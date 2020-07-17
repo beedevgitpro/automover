@@ -1,0 +1,380 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/constants.dart';
+import 'package:flutter_app/model/loginmodel.dart';
+import 'package:flutter_app/ui/widgets/custom_shape.dart';
+import 'package:flutter_app/ui/widgets/customappbar.dart';
+import 'package:flutter_app/ui/widgets/responsive_ui.dart';
+import 'package:flutter_app/ui/widgets/textformfield.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
+
+import 'package:shared_preferences/shared_preferences.dart';
+class SignUpScreen extends StatefulWidget {
+  @override
+  _SignUpScreenState createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  bool checkBoxValue = false;
+  double _height;
+  double _width;
+  double _pixelRatio;
+  bool _large;
+  bool _medium;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmpasswordController = TextEditingController();
+
+
+
+
+  FlutterToast flutterToast;
+
+  @override
+  void initState() {
+    super.initState();
+    flutterToast = FlutterToast(context);
+  }
+
+  _showToast(var message) {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Colors.blueAccent,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 12.0,
+          ),
+          Text(message,style: TextStyle(color: Colors.white),),
+        ],
+      ),
+    );
+
+
+    flutterToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 5),
+    );
+  }
+
+  Future<LoginModel> SignUP(username,email,password,confirmpassword) async {
+    ProgressDialog pr;
+    pr = new ProgressDialog(context,isDismissible: false);
+    await pr.show();
+
+    final response = await http.post(
+        'https://automover.beedevstaging.com/api/register',
+        body: {'name':username, 'email': email,'password':password,'c_password':confirmpassword}
+    );
+
+    try {
+      LoginModel singinrespdata = loginModelFromJson(response.body);
+      print("signi"+singinrespdata.toString());
+      if (singinrespdata.status == "success") {
+        pr.hide();
+        Navigator.of(context).pop();
+        _showToast("User Registered Successfully");
+
+//        SharedPreferences prefs = await SharedPreferences.getInstance();
+//        prefs.setString('loggedIn', "true");
+//        //   prefs.setString('userid', );
+//        prefs.setString('token_security',singinrespdata.token);
+
+
+
+      }
+      else {
+        pr.hide();
+        _showToast(singinrespdata.status);
+      }
+    }
+    catch(e)
+    {
+      pr.hide();
+      _showStatusDialog("Email already in use","Sign In with your existing account");
+
+    }
+
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    _height = MediaQuery.of(context).size.height;
+    _width = MediaQuery.of(context).size.width;
+    _pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    _large =  ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
+    _medium =  ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
+
+
+
+
+
+    return Material(
+      child: Scaffold(
+         key: _scaffoldKey,
+        body: Builder(
+          builder:  (ctx) => Container(
+            height: _height,
+            width: _width,
+            margin: EdgeInsets.only(bottom: 5),
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  clipShape(),
+                  form(),
+                  SizedBox(height: _height/35,),
+                  button(ctx),
+                  //signInTextRow(),
+                ],
+              ),
+            ),
+          ),
+        )
+
+      ),
+    );
+  }
+
+  Widget clipShape() {
+    return Stack(
+      children: <Widget>[
+
+        Opacity(
+          opacity: 0.75,
+          child: ClipPath(
+            clipper: CustomShapeClipper(),
+            child: Container(
+              height:_large? _height/4 : (_medium? _height/3.75 : _height/3.5),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xff0985ba), Color(0xff1a6ea8)],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Opacity(
+          opacity: 0.5,
+          child: ClipPath(
+            clipper: CustomShapeClipper2(),
+            child: Container(
+              height: _large? _height/4.5 : (_medium? _height/4.25 : _height/4),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xff0985ba), Color(0xff1a6ea8)],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.bottomCenter,
+          margin: EdgeInsets.only(top: _large? _height/30 : (_medium? _height/25 : _height/20)),
+          child: Image.asset(
+            'assets/img/logo.png',
+            height: _height/3.5,
+            width: _width/3.5,
+          ),
+        ),
+//        Positioned(
+//          top: _height/8,
+//          left: _width/1.75,
+//          child: Container(
+//            alignment: Alignment.center,
+//            height: _height/23,
+//            padding: EdgeInsets.all(5),
+//            decoration: BoxDecoration(
+//              shape: BoxShape.circle,
+//              color:  Colors.orange[100],
+//            ),
+//            child: GestureDetector(
+//                onTap: (){
+//                  print('Adding photo');
+//                },
+//                child: Icon(Icons.add_a_photo, size: _large? 22: (_medium? 15: 13),)),
+//          ),
+//        ),
+      ],
+    );
+  }
+
+  Widget form() {
+    return Container(
+      margin: EdgeInsets.only(
+          left:_width/ 12.0,
+          right: _width / 12.0,
+          top: _height / 20.0),
+      child: Form(
+        child: Column(
+          children: <Widget>[
+            firstNameTextFormField(),
+            SizedBox(height: _height / 60.0),
+            emailTextFormField(),
+
+            SizedBox(height: _height / 60.0),
+            passwordTextFormField(),
+            SizedBox(height: _height / 60.0),
+            confirmpasswordTextFormField(),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget firstNameTextFormField() {
+    return CustomTextField(
+      textEditingController: userNameController,
+      keyboardType: TextInputType.text,
+      icon: Icons.person,
+      hint: "First Name",
+    );
+  }
+  Future<void> _showStatusDialog(String title, String msg) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(msg),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  'OK',
+                  style: TextStyle(color: Color(0xff0985ba)),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Widget emailTextFormField() {
+    return CustomTextField(
+      textEditingController: emailController,
+      keyboardType: TextInputType.emailAddress,
+      icon: Icons.email,
+      hint: "Email ID",
+    );
+  }
+
+
+
+  Widget passwordTextFormField() {
+    return CustomTextField(
+      keyboardType: TextInputType.text,
+      textEditingController: passwordController,
+      obscureText: true,
+      icon: Icons.lock,
+      hint: "Password",
+    );
+  }
+  Widget confirmpasswordTextFormField() {
+    return CustomTextField(
+      textEditingController: confirmpasswordController,
+      keyboardType: TextInputType.text,
+      obscureText: true,
+      icon: Icons.lock,
+      hint: "Confirm Password",
+    );
+  }
+
+
+
+
+  Widget button(BuildContext context) {
+    return RaisedButton(
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      onPressed: () async {
+        if(userNameController.text.toString().isEmpty)
+        {
+          Scaffold
+              .of(context)
+              .showSnackBar(SnackBar(content: Text('Please enter your name')));
+             // _showStatusDialog("Name is required", "Please enter your Name");
+        }
+        else if(emailController.text.toString().isEmpty)
+        {
+          Scaffold
+              .of(context)
+              .showSnackBar(SnackBar(content: Text('Please enter your Email')));
+              // _showStatusDialog("Email is required", "Please enter your Email");
+        }
+        else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(emailController.text.toString())){
+          Scaffold
+              .of(context)
+              .showSnackBar(SnackBar(content: Text('Please enter a valid Email')));
+          // _showStatusDialog("Invalid Email", "Please enter a valid Email");
+        }
+        else if(passwordController.text.toString().isEmpty)
+        {
+          // Scaffold
+          //     .of(context)
+          //     .showSnackBar(SnackBar(content: Text('Please enter a valid password')));
+              _showStatusDialog("Password is required", "Please enter a valid password");
+        }
+
+        else if(confirmpasswordController.text.toString().isEmpty)
+        {
+          Scaffold
+              .of(context)
+              .showSnackBar(SnackBar(content: Text('Please confirm entered password')));
+          // _showStatusDialog("Password confirmation is required", "Please enter a valid password");
+        }
+        else if(passwordController.text.toString()!=confirmpasswordController.text.toString())
+        {
+          // Scaffold
+          //     .of(context)
+          //     .showSnackBar(SnackBar(content: Text('Passwords Don\'t Match')));
+          _showStatusDialog("Passwords don't match", "'Password' and 'Confirm Password' must have the same values");
+        }
+        else
+        {
+           try {
+            final result = await InternetAddress.lookup('google.com');
+            if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+              SignUP(userNameController.text.toString(),emailController.text.toString(),passwordController.text.toString(),confirmpasswordController.text.toString());
+            }
+          } on SocketException catch (_) {
+            _showStatusDialog("No Internet Connection", "Internet connection required");
+          }
+          
+        }
+
+      },
+      textColor: Colors.white,
+      padding: EdgeInsets.all(0.0),
+      child: Container(
+        alignment: Alignment.center,
+        height: _height / 20,
+        width:_large? _width/2 : (_medium? _width/2.5: _width/2.25),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          gradient: LinearGradient(
+            colors:<Color>[Color(0xff0985ba), Color(0xff1a6ea8)],
+
+          ),
+        ),
+        padding: const EdgeInsets.all(12.0),
+        child: Text('SIGN UP', style: TextStyle(fontSize: _large? 14: (_medium? 12: 10)),),
+      ),
+    );
+  }
+
+}
+
