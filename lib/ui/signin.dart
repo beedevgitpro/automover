@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/model/loginmodel.dart';
@@ -41,7 +42,21 @@ class _SignInScreenState extends State<SignInScreen> {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return Platform.isAndroid?AlertDialog(
+            title: Text(title),
+            content: Text(msg),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  'OK',
+                  style: TextStyle(color: Color(0xff0985ba)),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ):CupertinoAlertDialog(
             title: Text(title),
             content: Text(msg),
             actions: <Widget>[

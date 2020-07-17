@@ -116,9 +116,9 @@ class _MyHomePageState extends State<CarCrashForm> {
   @override
   void initState() {
     super.initState();
-    
+    print('initstate');
     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      
+      print('Im in connectivity');
       
       setState(() {
         if(result.toString()=="ConnectivityResult.none"){
@@ -145,8 +145,8 @@ class _MyHomePageState extends State<CarCrashForm> {
     // _secondValue = 0.0;
     _value1 = 0.0;
     // _secondValue1 = 0.0;
-    isSwitched = true;
-    isSwitched1 = true;
+    isSwitched = false;
+    isSwitched1 = false;
     fetchuser();
   }
   @override
@@ -779,7 +779,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 });
                                               },
                                               activeTrackColor: Colors.teal,
-                                              activeColor: Colors.white,
+                                              activeColor: Platform.isAndroid?Colors.white:Colors.teal,
                                             ),
                                           ),
                                         )
@@ -818,7 +818,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 });
                                               },
                                               activeTrackColor: Colors.teal,
-                                              activeColor: Colors.white,
+                                              activeColor: Platform.isAndroid?Colors.white:Colors.teal,
                                             ),
                                           ),
                                         )
@@ -911,12 +911,16 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             Colors.transparent,
                                                         thumbColor:
                                                             Colors.white,
+                                                        thumbShape: RoundSliderThumbShape(
+                                                          elevation:6,
+                                                          enabledThumbRadius: 12
+                                                        ),
                                                         overlayShape:
                                                             RoundSliderOverlayShape(
                                                                 overlayRadius:
                                                                     10.0),
                                                       ),
-                                                      child: Slider.adaptive(
+                                                      child: Slider(
                                                         divisions: 2,
                                                         min: 0,
                                                         max: 2,
@@ -1096,12 +1100,16 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             Colors.transparent,
                                                         thumbColor:
                                                             Colors.white,
+                                                        thumbShape: RoundSliderThumbShape(
+                                                          elevation:6,
+                                                          enabledThumbRadius: 12
+                                                        ),
                                                         overlayShape:
                                                             RoundSliderOverlayShape(
                                                                 overlayRadius:
                                                                     10.0),
                                                       ),
-                                                      child: Slider.adaptive(
+                                                      child: Slider(
                                                         divisions: 2,
                                                         min: 0,
                                                         max: 2,
