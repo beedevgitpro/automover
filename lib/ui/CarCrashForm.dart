@@ -1371,59 +1371,61 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           maxLines: 8,
                                         ),
                                       ),
-                                      Container(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      Column(
+                                        children: [
+                                          Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      " Reciever Signature",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
-                                                          fontFamily: "Nunito",
-                                                          color: Color(0xff000000)),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          " Reciever Signature",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
+                                                              fontFamily: "Nunito",
+                                                              color: Color(0xff000000)),
+                                                        ),
+                                                        GestureDetector(
+                                                      child: Padding(
+                                                        padding: EdgeInsetsDirectional.only(end:5),
+                                                        child: Icon(
+                                                          Icons.clear,
+                                                          color: Color(0xff1a6ea8),
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        _controller2.clear();
+                                                      },
                                                     ),
-                                                    GestureDetector(
-                                                  child: Padding(
-                                                    padding: EdgeInsetsDirectional.only(end:5),
-                                                    child: Icon(
-                                                      Icons.clear,
-                                                      color: Color(0xff1a6ea8),
+                                                      ],
                                                     ),
-                                                  ),
-                                                  onTap: () {
-                                                    _controller2.clear();
-                                                  },
-                                                ),
+                                                    RepaintBoundary(
+                                                      key: scr2,
+                                                          child: Signature(
+                                                        controller: _controller2,
+                                                        height: _large?150:100,
+                                                        width: MediaQuery.of(context).size.width*0.9,
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
-                                                RepaintBoundary(
-                                                  key: scr2,
-                                                      child: Signature(
-                                                    controller: _controller2,
-                                                    height: _large?150:100,
-                                                    width: MediaQuery.of(context).size.width*0.9,
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                  ),
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                      top: BorderSide(
+                                                          color:
+                                                              Color(0xffb0b0b0))),
                                                 ),
-                                              ],
-                                            ),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                  top: BorderSide(
-                                                      color:
-                                                          Color(0xffb0b0b0))),
-                                            ),
-                                          ),
-                                          Container(
+                                              ),
+                                              Container(
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -1475,6 +1477,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             Color(0xffb0b0b0)),
                                                     )),
                                           )
+                                        ],
+                                      ),
+                                          
                                      
                                     ],
                                   ))),
