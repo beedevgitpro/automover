@@ -3,6 +3,7 @@ import 'dart:convert';
 // import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/constants/constants.dart';
+import 'package:flutter_app/ui/widgets/responsive_ui.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
@@ -48,6 +49,11 @@ class _MyHomePageState extends State<CarCrashForm> {
   String dropdownValue = 'Honda';
   String dropdownValue1 = 'Honda';
   String token;
+  double _height;
+  double _width;
+  double _pixelRatio;
+  bool _large;
+  bool _medium;
   var subscription;
   var scr = new GlobalKey();
   var scr1 = new GlobalKey();
@@ -100,7 +106,7 @@ class _MyHomePageState extends State<CarCrashForm> {
           ),
           Text(
             message,
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white,fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
           ),
         ],
       ),
@@ -168,13 +174,13 @@ class _MyHomePageState extends State<CarCrashForm> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return Platform.isAndroid?AlertDialog(
-            title: Text(title),
-            content: Text(msg),
+            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
+            content: Text(msg,style:TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
             actions: <Widget>[
               FlatButton(
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Color(0xff0985ba)),
+                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -182,13 +188,13 @@ class _MyHomePageState extends State<CarCrashForm> {
               ),
             ],
           ):CupertinoAlertDialog(
-             title: Text(title),
-            content: Text(msg),
+            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
+            content: Text(msg,style:TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
             actions: <Widget>[
               FlatButton(
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Color(0xff0985ba)),
+                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -204,13 +210,12 @@ class _MyHomePageState extends State<CarCrashForm> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return Platform.isAndroid?AlertDialog(
-            title: Text("Are you sure you want to logout?"),
+            title: Text("Are you sure you want to logout?",style:TextStyle(fontWeight:FontWeight.bold,fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
             actions: <Widget>[
-              
               FlatButton(
                 child: Text(
                   'No',
-                  style: TextStyle(color: Color(0xff0985ba)),
+                 style:TextStyle(fontWeight:FontWeight.bold,fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize))
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -219,7 +224,7 @@ class _MyHomePageState extends State<CarCrashForm> {
               FlatButton(
                 child: Text(
                   'Yes',
-                  style: TextStyle(color: Color(0xff0985ba)),
+                  style:TextStyle(fontWeight:FontWeight.bold,fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
                 ),
                 onPressed: () async {
                   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -285,7 +290,10 @@ class _MyHomePageState extends State<CarCrashForm> {
       'receiver_signature_data':
           "data:image/png;base64," + base64Imagerecieversign,
     };
-    SharedPreferences.getInstance().then((value){value.setString('form_body', jsonEncode(body));
+    SharedPreferences.getInstance().then((value){
+      List<String>forms=value.getStringList('forms')??[];
+      forms.add(jsonEncode(body));
+      value.setStringList('forms',forms);
       value.setBool('toBeSubmitted', true);
     });
     setState(() {
@@ -333,10 +341,12 @@ class _MyHomePageState extends State<CarCrashForm> {
     //     "     othercomment" +
     //     othercommentController.text.toString());
     await pr.show();
+    List lst=prefs.getStringList('forms');
     final response = await http
         .post('https://automover.beedevstaging.com/api/post-survey', headers: {
       'Authorization': 'Bearer $token',
-    }, body: (prefs.getBool('toBeSubmitted')??false)?jsonDecode(prefs.getString('form_body')):{
+    }, body:(prefs.getBool('toBeSubmitted')??false)?jsonDecode(lst[0]):
+    {
       'user_id': '1',
       'job_no': bookingIdController.text.toString(),
       'sender_report': senderController.text.toString(),
@@ -360,13 +370,12 @@ class _MyHomePageState extends State<CarCrashForm> {
       'receiver_signature_data':
           "data:image/png;base64," + base64Imagerecieversign,
     });
-
     try {
       CarCrashModel carCrashModel = carCrashModelFromJson(response.body);
       print("carcrashresponse" + response.body.toString());
       if (carCrashModel.status == "success") {
         
-        prefs.setString('form_body',null);
+        prefs.setString('forms',null);
         pr.hide();
         setState(() {
           _controller.clear();
@@ -385,8 +394,20 @@ class _MyHomePageState extends State<CarCrashForm> {
           recieverController.clear();
         });
         //  Navigator.of(context).pop();
-        _showStatusDialog("Thank you for submitting!", (prefs.getBool('toBeSubmitted')??false)?"Previous offline submission recorded":"Submission recorded.");
-        prefs.setBool('toBeSubmitted',false);
+        
+        if(prefs.getBool('toBeSubmitted')??false)
+        {if(lst.length>1){
+          lst.removeAt(0);
+          prefs.setStringList('forms', lst);
+          CrashFormSubmit();
+        }
+        else
+        {
+          _showStatusDialog("Thank you for submitting!", (prefs.getBool('toBeSubmitted')??false)?"Previous offline submission recorded":"Submission recorded.");
+          prefs.setBool('toBeSubmitted',false);
+          prefs.remove('forms');
+        }}
+          
 
 //        SharedPreferences prefs = await SharedPreferences.getInstance();
 //        prefs.setString('loggedIn', "true");
@@ -395,16 +416,16 @@ class _MyHomePageState extends State<CarCrashForm> {
 
       } else {
         pr.hide();
-        prefs.setString('form_body',null);
+        prefs.setString('forms',null);
        toBeSubmitted?_showStatusDialog("Couldn't submit saved offline data",""):_showStatusDialog("Something Went Wrong", carCrashModel.status);
-        prefs.setBool('toBeSubmitted',false);
+        //prefs.setBool('toBeSubmitted',false);
         //_showToast(carCrashModel.status);
       }
     } catch (e) {
       pr.hide();
       _showStatusDialog("Something Went Wrong", "Reverify entered information");
       print(e);
-      prefs.setBool('toBeSubmitted',false);
+      //prefs.setBool('toBeSubmitted',false);
       //_showToast("Something Went Wrong" + response.body);
     }
   }
@@ -426,6 +447,11 @@ class _MyHomePageState extends State<CarCrashForm> {
 
   @override
   Widget build(BuildContext context) {
+    _height = MediaQuery.of(context).size.height;
+    _width = MediaQuery.of(context).size.width;
+    _pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    _large = ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
+    _medium = ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: DefaultTabController(
@@ -435,15 +461,16 @@ class _MyHomePageState extends State<CarCrashForm> {
             backgroundColor: Color(0xff0985ba),
             title: Text(
               'Vehicle Survey Report',
-              style: TextStyle(fontFamily: "Nunito"),
+              style: TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize+5 : (_medium ? kMediumFontSize+2 : kSmallFontSize)),
             ),
             actions: <Widget>[
               new Image.asset(
                 'assets/img/logo.png',
-                width: 85,
-                height: 85,
+                width: _large ? 120 : 85,
+                height:_large ? 120 : 85,
               ),
-              IconButton(icon: Icon(Icons.exit_to_app,size: 28,), onPressed:_showLogoutConfirmationDialog),
+              SizedBox(width:5),
+              IconButton(icon: Icon(Icons.exit_to_app,size: _large ? 32 : 28,), onPressed:_showLogoutConfirmationDialog),
               // PopupMenuButton<String>(
               //   onSelected: handleClick,
               //   itemBuilder: (BuildContext context) {
@@ -480,11 +507,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width >=
-                                                    600
-                                                ? 19
-                                                : 15,
+                                        fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                         fontFamily: "Nunito"),
                                   ),
                                   Padding(
@@ -500,12 +523,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           return 'This field is required';
                                       },
                                       style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width >=
-                                                  600
-                                              ? 20
-                                              : 16,
+                                          fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                           fontFamily: "Nunito",
                                           color: Color(0xffffffff)),
                                       controller: bookingIdController,
@@ -538,6 +556,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 "Surveyed By  ",
                                 style: TextStyle(
                                     color: Colors.white,
+                                    fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                     fontWeight: FontWeight.bold,
                                     fontFamily: "Nunito"),
                               ),
@@ -545,10 +564,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 username + "  ",
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width >= 600
-                                            ? 22
-                                            : 18,
+                                    fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                     fontFamily: "Nunito"),
                               ),
                             ],
@@ -586,24 +602,20 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
+                                          flex: 1,
                                           child: Text(
                                             'Make',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 16,
+                                                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                           ),
                                         ),
                                         Expanded(
-                                          flex: MediaQuery.of(context)
-                                                      .size
-                                                      .width >=
-                                                  600
-                                              ? 1
-                                              : 2,
+                                          flex:2,
                                           child: TextFormField(
                                             style: TextStyle(
-                                                fontSize: 16,
+                                                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                             controller: makeController,
                                             decoration: InputDecoration(
@@ -613,7 +625,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 focusedBorder: InputBorder.none,
                                                 errorBorder: InputBorder.none,
                                                 hintText:
-                                                    '${MediaQuery.of(context).size.width >= 600 ? 'Manufacturer' : 'Manufacturer'}'),
+                                                    '${_large ? 'Manufacturer Name' : 'Manufacturer'}'),
                                             validator: (value) {
                                               if (value.isEmpty)
                                                 return 'Required';
@@ -629,18 +641,20 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
+                                          flex:2,
                                           child: Text(
                                             'Model',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 16,
+                                                fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                           ),
                                         ),
                                         Expanded(
+                                          flex:2,
                                           child: TextFormField(
                                             style: TextStyle(
-                                                fontSize: 16,
+                                                fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                             controller: modelController,
                                             decoration: InputDecoration(
@@ -673,20 +687,15 @@ class _MyHomePageState extends State<CarCrashForm> {
                                             'Rego',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 16,
+                                                fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                           ),
                                         ),
                                         Expanded(
-                                          flex: MediaQuery.of(context)
-                                                      .size
-                                                      .width >=
-                                                  600
-                                              ? 1
-                                              : 2,
+                                          flex: 2,
                                           child: TextFormField(
                                             style: TextStyle(
-                                                fontSize: 16,
+                                                fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                             controller: regoController,
                                             decoration: InputDecoration(
@@ -711,22 +720,24 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
+                                          flex:2,
                                           child: Text(
                                             'Speedo',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 16,
+                                                fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                           ),
                                         ),
                                         Expanded(
+                                          flex:2,
                                           child: TextFormField(
                                             keyboardType: TextInputType.number,
                                             inputFormatters: [
                                               WhitelistingTextInputFormatter.digitsOnly
                                             ],
                                             style: TextStyle(
-                                                fontSize: 16,
+                                                fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                             controller: speedoController,
                                             decoration: InputDecoration(
@@ -753,24 +764,21 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
-                                          flex: MediaQuery.of(context)
-                                                      .size
-                                                      .width >=
-                                                  600
-                                              ? 3
-                                              : 2,
+                                          flex: _large
+                                              ? 9
+                                              : 4,
                                           child: Text(
                                             'Drivable',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 16,
+                                                fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                           ),
                                         ),
                                         Expanded(
-                                          flex: 1,
+                                          flex: 2,
                                           child: Transform.scale(
-                                            scale: 1.2,
+                                            scale: _large?1.5:1.2,
                                             child: Switch.adaptive(
                                               value: isSwitched,
                                               onChanged: (value) {
@@ -792,24 +800,21 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
-                                          flex: MediaQuery.of(context)
-                                                      .size
-                                                      .width >=
-                                                  600
-                                              ? 6
+                                          flex: _large
+                                              ? 9
                                               : 4,
                                           child: Text(
                                             'Goods Inside',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 16,
+                                                fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                 fontFamily: "Nunito"),
                                           ),
                                         ),
                                         Expanded(
                                           flex: 2,
                                           child: Transform.scale(
-                                            scale: 1.2,
+                                            scale: _large?1.5:1.2,
                                             child: Switch.adaptive(
                                               value: isSwitched1,
                                               onChanged: (value) {
@@ -838,7 +843,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           'External Condition',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 16,
+                                              fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                               fontFamily: "Nunito"),
                                         ),
                                         SizedBox(
@@ -855,7 +860,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       margin:
                                                           EdgeInsets.symmetric(
                                                               horizontal: 5),
-                                                      height: 10,
+                                                      height: _large?20:10,
                                                       child: Row(
                                                         children: [
                                                           Expanded(
@@ -882,6 +887,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                           ),
                                                           Expanded(
                                                             child: Container(
+                                                              margin: EdgeInsets.only(right:_large?3:0),
                                                               decoration:
                                                                   BoxDecoration(
                                                                 borderRadius: BorderRadius.only(
@@ -899,42 +905,44 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         ],
                                                       ),
                                                     ),
-                                                    SliderTheme(
-                                                      data: SliderThemeData(
-                                                        activeTickMarkColor:
-                                                            Colors.transparent,
-                                                        inactiveTickMarkColor:
-                                                            Colors.transparent,
-                                                        activeTrackColor:
-                                                            Colors.transparent,
-                                                        inactiveTrackColor:
-                                                            Colors.transparent,
-                                                        thumbColor:
-                                                            Colors.white,
-                                                        thumbShape: RoundSliderThumbShape(
-                                                          elevation:6,
-                                                          enabledThumbRadius: 12
+                                                    Container(
+                                                      child: SliderTheme(
+                                                        data: SliderThemeData(
+                                                          activeTickMarkColor:
+                                                              Colors.transparent,
+                                                          inactiveTickMarkColor:
+                                                              Colors.transparent,
+                                                          activeTrackColor:
+                                                              Colors.transparent,
+                                                          inactiveTrackColor:
+                                                              Colors.transparent,
+                                                          thumbColor:
+                                                              Colors.white,
+                                                          thumbShape: RoundSliderThumbShape(
+                                                            elevation:6,
+                                                            enabledThumbRadius: _large?18:12
+                                                          ),
+                                                          overlayShape:
+                                                              RoundSliderOverlayShape(
+                                                                  overlayRadius:
+                                                                      10.0),
                                                         ),
-                                                        overlayShape:
-                                                            RoundSliderOverlayShape(
-                                                                overlayRadius:
-                                                                    10.0),
-                                                      ),
-                                                      child: Slider(
-                                                        divisions: 2,
-                                                        min: 0,
-                                                        max: 2,
-                                                        value: _value,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            _value = value;
-                                                            externalCondition =
-                                                                vehicleCondition[
-                                                                    value
-                                                                        .toInt()];
-                                                            print(_value);
-                                                          });
-                                                        },
+                                                        child: Slider(
+                                                          divisions: 2,
+                                                          min: 0,
+                                                          max: 2,
+                                                          value: _value,
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              _value = value;
+                                                              externalCondition =
+                                                                  vehicleCondition[
+                                                                      value
+                                                                          .toInt()];
+                                                              print(_value);
+                                                            });
+                                                          },
+                                                        ),
                                                       ),
                                                     )
 //                                                     Container(
@@ -998,12 +1006,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 child: Text(
                                                   externalCondition,
                                                   style: TextStyle(
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .width >=
-                                                                  600
-                                                              ? 22
+                                                      fontSize:_large
+                                                              ? 25
                                                               : 18,
                                                       color: Colors.black,
                                                       fontFamily: "Nunito"),
@@ -1026,7 +1030,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           'Internal Condition',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 16,
+                                              fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                               fontFamily: "Nunito"),
                                         ),
                                         SizedBox(
@@ -1045,7 +1049,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       margin:
                                                           EdgeInsets.symmetric(
                                                               horizontal: 5),
-                                                      height: 10,
+                                                      height: _large?20:10,
                                                       // decoration: BoxDecoration(
                                                       //   borderRadius: BorderRadius.circular(10),
                                                       //  gradient: LinearGradient(colors: [Colors.red,Colors.amber,Colors.green]),
@@ -1072,6 +1076,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                           )),
                                                           Expanded(
                                                               child: Container(
+                                                                margin: EdgeInsets.only(right:_large?3:0),
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius: BorderRadius.only(
@@ -1102,7 +1107,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             Colors.white,
                                                         thumbShape: RoundSliderThumbShape(
                                                           elevation:6,
-                                                          enabledThumbRadius: 12
+                                                          enabledThumbRadius: _large?18:12
                                                         ),
                                                         overlayShape:
                                                             RoundSliderOverlayShape(
@@ -1177,12 +1182,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 child: Text(
                                                   internalCondition,
                                                   style: TextStyle(
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .width >=
-                                                                  600
-                                                              ? 22
+                                                      fontSize:_large
+                                                              ? 25
                                                               : 18,
                                                       color: Colors.black,
                                                       fontFamily: "Nunito"),
@@ -1205,7 +1206,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                       Text(
                         "X- Dent S -Scratch C -Cracked R Rust",
                         style: TextStyle(
-                            fontSize: 16,
+                            fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                             fontWeight: FontWeight.bold,
                             fontFamily: "Nunito"),
                       ),
@@ -1215,7 +1216,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                       Text(
                         "Diagram to show major/obvious damage only -damaged vehicles will not be survyed",
                         style: TextStyle(
-                            fontSize: 15,
+                            fontSize: _large ? kLargeFontSize-3 : (_medium ? kMediumFontSize-3 : kSmallFontSize-1),
                             color: Colors.grey,
                             fontFamily: "Nunito"),
                         textAlign: TextAlign.center,
@@ -1247,16 +1248,15 @@ class _MyHomePageState extends State<CarCrashForm> {
                               children: [
                                 SvgPicture.asset(
                                   'assets/img/carmover.svg',
-                                  //width: MediaQuery.of(context).size.width,
+                                  width: MediaQuery.of(context).size.width,
                                   //height: MediaQuery.of(context).size.width/0.9,
                                   //height: 700,
-                                  width:550,
-                                  height: 500,
+                                  height: _large?700:500,
                                 ),
                                 Signature(
                                   controller: _controller,
-                                  width: 550,
-                                  height: 500,
+                                  width: MediaQuery.of(context).size.width*0.9,
+                                  height: _large?700:500,
                                   backgroundColor: Colors.transparent,
                                 ),
                               ],
@@ -1268,7 +1268,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                       Text(
                         "Boat/C/Van/Trlr Survey",
                         style: TextStyle(
-                            fontSize: 16,
+                            fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                             fontWeight: FontWeight.bold,
                             fontFamily: "Nunito"),
                       ),
@@ -1292,16 +1292,17 @@ class _MyHomePageState extends State<CarCrashForm> {
                           child: RepaintBoundary(
                             key: scr1,
                             child: Stack(
+                              alignment: Alignment.center,
                               children: [
-                                Image.asset(
-                                  'assets/img/carimage1.jpeg',
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 250,
+                                SvgPicture.asset(
+                                  'assets/img/car-top.svg',
+                                  width: MediaQuery.of(context).size.width*0.9,
+                                  height: _large?600:400,
                                 ),
                                 Signature(
                                   controller: _controller1,
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 250,
+                                  width: MediaQuery.of(context).size.width*0.9,
+                                  height: _large?600:400,
                                   backgroundColor: Colors.transparent,
                                 ),
                               ],
@@ -1326,7 +1327,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                               "Other Comments",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
+                                                  fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                   fontFamily: "Nunito"),
                                             ),
                                           )),
@@ -1358,7 +1359,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                             focusedBorder: InputBorder.none,
                                             hintText: "Write Message",
                                             hintStyle: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize),
                                               fontFamily: "Nunito",
                                               color: Color(0xff999999),
                                             ),
@@ -1385,7 +1386,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          fontSize: 16,
+                                                          fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                           fontFamily: "Nunito",
                                                           color: Color(0xff000000)),
                                                     ),
@@ -1407,8 +1408,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   key: scr2,
                                                       child: Signature(
                                                     controller: _controller2,
-                                                    height: 100,
-                                                    width: MediaQuery.of(context).size.width,
+                                                    height: _large?150:100,
+                                                    width: MediaQuery.of(context).size.width*0.9,
                                                     backgroundColor:
                                                         Colors.transparent,
                                                   ),
@@ -1437,7 +1438,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          fontSize: 16,
+                                                          fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                           fontFamily: "Nunito",
                                                           color: Color(0xff000000)),
                                                     ),
@@ -1459,8 +1460,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   key:scr3,
                                                     child: Signature(
                                                     controller: _controller3,
-                                                    height: 100,
-                                                    width: double.infinity,
+                                                    height:_large?150:100,
+                                                    width: MediaQuery.of(context).size.width*0.9,
                                                     backgroundColor:
                                                         Colors.transparent,
                                                   ),
@@ -1544,7 +1545,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                     "Cancel",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                         color: Colors.white,
                                         fontWeight: FontWeight.normal,
                                         fontFamily: "Nunito"),
@@ -1603,7 +1604,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontFamily: "Nunito",
-                                        fontSize: 20,
+                                        fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                         color: Colors.white,
                                         fontWeight: FontWeight.normal),
                                   ),
@@ -1661,7 +1662,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                           Text(
                             "Sender Details",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                               fontFamily: "Nunito",
                             ),
                           ),
@@ -1678,7 +1679,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                           Text(
                             "Receiver Details",
                             style:
-                                TextStyle(fontSize: 16, fontFamily: "Nunito"),
+                                TextStyle(fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize), fontFamily: "Nunito"),
                           ),
                           Icon(Icons.add_circle_outline,
                               color: Color(0xff848484)),
@@ -1703,7 +1704,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                     focusNode: senderDetailsFocusNode,
                     maxLines: 5,
                     cursorColor: Color(0xff1a6ea8),
-                    style: TextStyle(fontSize: 16, fontFamily: "Nunito"),
+                    style: TextStyle(fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize), fontFamily: "Nunito"),
                     controller: senderController,
                     validator: (value) {
                       if (value.isEmpty) return 'This field is required';
@@ -1724,7 +1725,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                   maxLines: 5,
                   cursorColor: Color(0xff1a6ea8),
                   focusNode: receiverDetailsFocusNode,
-                  style: TextStyle(fontSize: 16, fontFamily: "Nunito"),
+                  style: TextStyle(fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize), fontFamily: "Nunito"),
                   controller: recieverController,
                   validator: (value) {
                     if (value.isEmpty) return 'This field is required';
@@ -1798,7 +1799,7 @@ class _MyHomePageState extends State<CarCrashForm> {
 //return DropdownMenuItem<String>(
 //value: value,
 //child: Text(value,
-//style: TextStyle(fontSize: 16,fontFamily: "Nunito",),),
+//style: TextStyle(fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),fontFamily: "Nunito",),),
 //);
 //}).toList(),
 //),

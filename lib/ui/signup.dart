@@ -55,9 +55,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           SizedBox(
             width: 12.0,
           ),
-          Text(message,style: TextStyle(color: Colors.white),),
+          Text(message,style: TextStyle(color: Colors.white,fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),),
         ],
-      ),
+      ), 
     );
 
 
@@ -135,7 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 children: <Widget>[
                   clipShape(),
                   form(),
-                  SizedBox(height: _height/35,),
+                  SizedBox(height: _height/30,),
                   button(ctx),
                   //signInTextRow(),
                 ],
@@ -221,12 +221,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Column(
           children: <Widget>[
             firstNameTextFormField(),
-            SizedBox(height: _height / 60.0),
+            SizedBox(height: _height / 55.0),
             emailTextFormField(),
-
-            SizedBox(height: _height / 60.0),
+            SizedBox(height: _height / 55.0),
             passwordTextFormField(),
-            SizedBox(height: _height / 60.0),
+            SizedBox(height: _height / 55.0),
             confirmpasswordTextFormField(),
           ],
         ),
@@ -247,13 +246,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return Platform.isAndroid?AlertDialog(
-            title: Text(title),
-            content: Text(msg),
+            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
+            content: Text(msg,style:TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
             actions: <Widget>[
               FlatButton(
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Color(0xff0985ba)),
+                  style: TextStyle(color: Color(0xff0985ba),fontFamily: "Nunito",fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -261,13 +260,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ],
           ):CupertinoAlertDialog(
-            title: Text(title),
-            content: Text(msg),
+            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
+            content: Text(msg,style:TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
             actions: <Widget>[
               FlatButton(
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Color(0xff0985ba)),
+                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -320,20 +319,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
         {
           Scaffold
               .of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter your name')));
+              .showSnackBar(SnackBar(content: Text('Please enter your name',style: TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),)));
              // _showStatusDialog("Name is required", "Please enter your Name");
         }
         else if(emailController.text.toString().isEmpty)
         {
           Scaffold
               .of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter your Email')));
+              .showSnackBar(SnackBar(content: Text('Please enter your Email',style: TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),)));
               // _showStatusDialog("Email is required", "Please enter your Email");
         }
         else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(emailController.text.toString())){
           Scaffold
               .of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter a valid Email')));
+              .showSnackBar(SnackBar(content: Text('Please enter a valid Email',style: TextStyle(fontSize: _large ? kLargeFontSize-5 : (_medium ? kMediumFontSize-5 : kSmallFontSize-5)),)));
           // _showStatusDialog("Invalid Email", "Please enter a valid Email");
         }
         else if(passwordController.text.toString().isEmpty)
@@ -348,7 +347,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         {
           Scaffold
               .of(context)
-              .showSnackBar(SnackBar(content: Text('Please confirm entered password')));
+              .showSnackBar(SnackBar(content: Text('Please confirm entered password',style: TextStyle(fontSize: _large ? kLargeFontSize-5 : (_medium ? kMediumFontSize-5 : kSmallFontSize-5)),)));
           // _showStatusDialog("Password confirmation is required", "Please enter a valid password");
         }
         else if(passwordController.text.toString()!=confirmpasswordController.text.toString())
@@ -386,7 +385,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
         padding: const EdgeInsets.all(12.0),
-        child: Text('SIGN UP', style: TextStyle(fontSize: _large? 14: (_medium? 12: 10)),),
+        child: Text('SIGN UP',style: TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/ui/widgets/responsive_ui.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -33,11 +34,11 @@ class CustomTextField extends StatelessWidget {
       child: TextFormField(
         obscureText: obscureText,
         controller: textEditingController,
-        style: TextStyle(fontFamily: "Nunito",),
+        style: TextStyle(fontFamily: "Nunito",fontSize: large ? kLargeFontSize : (medium ? kMediumFontSize : kSmallFontSize)),
         keyboardType: keyboardType,
         cursorColor: Color(0xff0985ba),
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Color(0xff1a6ea8), size: 20),
+          prefixIcon: Icon(icon, color: Color(0xff1a6ea8), size: large ? kLargeFontSize : (medium ? kMediumFontSize : kSmallFontSize)),
           hintText: hint,
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30.0),

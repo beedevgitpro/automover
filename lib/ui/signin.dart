@@ -43,13 +43,13 @@ class _SignInScreenState extends State<SignInScreen> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return Platform.isAndroid?AlertDialog(
-            title: Text(title),
-            content: Text(msg),
+            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
+            content: Text(msg,style:TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
             actions: <Widget>[
               FlatButton(
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Color(0xff0985ba)),
+                  style: TextStyle(color: Color(0xff0985ba),fontFamily: "Nunito",fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -57,13 +57,13 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             ],
           ):CupertinoAlertDialog(
-            title: Text(title),
-            content: Text(msg),
+            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
+            content: Text(msg,style:TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
             actions: <Widget>[
               FlatButton(
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Color(0xff0985ba)),
+                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -115,7 +115,11 @@ class _SignInScreenState extends State<SignInScreen> {
       _showStatusDialog("Error occured", e.toString());
     }
   }
-
+  @override
+  void initState() {
+    print(_large);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
@@ -137,7 +141,7 @@ class _SignInScreenState extends State<SignInScreen> {
               signInTextRow(),
               form(),
               forgetPassTextRow(),
-              SizedBox(height: _height / 16),
+              SizedBox(height: _height / 25),
               button(),
               signUpTextRow(),
             ],
@@ -227,7 +231,7 @@ class _SignInScreenState extends State<SignInScreen> {
             style: TextStyle(
               fontFamily: "Nunito",
               fontWeight: FontWeight.w200,
-              fontSize: _large ? 20 : (_medium ? 17.5 : 15),
+              fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)
             ),
           ),
         ],
@@ -306,10 +310,10 @@ class _SignInScreenState extends State<SignInScreen> {
       onPressed: () async {
         if (emailController.text.toString().isEmpty) {
           Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter a valid Email')));
+              .showSnackBar(SnackBar(content: Text('Please enter a valid Email',style: TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),)));
         } else if (passwordController.text.toString().isEmpty) {
           Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter a valid password')));
+              .showSnackBar(SnackBar(content: Text('Please enter a valid password',style: TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),)));
         } else {
           try {
             final result = await InternetAddress.lookup('google.com');
@@ -336,7 +340,7 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         padding: const EdgeInsets.all(12.0),
         child: Text('SIGN IN',
-            style: TextStyle(fontSize: _large ? 14 : (_medium ? 12 : 10))),
+            style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
       ),
     );
   }
@@ -351,10 +355,10 @@ class _SignInScreenState extends State<SignInScreen> {
             "Don't have an account?",
             style: TextStyle(
                 fontWeight: FontWeight.w400,
-                fontSize: _large ? 17 : (_medium ? 15 : 13)),
+                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
           ),
           SizedBox(
-            width: 5,
+            width: 8,
           ),
           GestureDetector(
             onTap: () {
@@ -368,7 +372,7 @@ class _SignInScreenState extends State<SignInScreen> {
               style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: Color(0xff0985ba),
-                  fontSize: _large ? 18 : (_medium ? 16 : 14)),
+                  fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
             ),
           )
         ],
