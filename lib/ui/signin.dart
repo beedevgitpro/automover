@@ -331,7 +331,7 @@ class _SignInScreenState extends State<SignInScreen> {
       padding: EdgeInsets.all(0.0),
       child: Container(
         alignment: Alignment.center,
-        width: _large ? _width / 4 : (_medium ? _width / 3.75 : _width / 3.5),
+        width: _large ? _width / 2 : (_medium ? _width / 2.5 : _width / 2.25),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
           gradient: LinearGradient(
@@ -340,7 +340,7 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         padding: const EdgeInsets.all(12.0),
         child: Text('SIGN IN',
-            style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
+            style: TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
       ),
     );
   }
