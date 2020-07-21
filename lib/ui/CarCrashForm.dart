@@ -175,12 +175,12 @@ class _MyHomePageState extends State<CarCrashForm> {
         builder: (BuildContext context) {
           return Platform.isAndroid?AlertDialog(
             title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
-            content: Text(msg,style:TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
+            content: Text(msg,style:TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize : kSmallFontSize))),
             actions: <Widget>[
               FlatButton(
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
+                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize : kSmallFontSize)),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -189,12 +189,12 @@ class _MyHomePageState extends State<CarCrashForm> {
             ],
           ):CupertinoAlertDialog(
             title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
-            content: Text(msg,style:TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
+            content: Text(msg,style:TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize : kSmallFontSize))),
             actions: <Widget>[
               FlatButton(
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
+                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize : kSmallFontSize)),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -215,7 +215,7 @@ class _MyHomePageState extends State<CarCrashForm> {
               FlatButton(
                 child: Text(
                   'No',
-                 style:TextStyle(fontWeight:FontWeight.bold,fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize))
+                 style:TextStyle(fontWeight:FontWeight.bold,fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize : kSmallFontSize))
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -407,6 +407,9 @@ class _MyHomePageState extends State<CarCrashForm> {
           prefs.setBool('toBeSubmitted',false);
           prefs.remove('forms');
         }}
+        else{
+          _showStatusDialog("Thank you for submitting!", "Submission recorded.");
+        }
           
 
 //        SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -423,7 +426,7 @@ class _MyHomePageState extends State<CarCrashForm> {
       }
     } catch (e) {
       pr.hide();
-      _showStatusDialog("Something Went Wrong", "Reverify entered information");
+      _showStatusDialog("Something Went Wrong","");
       print(e);
       //prefs.setBool('toBeSubmitted',false);
       //_showToast("Something Went Wrong" + response.body);
@@ -1365,18 +1368,16 @@ class _MyHomePageState extends State<CarCrashForm> {
                                             ),
 // labelText: 'Enter
                                           ),
-
 // onEditingComplete: ()=>print(abc),
-
                                           maxLines: 8,
                                         ),
                                       ),
                                       _large?Row(children: [
                                         Expanded(
-                                                                                  child: Container(
+                                              child: Container(
                                                   child: Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
+                                                        CrossAxisAlignment.center,
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
                                                     children: [
@@ -1411,7 +1412,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             child: Signature(
                                                           controller: _controller2,
                                                           height: _large?150:100,
-                                                          //width: MediaQuery.of(context).size.width*0.9,
+                                                          width: MediaQuery.of(context).size.width*0.45,
                                                           backgroundColor:
                                                               Colors.transparent,
                                                         ),
@@ -1422,7 +1423,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     border: Border(
                                                         top: BorderSide(
                                                             color:
-                                                                Color(0xffb0b0b0))),
+                                                                Color(0xffb0b0b0)),
+                                                              bottom: BorderSide(color:Color(0xffb0b0b0))  
+                                                              ),
                                                   ),
                                                 ),
                                         ),
@@ -1430,7 +1433,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                                               child: Container(
                                             child: Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.center,
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 children: [
@@ -1465,7 +1468,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       child: Signature(
                                                       controller: _controller3,
                                                       height:_large?150:100,
-                                                      //width: MediaQuery.of(context).size.width*0.9,
+                                                      width: MediaQuery.of(context).size.width*0.45,
                                                       backgroundColor:
                                                           Colors.transparent,
                                                     ),
@@ -1477,7 +1480,10 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       top: BorderSide(
                                                           color:
                                                               Color(0xffb0b0b0)),
-                                                      )),
+                                                      left: BorderSide(color:Color(0xffb0b0b0)),
+                                                      bottom: BorderSide(color:Color(0xffb0b0b0))
+                                                      ),
+                                                      ),
                                           ),
                                               )
                                       ]):
@@ -1486,7 +1492,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           Container(
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.center,
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
