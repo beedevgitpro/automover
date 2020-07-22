@@ -130,15 +130,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
             height: _height,
             width: _width,
             margin: EdgeInsets.only(bottom: 5),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  clipShape(),
-                  form(),
-                  SizedBox(height: _height/30,),
-                  button(ctx),
-                  //signInTextRow(),
-                ],
+            child: GestureDetector(
+              onTap: (){
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+               child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    clipShape(),
+                    registerTextRow(),
+                    form(),
+                    SizedBox(height: _height / 20),
+                    button(ctx),
+                    signInTextRow(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -147,17 +153,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-
   Widget clipShape() {
+    //double height = MediaQuery.of(context).size.height;
     return Stack(
       children: <Widget>[
-
         Opacity(
           opacity: 0.75,
           child: ClipPath(
             clipper: CustomShapeClipper(),
             child: Container(
-              height:_large? _height/4 : (_medium? _height/3.75 : _height/3.5),
+              height: _large
+                  ? _height / 4
+                  : (_medium ? _height / 3.75 : _height / 3.5),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xff0985ba), Color(0xff1a6ea8)],
@@ -171,7 +178,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: ClipPath(
             clipper: CustomShapeClipper2(),
             child: Container(
-              height: _large? _height/4.5 : (_medium? _height/4.25 : _height/4),
+              height: _large
+                  ? _height / 4.5
+                  : (_medium ? _height / 4.25 : _height / 4),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xff0985ba), Color(0xff1a6ea8)],
@@ -181,36 +190,72 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
         Container(
-          alignment: Alignment.bottomCenter,
-          margin: EdgeInsets.only(top: _large? _height/30 : (_medium? _height/25 : _height/20)),
+          alignment: Alignment.topCenter,
+          // margin: EdgeInsets.only(
+          //     top: _large
+          //         ? _height / 30
+          //         : (_medium ? _height / 25 : _height / 20)),
           child: Image.asset(
             'assets/img/logo.png',
-            height: _height/3.5,
-            width: _width/3.5,
+            height: _height / 3.3,
+            width: _width / 3.3,
           ),
         ),
-//        Positioned(
-//          top: _height/8,
-//          left: _width/1.75,
-//          child: Container(
-//            alignment: Alignment.center,
-//            height: _height/23,
-//            padding: EdgeInsets.all(5),
-//            decoration: BoxDecoration(
-//              shape: BoxShape.circle,
-//              color:  Colors.orange[100],
-//            ),
-//            child: GestureDetector(
-//                onTap: (){
-//                  print('Adding photo');
-//                },
-//                child: Icon(Icons.add_a_photo, size: _large? 22: (_medium? 15: 13),)),
-//          ),
-//        ),
       ],
     );
   }
-
+  Widget signInTextRow() {
+    return Container(
+      margin: EdgeInsets.only(top: _height / 80.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Already have an account?",
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          GestureDetector(
+            onTap: () {
+              passwordController.clear();
+              emailController.clear();
+              // Navigator.of(context).pushNamedAndRemoveUntil(SIGN_IN,(r)=>false);
+              Navigator.pop(context);
+            },
+            child: Text(
+              "Login",
+              style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xff0985ba),
+                  fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+  Widget registerTextRow() {
+    return Container(
+      //margin: EdgeInsets.only(left: _width / 20, top: _height / 100),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Register",
+            style: TextStyle(
+              fontFamily: "Nunito",
+              fontWeight: FontWeight.bold,
+              fontSize: _large ? 60 : (_medium ? 50 : 40),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   Widget form() {
     return Container(
       margin: EdgeInsets.only(
@@ -221,11 +266,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Column(
           children: <Widget>[
             firstNameTextFormField(),
-            SizedBox(height: _height / 55.0),
+            SizedBox(height: _height / 40.0),
             emailTextFormField(),
-            SizedBox(height: _height / 55.0),
+            SizedBox(height: _height / 40.0),
             passwordTextFormField(),
-            SizedBox(height: _height / 55.0),
+            SizedBox(height: _height / 40.0),
             confirmpasswordTextFormField(),
           ],
         ),
@@ -384,7 +429,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
         padding: const EdgeInsets.all(12.0),
-        child: Text('SIGN UP',style: TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),),
+        child: Text('REGISTER',style: TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),),
       ),
     );
   }

@@ -33,6 +33,10 @@ dependencies:
   flutter_xlider: ^3.4.0
   connectivity: ^0.4.9
   flutter_svg: ^0.18.0
+  strings: ^0.1.2
+  flutter_spinkit: "^4.1.2"
+  rflutter_alert:
+
 
 
   # The following adds the Cupertino Icons font to your application.

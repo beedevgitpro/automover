@@ -129,22 +129,27 @@ class _SignInScreenState extends State<SignInScreen> {
     _medium = ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
 
     return Material(
-      child: Container(
-        height: _height,
-        width: _width,
-        padding: EdgeInsets.only(bottom: 5),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              clipShape(),
-              welcomeTextRow(),
-              signInTextRow(),
-              form(),
-              forgetPassTextRow(),
-              SizedBox(height: _height / 25),
-              button(),
-              signUpTextRow(),
-            ],
+      child: GestureDetector(
+        onTap: (){
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+              child: Container(
+          height: _height,
+          width: _width,
+          padding: EdgeInsets.only(bottom: 5),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                clipShape(),
+                welcomeTextRow(),
+                signInTextRow(),
+                form(),
+                forgetPassTextRow(),
+                SizedBox(height: _height / 75),
+                button(),
+                signUpTextRow(),
+              ],
+            ),
           ),
         ),
       ),
@@ -188,15 +193,15 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
         Container(
-          alignment: Alignment.bottomCenter,
-          margin: EdgeInsets.only(
-              top: _large
-                  ? _height / 30
-                  : (_medium ? _height / 25 : _height / 20)),
+          alignment: Alignment.topCenter,
+          // margin: EdgeInsets.only(
+          //     top: _large
+          //         ? _height / 30
+          //         : (_medium ? _height / 25 : _height / 20)),
           child: Image.asset(
             'assets/img/logo.png',
-            height: _height / 3.5,
-            width: _width / 3.5,
+            height: _height / 3.3,
+            width: _width / 3.3,
           ),
         ),
       ],
@@ -205,8 +210,9 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Widget welcomeTextRow() {
     return Container(
-      margin: EdgeInsets.only(left: _width / 20, top: _height / 100),
+      //margin: EdgeInsets.only(left: _width / 20, top: _height / 100),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
             "Welcome",
@@ -223,11 +229,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Widget signInTextRow() {
     return Container(
-      margin: EdgeInsets.only(left: _width / 15.0),
+      // margin: EdgeInsets.only(left: _width / 15.0),
       child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Sign in to your account",
+            "Login to your account",
             style: TextStyle(
               fontFamily: "Nunito",
               fontWeight: FontWeight.w200,
@@ -339,7 +346,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
         padding: const EdgeInsets.all(12.0),
-        child: Text('SIGN IN',
+        child: Text('LOGIN',
             style: TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
       ),
     );
@@ -347,7 +354,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Widget signUpTextRow() {
     return Container(
-      margin: EdgeInsets.only(top: _height / 120.0),
+      margin: EdgeInsets.only(top: _height / 80.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -365,10 +372,10 @@ class _SignInScreenState extends State<SignInScreen> {
               passwordController.clear();
               emailController.clear();
               Navigator.of(context).pushNamed(SIGN_UP);
-              print("Routing to Sign up screen");
+              
             },
             child: Text(
-              "Sign up",
+              "Register",
               style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: Color(0xff0985ba),

@@ -34,6 +34,10 @@ class CustomTextField extends StatelessWidget {
       child: TextFormField(
         obscureText: obscureText,
         controller: textEditingController,
+        onFieldSubmitted: (value){
+            FocusScope.of(context).nextFocus();
+        },
+        textInputAction: TextInputAction.next,
         style: TextStyle(fontFamily: "Nunito",fontSize: large ? kLargeFontSize : (medium ? kMediumFontSize : kSmallFontSize)),
         keyboardType: keyboardType,
         cursorColor: Color(0xff0985ba),
