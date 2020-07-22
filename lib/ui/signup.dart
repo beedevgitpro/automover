@@ -1,4 +1,5 @@
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
@@ -25,6 +26,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   double _pixelRatio;
   bool _large;
   bool _medium;
+  bool isConnected=true;
+  var subscription;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController userNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -40,6 +43,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void initState() {
     super.initState();
     flutterToast = FlutterToast(context);
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+
+      setState(() {
+        if (result.toString() == "ConnectivityResult.none") {
+          isConnected = false;
+        } else {
+          isConnected = true;
+        }
+      });
+      // Got a new connectivity status!
+      // print(result.toString());
+      // print(isConnected);
+    });
   }
 
   _showToast(var message) {
@@ -404,15 +422,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
         else
         {
-           try {
-            final result = await InternetAddress.lookup('google.com');
-            if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-              SignUP(userNameController.text.toString(),emailController.text.toString(),passwordController.text.toString(),confirmpasswordController.text.toString());
-            }
-          } on SocketException catch (_) {
-            _showStatusDialog("No Internet Connection", "Internet connection required");
-          }
-          
+          isConnected?SignUP(userNameController.text.toString(),emailController.text.toString(),passwordController.text.toString(),confirmpasswordController.text.toString()):_showStatusDialog("No Internet Connection", "Internet connection required");
         }
 
       },

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
@@ -33,6 +34,8 @@ class _SignInScreenState extends State<SignInScreen> {
   double _pixelRatio;
   bool _large;
   bool _medium;
+  bool isConnected = true;
+  var subscription;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> _key = GlobalKey();
@@ -42,35 +45,76 @@ class _SignInScreenState extends State<SignInScreen> {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return Platform.isAndroid?AlertDialog(
-            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
-            content: Text(msg,style:TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Color(0xff0985ba),fontFamily: "Nunito",fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ):CupertinoAlertDialog(
-            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
-            content: Text(msg,style:TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2))),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
+          return Platform.isAndroid
+              ? AlertDialog(
+                  title: Text(title,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Nunito",
+                          fontSize: _large
+                              ? kLargeFontSize
+                              : (_medium ? kMediumFontSize : kSmallFontSize))),
+                  content: Text(msg,
+                      style: TextStyle(
+                          fontFamily: "Nunito",
+                          fontSize: _large
+                              ? kLargeFontSize - 2
+                              : (_medium
+                                  ? kMediumFontSize - 2
+                                  : kSmallFontSize - 2))),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(
+                        'OK',
+                        style: TextStyle(
+                            color: Color(0xff0985ba),
+                            fontFamily: "Nunito",
+                            fontSize: _large
+                                ? kLargeFontSize - 2
+                                : (_medium
+                                    ? kMediumFontSize - 2
+                                    : kSmallFontSize - 2)),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                )
+              : CupertinoAlertDialog(
+                  title: Text(title,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Nunito",
+                          fontSize: _large
+                              ? kLargeFontSize
+                              : (_medium ? kMediumFontSize : kSmallFontSize))),
+                  content: Text(msg,
+                      style: TextStyle(
+                          fontFamily: "Nunito",
+                          fontSize: _large
+                              ? kLargeFontSize - 2
+                              : (_medium
+                                  ? kMediumFontSize - 2
+                                  : kSmallFontSize - 2))),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(
+                        'OK',
+                        style: TextStyle(
+                            color: Color(0xff0985ba),
+                            fontSize: _large
+                                ? kLargeFontSize - 2
+                                : (_medium
+                                    ? kMediumFontSize - 2
+                                    : kSmallFontSize - 2)),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
         });
   }
 
@@ -115,11 +159,26 @@ class _SignInScreenState extends State<SignInScreen> {
       _showStatusDialog("Error occured", e.toString());
     }
   }
+
   @override
   void initState() {
-    print(_large);
     super.initState();
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        if (result.toString() == "ConnectivityResult.none") {
+          isConnected = false;
+        } else {
+          isConnected = true;
+        }
+      });
+      // Got a new connectivity status!
+      // print(result.toString());
+      // print(isConnected);
+    });
   }
+
   @override
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
@@ -130,10 +189,10 @@ class _SignInScreenState extends State<SignInScreen> {
 
     return Material(
       child: GestureDetector(
-        onTap: (){
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-              child: Container(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Container(
           height: _height,
           width: _width,
           padding: EdgeInsets.only(bottom: 5),
@@ -231,15 +290,16 @@ class _SignInScreenState extends State<SignInScreen> {
     return Container(
       // margin: EdgeInsets.only(left: _width / 15.0),
       child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
             "Login to your account",
             style: TextStyle(
-              fontFamily: "Nunito",
-              fontWeight: FontWeight.w200,
-              fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)
-            ),
+                fontFamily: "Nunito",
+                fontWeight: FontWeight.w200,
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
           ),
         ],
       ),
@@ -316,22 +376,29 @@ class _SignInScreenState extends State<SignInScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       onPressed: () async {
         if (emailController.text.toString().isEmpty) {
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter a valid Email',style: TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),)));
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+            'Please enter a valid Email',
+            style: TextStyle(
+                fontSize: _large
+                    ? kLargeFontSize - 2
+                    : (_medium ? kMediumFontSize - 2 : kSmallFontSize - 2)),
+          )));
         } else if (passwordController.text.toString().isEmpty) {
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter a valid password',style: TextStyle(fontSize: _large ? kLargeFontSize-2 : (_medium ? kMediumFontSize-2 : kSmallFontSize-2)),)));
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+            'Please enter a valid password',
+            style: TextStyle(
+                fontSize: _large
+                    ? kLargeFontSize - 2
+                    : (_medium ? kMediumFontSize - 2 : kSmallFontSize - 2)),
+          )));
         } else {
-          try {
-            final result = await InternetAddress.lookup('google.com');
-            if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-              login(emailController.text.toString(),
-              passwordController.text.toString());
-            }
-          } on SocketException catch (_) {
-            _showStatusDialog("No Internet Connection", "Internet connection required");
-          }
-          
+          isConnected
+              ? login(emailController.text.toString(),
+                  passwordController.text.toString())
+              : _showStatusDialog(
+                  "No Internet Connection", "Internet connection required");
         }
       },
       textColor: Colors.white,
@@ -347,7 +414,11 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         padding: const EdgeInsets.all(12.0),
         child: Text('LOGIN',
-            style: TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
+            style: TextStyle(
+                fontFamily: "Nunito",
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize))),
       ),
     );
   }
@@ -362,7 +433,9 @@ class _SignInScreenState extends State<SignInScreen> {
             "Don't have an account?",
             style: TextStyle(
                 fontWeight: FontWeight.w400,
-                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
           ),
           SizedBox(
             width: 8,
@@ -372,14 +445,15 @@ class _SignInScreenState extends State<SignInScreen> {
               passwordController.clear();
               emailController.clear();
               Navigator.of(context).pushNamed(SIGN_UP);
-              
             },
             child: Text(
               "Register",
               style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: Color(0xff0985ba),
-                  fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
+                  fontSize: _large
+                      ? kLargeFontSize
+                      : (_medium ? kMediumFontSize : kSmallFontSize)),
             ),
           )
         ],

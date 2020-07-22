@@ -167,8 +167,8 @@ class _MyHomePageState extends State<CarCrashForm> {
         }
       });
       // Got a new connectivity status!
-      print(result.toString());
-      print(isConnected);
+      // print(result.toString());
+      // print(isConnected);
     });
     flutterToast = FlutterToast(context);
     dropdownValue = 'Honda';
