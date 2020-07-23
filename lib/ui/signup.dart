@@ -9,7 +9,7 @@ import 'package:flutter_app/ui/widgets/customappbar.dart';
 import 'package:flutter_app/ui/widgets/responsive_ui.dart';
 import 'package:flutter_app/ui/widgets/textformfield.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:progress_dialog/progress_dialog.dart';
+import 'widgets/custom_progress_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'dart:io';
@@ -119,7 +119,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     catch(e)
     {
       pr.hide();
-      _showStatusDialog("Email already in use","Login with your Existing Account");
+      _showStatusDialog("Email is Already Registered",null);
 
     }
 
