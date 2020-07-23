@@ -11,6 +11,7 @@ import 'package:flutter_app/ui/widgets/textformfield.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:http/http.dart' as http;
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,8 +78,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ],
       ), 
     );
-
-
     flutterToast.showToast(
       child: toast,
       gravity: ToastGravity.BOTTOM,
@@ -120,7 +119,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     catch(e)
     {
       pr.hide();
-      _showStatusDialog("Email already in use","Sign In with your existing account");
+      _showStatusDialog("Email already in use","Login with your Existing Account");
 
     }
 
@@ -157,8 +156,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: <Widget>[
                     clipShape(),
                     registerTextRow(),
+                    // createAccountTextRow(),
                     form(),
-                    SizedBox(height: _height / 20),
+                    SizedBox(height: _height / 30),
                     button(ctx),
                     signInTextRow(),
                   ],
@@ -168,6 +168,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         )
 
+      ),
+    );
+  }
+   Widget createAccountTextRow() {
+    return Container(
+      // margin: EdgeInsets.only(left: _width / 15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Create an account",
+            style: TextStyle(
+                fontFamily: "Nunito",
+                fontWeight: FontWeight.w200,
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
+          ),
+        ],
       ),
     );
   }
@@ -215,8 +234,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           //         : (_medium ? _height / 25 : _height / 20)),
           child: Image.asset(
             'assets/img/logo.png',
-            height: _height / 3.3,
-            width: _width / 3.3,
+            height: _large?_width / 3.0:_width /2.0,
+            width: _large?_width / 3.3:_width /2.5,
           ),
         ),
       ],
@@ -267,7 +286,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             style: TextStyle(
               fontFamily: "Nunito",
               fontWeight: FontWeight.bold,
-              fontSize: _large ? 60 : (_medium ? 50 : 40),
+              fontSize: _large ? 55 : (_medium ? 45 : 35),
             ),
           ),
         ],
@@ -279,16 +298,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
       margin: EdgeInsets.only(
           left:_width/ 12.0,
           right: _width / 12.0,
-          top: _height / 20.0),
+          top: _height / 15.0),
       child: Form(
         child: Column(
           children: <Widget>[
             firstNameTextFormField(),
-            SizedBox(height: _height / 40.0),
+            SizedBox(height: _height / 45.0),
             emailTextFormField(),
-            SizedBox(height: _height / 40.0),
+            SizedBox(height: _height / 45.0),
             passwordTextFormField(),
-            SizedBox(height: _height / 40.0),
+            SizedBox(height: _height / 45.0),
             confirmpasswordTextFormField(),
           ],
         ),
@@ -303,43 +322,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
       hint: "First Name",
     );
   }
-  Future<void> _showStatusDialog(String title, String msg) async {
-    return showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Platform.isAndroid?AlertDialog(
-            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
-            content: Text(msg,style:TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Color(0xff0985ba),fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ):CupertinoAlertDialog(
-            title: Text(title,style:TextStyle(fontWeight:FontWeight.bold,fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
-            content: Text(msg,style:TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize))),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Color(0xff0985ba),fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        });
+ void _showStatusDialog(String title, String msg){
+    Alert(context: context, title: title,desc: msg,
+    style: AlertStyle(
+      titleStyle: TextStyle(fontSize:_large?kLargeFontSize+6:kMediumFontSize+4),
+        descStyle: TextStyle(fontSize:_large?kLargeFontSize+2:kMediumFontSize+2),
+        isOverlayTapDismiss: false,
+     animationType: AnimationType.grow,
+     isCloseButton: false, 
+    ),
+    image: Image.asset('assets/img/logo-new.png',width: _width*0.60,),
+    buttons: [
+        DialogButton(
+          color: Color(0xff167db3),
+          child: Text(
+            'Close'.toUpperCase(),
+            style: TextStyle(color: Colors.white, fontSize:_large?kLargeFontSize:kMediumFontSize),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            // jobRefNode.requestFocus();
+          },
+        )
+      ],).show();
+    
   }
-
   Widget emailTextFormField() {
     return CustomTextField(
       textEditingController: emailController,
@@ -378,24 +385,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       onPressed: () async {
+        FocusScope.of(context).requestFocus(new FocusNode());
         if(userNameController.text.toString().isEmpty)
         {
           Scaffold
               .of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter your name',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
+              .showSnackBar(SnackBar(content: Text('Please Enter Your Name',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
              // _showStatusDialog("Name is required", "Please enter your Name");
         }
         else if(emailController.text.toString().isEmpty)
         {
           Scaffold
               .of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter your Email',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
+              .showSnackBar(SnackBar(content: Text('Please Enter a Valid Email',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
               // _showStatusDialog("Email is required", "Please enter your Email");
         }
         else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(emailController.text.toString())){
           Scaffold
               .of(context)
-              .showSnackBar(SnackBar(content: Text('Please enter a valid Email',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
+              .showSnackBar(SnackBar(content: Text('Please Enter a Valid Email',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
           // _showStatusDialog("Invalid Email", "Please enter a valid Email");
         }
         else if(passwordController.text.toString().isEmpty)
@@ -403,14 +411,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
           // Scaffold
           //     .of(context)
           //     .showSnackBar(SnackBar(content: Text('Please enter a valid password')));
-              _showStatusDialog("Password is required", "Please enter a valid password");
+               Scaffold
+              .of(context)
+              .showSnackBar(SnackBar(content: Text('Please Enter a Password',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
         }
 
         else if(confirmpasswordController.text.toString().isEmpty)
         {
           Scaffold
               .of(context)
-              .showSnackBar(SnackBar(content: Text('Please confirm entered password',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
+              .showSnackBar(SnackBar(content: Text('Please Confirm Entered Password',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
           // _showStatusDialog("Password confirmation is required", "Please enter a valid password");
         }
         else if(passwordController.text.toString()!=confirmpasswordController.text.toString())
@@ -418,7 +428,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           // Scaffold
           //     .of(context)
           //     .showSnackBar(SnackBar(content: Text('Passwords Don\'t Match')));
-          _showStatusDialog("Passwords don't match", "'Password' and 'Confirm Password' must have the same values");
+          _showStatusDialog("'Password' and 'Confirm Password' must match", null);
         }
         else
         {

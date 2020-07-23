@@ -16,7 +16,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_app/model/carcrashmodel.dart';
 // import 'package:flutter_app/ui/drawer.dart';
-import 'package:progress_dialog/progress_dialog.dart';
+import 'widgets/custom_progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:signature/signature.dart';
 import 'dart:ui' as UI;
@@ -33,21 +33,21 @@ class _MyHomePageState extends State<CarCrashForm> {
   final _formKey = GlobalKey<FormState>();
   FocusNode receiverDetailsFocusNode = FocusNode();
   FocusNode senderDetailsFocusNode = FocusNode();
-  bool err=false;
-  final jobRefNode=FocusNode();
-  final makeNode=FocusNode();
-  final modelNode=FocusNode();
-  final speedoNode=FocusNode();
-  final regoNode=FocusNode();
-  final sNameNode=FocusNode();
-  final sPhoneNode=FocusNode();
-  final sEmailNode=FocusNode();
-  final sAddressNode=FocusNode();
-  final commentNode=FocusNode();
-  final rNameNode=FocusNode();
-  final rPhoneNode=FocusNode();
-  final rEmailNode=FocusNode();
-  final rAddressNode=FocusNode();
+  bool err = false;
+  final jobRefNode = FocusNode();
+  final makeNode = FocusNode();
+  final modelNode = FocusNode();
+  final speedoNode = FocusNode();
+  final regoNode = FocusNode();
+  final sNameNode = FocusNode();
+  final sPhoneNode = FocusNode();
+  final sEmailNode = FocusNode();
+  final sAddressNode = FocusNode();
+  final commentNode = FocusNode();
+  final rNameNode = FocusNode();
+  final rPhoneNode = FocusNode();
+  final rEmailNode = FocusNode();
+  final rAddressNode = FocusNode();
   bool toBeSubmitted = false;
   bool isConnected = true;
   double _value = 0.0;
@@ -72,6 +72,7 @@ class _MyHomePageState extends State<CarCrashForm> {
   double _pixelRatio;
   bool _large;
   bool _medium;
+  bool _autoValidate = false;
   var subscription;
   var scr = new GlobalKey();
   var scr1 = new GlobalKey();
@@ -106,12 +107,12 @@ class _MyHomePageState extends State<CarCrashForm> {
   final SignatureController _controller2 = SignatureController(
     penStrokeWidth: 2,
     penColor: Colors.blueAccent,
-    exportBackgroundColor: Colors.grey,
+    exportBackgroundColor: Colors.white,
   );
   final SignatureController _controller3 = SignatureController(
     penStrokeWidth: 2,
     penColor: Colors.blueAccent,
-    exportBackgroundColor: Colors.grey,
+    exportBackgroundColor: Colors.white,
   );
 
   FlutterToast flutterToast;
@@ -155,7 +156,6 @@ class _MyHomePageState extends State<CarCrashForm> {
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-
       setState(() {
         if (result.toString() == "ConnectivityResult.none") {
           isConnected = false;
@@ -198,156 +198,185 @@ class _MyHomePageState extends State<CarCrashForm> {
     });
   }
 
-  Future<void> _showStatusDialog(String title, String msg) async {
-    return showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Platform.isAndroid
-              ? AlertDialog(
-                  title: Text(title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: _large
-                              ? kLargeFontSize
-                              : (_medium ? kMediumFontSize : kSmallFontSize))),
-                  content: Text(msg,
-                      style: TextStyle(
-                          fontSize: _large
-                              ? kLargeFontSize - 2
-                              : (_medium ? kMediumFontSize : kSmallFontSize))),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        'OK',
-                        style: TextStyle(
-                            color: Color(0xff0985ba),
-                            fontSize: _large
-                                ? kLargeFontSize - 2
-                                : (_medium ? kMediumFontSize : kSmallFontSize)),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                )
-              : CupertinoAlertDialog(
-                  title: Text(title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: _large
-                              ? kLargeFontSize
-                              : (_medium ? kMediumFontSize : kSmallFontSize))),
-                  content: Text(msg,
-                      style: TextStyle(
-                          fontSize: _large
-                              ? kLargeFontSize - 2
-                              : (_medium ? kMediumFontSize : kSmallFontSize))),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        'OK',
-                        style: TextStyle(
-                            color: Color(0xff0985ba),
-                            fontSize: _large
-                                ? kLargeFontSize - 2
-                                : (_medium ? kMediumFontSize : kSmallFontSize)),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-        });
+  void _showStatusDialog(String title, String msg, String btnText) {
+    Alert(
+      context: context,
+      title: title,
+      desc: msg,
+      style: AlertStyle(
+        titleStyle: TextStyle(
+            fontSize: _large ? kLargeFontSize + 6 : kMediumFontSize + 4),
+        descStyle: TextStyle(
+            fontWeight: FontWeight.normal,
+            fontSize: _large ? kLargeFontSize + 2 : kMediumFontSize + 2),
+        isOverlayTapDismiss: false,
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+      ),
+      image: Image.asset(
+        'assets/img/logo-new.png',
+        width: _width * 0.60,
+      ),
+      buttons: [
+        DialogButton(
+          color: Color(0xff167db3),
+          child: Text(
+            btnText.toUpperCase(),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: _large ? kLargeFontSize : kMediumFontSize),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            jobRefNode.requestFocus();
+          },
+        )
+      ],
+    ).show();
   }
 
-  Future<void> _showLogoutConfirmationDialog() async {
-    return showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Platform.isAndroid
-              ? AlertDialog(
-                  title: Text("Are you sure you want to logout?",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: _large
-                              ? kLargeFontSize
-                              : (_medium ? kMediumFontSize : kSmallFontSize))),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        'Yes',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: _large
-                                ? kLargeFontSize
-                                : (_medium ? kMediumFontSize : kSmallFontSize)),
-                      ),
-                      onPressed: () async {
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        prefs.remove("loggedIn");
-                        //prefs.setBool('toBeSubmitted',null);
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            SIGN_IN, (Route<dynamic> route) => false);
-                      },
-                    ),
-                    FlatButton(
-                      child: Text('No',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: _large
-                                  ? kLargeFontSize - 2
-                                  : (_medium
-                                      ? kMediumFontSize
-                                      : kSmallFontSize))),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    
-                  ],
-                )
-              : CupertinoAlertDialog(
-                  title: Text("Are you sure you want to logout?"),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        'No',
-                        style: TextStyle(color: Color(0xff0985ba)),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    FlatButton(
-                      child: Text(
-                        'Yes',
-                        style: TextStyle(color: Color(0xff0985ba)),
-                      ),
-                      onPressed: () async {
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        prefs.remove("loggedIn");
-                        //prefs.setBool('toBeSubmitted',null);
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            SIGN_IN, (Route<dynamic> route) => false);
-                      },
-                    ),
-                  ],
-                );
-        });
+  // Future<void> _showStatusDialog(String title, String msg) async {
+  //   return showDialog<void>(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (BuildContext context) {
+  //         return Platform.isAndroid
+  //             ? AlertDialog(
+  //                 title: Text(title,
+  //                     style: TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         fontSize: _large
+  //                             ? kLargeFontSize
+  //                             : (_medium ? kMediumFontSize : kSmallFontSize))),
+  //                 content: Text(msg,
+  //                     style: TextStyle(
+  //                         fontSize: _large
+  //                             ? kLargeFontSize - 2
+  //                             : (_medium ? kMediumFontSize : kSmallFontSize))),
+  //                 actions: <Widget>[
+  //                   FlatButton(
+  //                     child: Text(
+  //                       'OK',
+  //                       style: TextStyle(
+  //                           color: Color(0xff0985ba),
+  //                           fontSize: _large
+  //                               ? kLargeFontSize - 2
+  //                               : (_medium ? kMediumFontSize : kSmallFontSize)),
+  //                     ),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop();
+  //                     },
+  //                   ),
+  //                 ],
+  //               )
+  //             : CupertinoAlertDialog(
+  //                 title: Text(title,
+  //                     style: TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         fontSize: _large
+  //                             ? kLargeFontSize
+  //                             : (_medium ? kMediumFontSize : kSmallFontSize))),
+  //                 content: Text(msg,
+  //                     style: TextStyle(
+  //                         fontSize: _large
+  //                             ? kLargeFontSize - 2
+  //                             : (_medium ? kMediumFontSize : kSmallFontSize))),
+  //                 actions: <Widget>[
+  //                   FlatButton(
+  //                     child: Text(
+  //                       'OK',
+  //                       style: TextStyle(
+  //                           color: Color(0xff0985ba),
+  //                           fontSize: _large
+  //                               ? kLargeFontSize - 2
+  //                               : (_medium ? kMediumFontSize : kSmallFontSize)),
+  //                     ),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop();
+  //                     },
+  //                   ),
+  //                 ],
+  //               );
+  //       });
+  // }
+
+  //         DialogButton(
+  //       color: Color(0xff167db3),
+  //       child: Text(
+  //         capitalize('Close'),
+  //         style: TextStyle(color: Colors.white, fontSize: _large?kLargeFontSize:kMediumFontSize),
+  //       ),
+  //       onPressed: () {
+  //         Navigator.pop(context);
+  //         jobRefNode.requestFocus();
+  //       },
+  //     )
+
+  void _showLogoutConfirmationDialog() {
+    Alert(
+      context: context,
+      title: 'Are you sure?',
+      style: AlertStyle(
+        animationType: AnimationType.grow,
+        isOverlayTapDismiss: false,
+        isCloseButton: false,
+        titleStyle: TextStyle(
+            fontSize: _large ? kLargeFontSize + 6 : kMediumFontSize + 4),
+        descStyle: TextStyle(
+            fontSize: _large ? kLargeFontSize + 2 : kMediumFontSize + 2),
+      ),
+      image: Image.asset(
+        'assets/img/logo-new.png',
+        width: _width * 0.60,
+      ),
+      buttons: [
+        DialogButton(
+          color: Colors.blueGrey,
+          child: Text(
+            "Logout".toUpperCase(),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: _large ? kLargeFontSize : kMediumFontSize),
+          ),
+          onPressed: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.remove("loggedIn");
+            //prefs.setBool('toBeSubmitted',null);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                SIGN_IN, (Route<dynamic> route) => false);
+            // Navigator.pop(context);
+            //jobRefNode.requestFocus();
+          },
+        ),
+        DialogButton(
+          color: Color(0xff167db3),
+          child: Text(
+            'Cancel'.toUpperCase(),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: _large ? kLargeFontSize : kMediumFontSize),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            // jobRefNode.requestFocus();
+          },
+        )
+      ],
+    ).show();
   }
 
   void _saveData() {
     Map body = {
       'user_id': '1',
       'job_no': bookingIdController.text.toString(),
-      'sender_report': senderController.text.toString(),
-      'receiver_report': recieverController.text.toString(),
+      'sender_name': senderNameController.text.toString(),
+      'receiver_name': recieverNameController.text.toString(),
+      'sender_phone': senderPhoneController.text.toString(),
+      'receiver_phone': recieverPhoneController.text.toString(),
+      'sender_email': senderEmailController.text.toString(),
+      'receiver_email': recieverEmailController.text.toString(),
+      'sender_address': senderAddressController.text.toString(),
+      'receiver_address': recieverAddressController.text.toString(),
       'maked': makeController.text.toString(),
       'model': modelController.text.toString(),
       'rego': regoController.text.toString(),
@@ -382,7 +411,7 @@ class _MyHomePageState extends State<CarCrashForm> {
       modelController.clear();
       makeController.clear();
       bookingIdController.clear();
-      err=false;
+      err = false;
       speedoController.clear();
       isSwitched1 = false;
       isSwitched = false;
@@ -390,15 +419,13 @@ class _MyHomePageState extends State<CarCrashForm> {
       senderController.clear();
       recieverController.clear();
     });
-    _showStatusDialog(
-        'Data saved offline', 'Data will be submitted once device is online');
+    _showStatusDialog('Data saved offline',
+        'Data will be submitted once device is online', 'Start a New Survey');
   }
 
   Future<CarCrashModel> CrashFormSubmit() async {
-    var pr = Alert(context:context,title:'',style:AlertStyle(isCloseButton: false),closeFunction: (){
-      Navigator.pop(context);
-    });
-    err=false;
+    var pr = ProgressDialog(context);
+    err = false;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // print("sender_report" +
     //     senderController.text.toString() +
@@ -424,46 +451,52 @@ class _MyHomePageState extends State<CarCrashForm> {
     //     othercommentController.text.toString());
     await pr.show();
     List lst = prefs.getStringList('forms');
-    final response =
-        await http.post('https://automover.beedevstaging.com/api/post-survey',
-            headers: {
-              'Authorization': 'Bearer $token',
-            },
-            body: (prefs.getBool('toBeSubmitted') ?? false)
-                ? jsonDecode(lst[0])
-                : {
-                    'user_id': '1',
-                    'job_no': bookingIdController.text.toString(),
-                    'sender_report': senderNameController.text.toString(),
-                    'receiver_report': recieverNameController.text.toString(),
-                    'maked': makeController.text.toString(),
-                    'model': modelController.text.toString(),
-                    'rego': regoController.text.toString(),
-                    'speedo': speedoController.text.toString(),
-                    'is_drivable': !isSwitched ? '2' : '1',
-                    'goods_inside': !isSwitched1 ? '2' : '1',
-                    'external_condition': externalCondition.toString() == "Low"
-                        ? '3'
-                        : externalCondition.toString() == "Fair" ? '2' : '1',
-                    'interior_condition': internalCondition.toString() == "Low"
-                        ? '3'
-                        : internalCondition.toString() == "Fair" ? '2' : '1',
-                    'survey_image': "data:image/png;base64," + base64Imagecar,
-                    'boat_view_data':
-                        "data:image/png;base64," + base64Imageboat,
-                    'comments': othercommentController.text.toString(),
-                    'sender_signature_data':
-                        "data:image/png;base64," + base64Imagesendersign,
-                    'receiver_signature_data':
-                        "data:image/png;base64," + base64Imagerecieversign,
-                  });
+    final response = await http.post(
+        'https://automover.beedevstaging.com/api/post-survey',
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+        body: (prefs.getBool('toBeSubmitted') ?? false)
+            ? jsonDecode(lst[0])
+            : {
+                'user_id': '1',
+                'job_no': bookingIdController.text.toString(),
+                'sender_name': senderNameController.text.toString(),
+                'receiver_name': recieverNameController.text.toString(),
+                'sender_phone': senderPhoneController.text.toString(),
+                'receiver_phone': recieverPhoneController.text.toString(),
+                'sender_email': senderEmailController.text.toString(),
+                'receiver_email': recieverEmailController.text.toString(),
+                'sender_address': senderAddressController.text.toString(),
+                'receiver_address': recieverAddressController.text.toString(),
+                'maked': makeController.text.toString(),
+                'model': modelController.text.toString(),
+                'rego': regoController.text.toString(),
+                'speedo': speedoController.text.toString(),
+                'is_drivable': !isSwitched ? '2' : '1',
+                'goods_inside': !isSwitched1 ? '2' : '1',
+                'external_condition': externalCondition.toString() == "Low"
+                    ? '3'
+                    : externalCondition.toString() == "Fair" ? '2' : '1',
+                'interior_condition': internalCondition.toString() == "Low"
+                    ? '3'
+                    : internalCondition.toString() == "Fair" ? '2' : '1',
+                'survey_image': "data:image/png;base64," + base64Imagecar,
+                'boat_view_data': "data:image/png;base64," + base64Imageboat,
+                'comments': othercommentController.text.toString(),
+                'sender_signature_data':
+                    "data:image/png;base64," + base64Imagesendersign,
+                'receiver_signature_data':
+                    "data:image/png;base64," + base64Imagerecieversign,
+              });
     try {
+      print("carcrashresponse" + response.body.toString());
       CarCrashModel carCrashModel = carCrashModelFromJson(response.body);
       print("carcrashresponse" + response.body.toString());
       if (carCrashModel.status == "success") {
         prefs.setString('forms', null);
         // pr.hide();
-        pr.closeFunction();
+        pr.hide();
         setState(() {
           _controller.clear();
           _controller1.clear();
@@ -474,7 +507,7 @@ class _MyHomePageState extends State<CarCrashForm> {
           makeController.clear();
           bookingIdController.clear();
           speedoController.clear();
-          err=false;
+          err = false;
           isSwitched1 = false;
           isSwitched = false;
           othercommentController.clear();
@@ -496,16 +529,17 @@ class _MyHomePageState extends State<CarCrashForm> {
             CrashFormSubmit();
           } else {
             _showStatusDialog(
-                "Thank you for submitting!",
+                "Thank you for submitting Survey",
                 (prefs.getBool('toBeSubmitted') ?? false)
-                    ? "Previous offline submission recorded"
-                    : "Submission recorded.");
+                    ? "Previous offline survey submissions recorded"
+                    : "Survey Submission recorded.",
+                'Start a New Survey');
             prefs.setBool('toBeSubmitted', false);
             prefs.remove('forms');
           }
         } else {
-          _showStatusDialog(
-              "Thank you for submitting!", "Submission recorded.");
+          _showStatusDialog("Thank you for submitting Survey",
+              "Survey Submitted", 'Start a New Survey');
         }
 
 //        SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -514,17 +548,19 @@ class _MyHomePageState extends State<CarCrashForm> {
 //        prefs.setString('token_security',singinrespdata.token);
 
       } else {
-        pr.closeFunction();
+        pr.hide();
         prefs.setString('forms', null);
         toBeSubmitted
-            ? _showStatusDialog("Couldn't submit saved offline data", "")
-            : _showStatusDialog("Something Went Wrong", carCrashModel.status);
+            ? _showStatusDialog(
+                "Couldn't submit saved offline data", "", 'Close')
+            : _showStatusDialog(
+                "Something Went Wrong", carCrashModel.status, 'Close');
         //prefs.setBool('toBeSubmitted',false);
         //_showToast(carCrashModel.status);
       }
     } catch (e) {
-      pr.closeFunction();
-      _showStatusDialog("Something Went Wrong", "");
+      pr.hide();
+      _showStatusDialog("Something Went Wrong", "", 'Close');
       print(e);
       //prefs.setBool('toBeSubmitted',false);
       //_showToast("Something Went Wrong" + response.body);
@@ -569,14 +605,17 @@ class _MyHomePageState extends State<CarCrashForm> {
                       ? kLargeFontSize + 5
                       : (_medium ? kMediumFontSize + 2 : kSmallFontSize)),
             ),
-            flexibleSpace:SafeArea(
-                          child: Image.asset(
+            flexibleSpace: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Image.asset(
                   'assets/img/logo.png',
-                  width: _large ? 65 : 55,
-                  height: _large ? 65 : 55,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.centerLeft,
+                  // width: _large ? 65 : 40,
+                  // height: _large ? 65 : 40.0,
+                  fit: BoxFit.fitHeight,
+                  alignment: Alignment.bottomLeft,
                 ),
+              ),
             ),
             actions: <Widget>[
               IconButton(
@@ -599,12 +638,18 @@ class _MyHomePageState extends State<CarCrashForm> {
             ],
           ),
           body: GestureDetector(
+            onPanDown: (_) {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
             onTap: () {
               FocusScope.of(context).requestFocus(new FocusNode());
             },
-            child: Column(
-              children: [
-                Container(
+            child: Form(
+              key: _formKey,
+              autovalidate: _autoValidate,
+              child: Column(
+                children: [
+                  Container(
                     color: Color(0xff1a6ea8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -638,11 +683,19 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         inputFormatters: [
                                           UpperCaseTextFormatter(),
                                         ],
-                                        onFieldSubmitted: (value){
+                                        onFieldSubmitted: (value) {
                                           sNameNode.requestFocus();
                                         },
                                         textInputAction: TextInputAction.next,
-                                       
+                                        validator: (value) {
+                                          if (value.isEmpty) {
+                                            if (!err) {
+                                              err = true;
+                                              jobRefNode.requestFocus();
+                                            }
+                                            return 'Required';
+                                          }
+                                        },
                                         style: TextStyle(
                                             fontSize: _large
                                                 ? kLargeFontSize
@@ -709,65 +762,62 @@ class _MyHomePageState extends State<CarCrashForm> {
                       ],
                     ),
                   ),
-                Expanded(
-                      child: SingleChildScrollView(
-                      child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: myBoxDecoration(),
-                                child:Table(
-                                    border: TableBorder.all(color: Color(0xffb3b3b3)),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              children: [
+                                Container(
+                                  decoration: myBoxDecoration(),
+                                  child: Table(
+                                    border: TableBorder.all(
+                                        color: Color(0xffb3b3b3)),
                                     columnWidths: {
                                       0: FractionColumnWidth(0.5),
                                       1: FractionColumnWidth(.5)
                                     },
                                     children: [
-                                      TableRow(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: Text(
-                                                      'Sender Details',
-                                                      textAlign: TextAlign.start,
-                                                      style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: _large
-                                                              ? kLargeFontSize
-                                                              : (_medium
-                                                                  ? kMediumFontSize
-                                                                  : kSmallFontSize),
-                                                          fontFamily: "Nunito"),
-                                                    ),
+                                      TableRow(children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Text(
+                                            'Sender Details',
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: _large
+                                                    ? kLargeFontSize
+                                                    : (_medium
+                                                        ? kMediumFontSize
+                                                        : kSmallFontSize),
+                                                fontFamily: "Nunito"),
                                           ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(10.0),
-                                                    child: Text(
-                                                      'Receiver Details',
-                                                      textAlign: TextAlign.start,
-                                                      style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: _large
-                                                              ? kLargeFontSize
-                                                              : (_medium
-                                                                  ? kMediumFontSize
-                                                                  : kSmallFontSize),
-                                                          fontFamily: "Nunito"),
-                                                    ),
-                                                  ),
-                                        ]
-                                      ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'Receiver Details',
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: _large
+                                                    ? kLargeFontSize
+                                                    : (_medium
+                                                        ? kMediumFontSize
+                                                        : kSmallFontSize),
+                                                fontFamily: "Nunito"),
+                                          ),
+                                        ),
+                                      ]),
                                       TableRow(children: [
                                         Padding(
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 // Expanded(
                                                 //   flex: 1,
@@ -786,11 +836,14 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 Expanded(
                                                   flex: 2,
                                                   child: TextFormField(
-                                                    onFieldSubmitted: (value){
-                                                      
-                                               sPhoneNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
+                                                    onFieldSubmitted: (value) {
+                                                      sPhoneNode.requestFocus();
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    textCapitalization:
+                                                        TextCapitalization
+                                                            .sentences,
                                                     focusNode: sNameNode,
                                                     style: TextStyle(
                                                         fontSize: _large
@@ -799,7 +852,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                 ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-                                                    controller: senderNameController,
+                                                    controller:
+                                                        senderNameController,
                                                     decoration: InputDecoration(
                                                         enabledBorder:
                                                             InputBorder.none,
@@ -807,19 +861,21 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             InputBorder.none,
                                                         focusedBorder:
                                                             InputBorder.none,
-                                                        errorBorder: InputBorder.none,
-                                                        
-                                                        hintText:
-                                                            'Name'),
+                                                        errorBorder:
+                                                            InputBorder.none,
+                                                        hintText: 'Name'),
                                                     inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
+                                                      UpperCaseTextFormatter(),
+                                                    ],
                                                     validator: (value) {
-                                                      if (value.isEmpty)
-                                                      {if(!err)
-                                                      {err=true;
-                                                      sNameNode.requestFocus();}
-                                                        return 'Required';}
+                                                      if (value.isEmpty) {
+                                                        if (!err) {
+                                                          err = true;
+                                                          sNameNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Required';
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -829,7 +885,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         Padding(
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 // Expanded(
                                                 //   flex: 2,
@@ -848,15 +905,18 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 Expanded(
                                                   flex: 2,
                                                   child: TextFormField(
-                                                    
+                                                    textCapitalization:
+                                                        TextCapitalization
+                                                            .sentences,
                                                     inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
-                                              onFieldSubmitted: (value){
-                                               rPhoneNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
-                                              focusNode: rNameNode,
+                                                      UpperCaseTextFormatter(),
+                                                    ],
+                                                    onFieldSubmitted: (value) {
+                                                      rPhoneNode.requestFocus();
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    focusNode: rNameNode,
                                                     style: TextStyle(
                                                         fontSize: _large
                                                             ? kLargeFontSize
@@ -864,7 +924,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                 ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-                                                    controller: recieverNameController,
+                                                    controller:
+                                                        recieverNameController,
                                                     decoration: InputDecoration(
                                                         enabledBorder:
                                                             InputBorder.none,
@@ -872,15 +933,18 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             InputBorder.none,
                                                         focusedBorder:
                                                             InputBorder.none,
-                                                        errorBorder: InputBorder.none,
-                                                        hintText:
-                                                            'Name'),
+                                                        errorBorder:
+                                                            InputBorder.none,
+                                                        hintText: 'Name'),
                                                     validator: (value) {
-                                                      if (value.isEmpty)
-                                                      {if(!err)
-                                                      {err=true;
-                                                      rNameNode.requestFocus();}
-                                                        return 'Required';}
+                                                      if (value.isEmpty) {
+                                                        if (!err) {
+                                                          err = true;
+                                                          rNameNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Required';
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -892,7 +956,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         Padding(
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 // Expanded(
                                                 //   flex: 1,
@@ -911,10 +976,13 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 Expanded(
                                                   flex: 1,
                                                   child: TextFormField(
-                                                    onFieldSubmitted: (value){
-                                                sEmailNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
+                                                    onFieldSubmitted: (value) {
+                                                      sEmailNode.requestFocus();
+                                                    },
+                                                    keyboardType:
+                                                        TextInputType.phone,
+                                                    textInputAction:
+                                                        TextInputAction.next,
                                                     style: TextStyle(
                                                         fontSize: _large
                                                             ? kLargeFontSize
@@ -922,27 +990,33 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                 ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-                                                    controller: senderPhoneController,
+                                                    controller:
+                                                        senderPhoneController,
                                                     decoration: InputDecoration(
-                                                        errorBorder: InputBorder.none,
+                                                        errorBorder:
+                                                            InputBorder.none,
                                                         enabledBorder:
                                                             InputBorder.none,
                                                         focusedErrorBorder:
                                                             InputBorder.none,
                                                         focusedBorder:
                                                             InputBorder.none,
-                                                            
-                                                        hintText: 'Phone Number'),
-                                                        focusNode: sPhoneNode,
-                                                        inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
+                                                        hintText:
+                                                            'Phone Number'),
+                                                    focusNode: sPhoneNode,
+                                                    inputFormatters: [
+                                                      WhitelistingTextInputFormatter
+                                                          .digitsOnly
+                                                    ],
                                                     validator: (value) {
-                                                      if (value.isEmpty)
-                                                      {if(!err)
-                                                      {err=true;
-                                                      sPhoneNode.requestFocus();}
-                                                        return 'Required';}
+                                                      if (value.isEmpty) {
+                                                        if (!err) {
+                                                          err = true;
+                                                          sPhoneNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Required';
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -952,7 +1026,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         Padding(
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 // Expanded(
                                                 //   flex: 2,
@@ -971,12 +1046,13 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 Expanded(
                                                   flex: 2,
                                                   child: TextFormField(
-                                                    onFieldSubmitted: (value){
-                                                        rEmailNode.requestFocus();
-                                                  },
-                                              textInputAction: TextInputAction.next,
+                                                    onFieldSubmitted: (value) {
+                                                      rEmailNode.requestFocus();
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
                                                     keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType.phone,
                                                     inputFormatters: [
                                                       WhitelistingTextInputFormatter
                                                           .digitsOnly
@@ -989,23 +1065,28 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                 ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-                                                    controller: recieverPhoneController,
+                                                    controller:
+                                                        recieverPhoneController,
                                                     decoration: InputDecoration(
-                                                        errorBorder: InputBorder.none,
+                                                        errorBorder:
+                                                            InputBorder.none,
                                                         enabledBorder:
                                                             InputBorder.none,
                                                         focusedErrorBorder:
                                                             InputBorder.none,
                                                         focusedBorder:
                                                             InputBorder.none,
-                                                        hintText: 'Phone Number'),
+                                                        hintText:
+                                                            'Phone Number'),
                                                     validator: (value) {
-                                                      if (value.isEmpty)
-                                                      {
-                                                        if(!err)
-                                                        {err=true;
-                                                        rPhoneNode.requestFocus();}
-                                                        return 'Required';}
+                                                      if (value.isEmpty) {
+                                                        if (!err) {
+                                                          err = true;
+                                                          rPhoneNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Required';
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -1017,17 +1098,19 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         Padding(
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                
                                                 Expanded(
                                                   flex: 2,
                                                   child: TextFormField(
-                                                    onFieldSubmitted: (value){
-                                               sAddressNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
-                                                    focusNode:sEmailNode,
+                                                    onFieldSubmitted: (value) {
+                                                      sAddressNode
+                                                          .requestFocus();
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    focusNode: sEmailNode,
                                                     style: TextStyle(
                                                         fontSize: _large
                                                             ? kLargeFontSize
@@ -1035,7 +1118,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                 ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-                                                    controller: senderEmailController,
+                                                    controller:
+                                                        senderEmailController,
                                                     decoration: InputDecoration(
                                                         enabledBorder:
                                                             InputBorder.none,
@@ -1043,19 +1127,21 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             InputBorder.none,
                                                         focusedBorder:
                                                             InputBorder.none,
-                                                        errorBorder: InputBorder.none,
-                                                        
-                                                        hintText:
-                                                            'Email'),
+                                                        errorBorder:
+                                                            InputBorder.none,
+                                                        hintText: 'Email'),
                                                     inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
+                                                      // UpperCaseTextFormatter(),
+                                                    ],
                                                     validator: (value) {
-                                                      if (value.isEmpty)
-                                                       {if(!err)
-                                                        {err=true;
-                                                      sEmailNode.requestFocus();}
-                                                        return 'Required';}
+                                                      if (value.isEmpty) {
+                                                        if (!err) {
+                                                          err = true;
+                                                          sEmailNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Required';
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -1065,7 +1151,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         Padding(
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 // Expanded(
                                                 //   flex: 1,
@@ -1085,13 +1172,15 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   flex: 2,
                                                   child: TextFormField(
                                                     inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
-                                              onFieldSubmitted: (value){
-                                               rAddressNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
-                                              focusNode: rEmailNode,
+                                                      // UpperCaseTextFormatter(),
+                                                    ],
+                                                    onFieldSubmitted: (value) {
+                                                      rAddressNode
+                                                          .requestFocus();
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    focusNode: rEmailNode,
                                                     style: TextStyle(
                                                         fontSize: _large
                                                             ? kLargeFontSize
@@ -1099,7 +1188,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                 ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-                                                    controller: recieverEmailController,
+                                                    controller:
+                                                        recieverEmailController,
                                                     decoration: InputDecoration(
                                                         enabledBorder:
                                                             InputBorder.none,
@@ -1107,16 +1197,18 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             InputBorder.none,
                                                         focusedBorder:
                                                             InputBorder.none,
-                                                        errorBorder: InputBorder.none,
-                                                        hintText:
-                                                            'Email'),
+                                                        errorBorder:
+                                                            InputBorder.none,
+                                                        hintText: 'Email'),
                                                     validator: (value) {
-                                                      if (value.isEmpty)
-                                                      {
-                                                         if(!err)
-                                                        {err=true;
-                                                        rEmailNode.requestFocus();}
-                                                      return 'Required';}
+                                                      if (value.isEmpty) {
+                                                        if (!err) {
+                                                          err = true;
+                                                          rEmailNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Required';
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -1128,7 +1220,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         Padding(
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 // Expanded(
                                                 //   flex: 1,
@@ -1147,11 +1240,12 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 Expanded(
                                                   flex: 2,
                                                   child: TextFormField(
-                                                    onFieldSubmitted: (value){
-                                               rNameNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
-                                                    focusNode:sAddressNode,
+                                                    onFieldSubmitted: (value) {
+                                                      rNameNode.requestFocus();
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    focusNode: sAddressNode,
                                                     style: TextStyle(
                                                         fontSize: _large
                                                             ? kLargeFontSize
@@ -1159,7 +1253,11 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                 ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-                                                    controller: senderAddressController,
+                                                    controller:
+                                                        senderAddressController,
+                                                    textCapitalization:
+                                                        TextCapitalization
+                                                            .sentences,
                                                     decoration: InputDecoration(
                                                         enabledBorder:
                                                             InputBorder.none,
@@ -1167,19 +1265,21 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             InputBorder.none,
                                                         focusedBorder:
                                                             InputBorder.none,
-                                                        errorBorder: InputBorder.none,
-                                                        
-                                                        hintText:
-                                                            'Address'),
+                                                        errorBorder:
+                                                            InputBorder.none,
+                                                        hintText: 'Address'),
                                                     inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
+                                                      // UpperCaseTextFormatter(),
+                                                    ],
                                                     validator: (value) {
-                                                      if (value.isEmpty)
-                                                       {if(!err)
-                                                        {err=true;
-                                                      sAddressNode.requestFocus();}
-                                                        return 'Required';}
+                                                      if (value.isEmpty) {
+                                                        if (!err) {
+                                                          err = true;
+                                                          sAddressNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Required';
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -1189,7 +1289,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         Padding(
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 // Expanded(
                                                 //   flex: 1,
@@ -1209,13 +1310,17 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   flex: 2,
                                                   child: TextFormField(
                                                     inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
-                                              onFieldSubmitted: (value){
-                                               makeNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
-                                              focusNode: rAddressNode,
+                                                      // UpperCaseTextFormatter(),
+                                                    ],
+                                                    textCapitalization:
+                                                        TextCapitalization
+                                                            .sentences,
+                                                    onFieldSubmitted: (value) {
+                                                      makeNode.requestFocus();
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    focusNode: rAddressNode,
                                                     style: TextStyle(
                                                         fontSize: _large
                                                             ? kLargeFontSize
@@ -1223,7 +1328,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                 ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-                                                    controller: recieverAddressController,
+                                                    controller:
+                                                        recieverAddressController,
                                                     decoration: InputDecoration(
                                                         enabledBorder:
                                                             InputBorder.none,
@@ -1231,15 +1337,18 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             InputBorder.none,
                                                         focusedBorder:
                                                             InputBorder.none,
-                                                        errorBorder: InputBorder.none,
-                                                        hintText:
-                                                            'Address'),
+                                                        errorBorder:
+                                                            InputBorder.none,
+                                                        hintText: 'Address'),
                                                     validator: (value) {
-                                                      if (value.isEmpty)
-                                                       {if(!err)
-                                                        {err=true;
-                                                      rAddressNode.requestFocus();}
-                                                      return 'Required';}
+                                                      if (value.isEmpty) {
+                                                        if (!err) {
+                                                          err = true;
+                                                          rAddressNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Required';
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -1249,319 +1358,419 @@ class _MyHomePageState extends State<CarCrashForm> {
                                       ]),
                                     ],
                                   ),
-                              ),
-                              SizedBox(
-                                height: 25,
-                              ),
-                              Column(children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.all(0),
-                                  child: Table(
-                                    border: TableBorder.all(color: Color(0xffb3b3b3)),
-                                    columnWidths: {
-                                      0: FractionColumnWidth(0.5),
-                                      1: FractionColumnWidth(.5)
-                                    },
-                                    children: [
-                                      TableRow(children: [
-                                        Padding(
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    'Make',
-                                                    style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: _large
-                                                            ? kLargeFontSize
-                                                            : (_medium
-                                                                ? kMediumFontSize
-                                                                : kSmallFontSize),
-                                                        fontFamily: "Nunito"),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: TextFormField(
-                                                    onFieldSubmitted: (value){
-                                               modelNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
-                                                    focusNode: makeNode,
-                                                    style: TextStyle(
-                                                        fontSize: _large
-                                                            ? kLargeFontSize
-                                                            : (_medium
-                                                                ? kMediumFontSize
-                                                                : kSmallFontSize),
-                                                        fontFamily: "Nunito"),
-                                                    controller: makeController,
-                                                    decoration: InputDecoration(
-                                                        enabledBorder:
-                                                            InputBorder.none,
-                                                        focusedErrorBorder:
-                                                            InputBorder.none,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        errorBorder: InputBorder.none,
-                                                        
-                                                        hintText:
-                                                            '${_large ? 'Manufacturer Name' : 'Manufacturer'}'),
-                                                    inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
-                                                    validator: (value) {
-                                                      if (value.isEmpty)
-                                                       if(!err)
-                                                        {err=true;
-                                                      makeNode.requestFocus();}
-                                                        return 'Required';
-                                                    },
-                                                  ),
-                                                ),
-                                              ]),
-                                          padding: const EdgeInsets.all(10),
-                                        ),
-                                        Padding(
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    'Model',
-                                                    style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: _large
-                                                            ? kLargeFontSize
-                                                            : (_medium
-                                                                ? kMediumFontSize
-                                                                : kSmallFontSize),
-                                                        fontFamily: "Nunito"),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: TextFormField(
-                                                    inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
-                                              onFieldSubmitted: (value){
-                                               regoNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
-                                              focusNode: modelNode,
-                                                    style: TextStyle(
-                                                        fontSize: _large
-                                                            ? kLargeFontSize
-                                                            : (_medium
-                                                                ? kMediumFontSize
-                                                                : kSmallFontSize),
-                                                        fontFamily: "Nunito"),
-                                                    controller: modelController,
-                                                    decoration: InputDecoration(
-                                                        enabledBorder:
-                                                            InputBorder.none,
-                                                        focusedErrorBorder:
-                                                            InputBorder.none,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        errorBorder: InputBorder.none,
-                                                        hintText:
-                                                            '${MediaQuery.of(context).size.width >= 600 ? 'Model Number' : 'Model'}'),
-                                                    validator: (value) {
-                                                      if (value.isEmpty)
-                                                       if(!err)
-                                                        {err=true;
-                                                      modelNode.requestFocus();}
-                                                        return 'Required';
-                                                    },
-                                                  ),
-                                                ),
-                                              ]),
-                                          padding: const EdgeInsets.all(10),
-                                        ),
-                                      ]),
-                                      TableRow(children: [
-                                        Padding(
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    'Rego',
-                                                    style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: _large
-                                                            ? kLargeFontSize
-                                                            : (_medium
-                                                                ? kMediumFontSize
-                                                                : kSmallFontSize),
-                                                        fontFamily: "Nunito"),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: TextFormField(
-                                                    onFieldSubmitted: (value){
-                                                speedoNode.requestFocus();
-                                              },
-                                              textInputAction: TextInputAction.next,
-                                                    style: TextStyle(
-                                                        fontSize: _large
-                                                            ? kLargeFontSize
-                                                            : (_medium
-                                                                ? kMediumFontSize
-                                                                : kSmallFontSize),
-                                                        fontFamily: "Nunito"),
-                                                    controller: regoController,
-                                                    decoration: InputDecoration(
-                                                        errorBorder: InputBorder.none,
-                                                        enabledBorder:
-                                                            InputBorder.none,
-                                                        focusedErrorBorder:
-                                                            InputBorder.none,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                            
-                                                        hintText: 'Registration'),
-                                                        focusNode: regoNode,
-                                                        inputFormatters: [
-                                                UpperCaseTextFormatter(),
-                                              ],
-                                                    validator: (value) {
-                                                      if (value.isEmpty)
-                                                       if(!err)
-                                                        {err=true;
-                                                      regoNode.requestFocus();}
-                                                        return 'Required';
-                                                    },
-                                                  ),
-                                                ),
-                                              ]),
-                                          padding: const EdgeInsets.all(10),
-                                        ),
-                                        Padding(
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    'Speedo',
-                                                    style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: _large
-                                                            ? kLargeFontSize
-                                                            : (_medium
-                                                                ? kMediumFontSize
-                                                                : kSmallFontSize),
-                                                        fontFamily: "Nunito"),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: TextFormField(
-                                                    onFieldSubmitted: (value){
-                                                        FocusScope.of(context).unfocus();
-                                                  },
-                                              textInputAction: TextInputAction.next,
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    inputFormatters: [
-                                                      WhitelistingTextInputFormatter
-                                                          .digitsOnly
-                                                    ],
-                                                    focusNode: speedoNode,
-                                                    style: TextStyle(
-                                                        fontSize: _large
-                                                            ? kLargeFontSize
-                                                            : (_medium
-                                                                ? kMediumFontSize
-                                                                : kSmallFontSize),
-                                                        fontFamily: "Nunito"),
-                                                    controller: speedoController,
-                                                    decoration: InputDecoration(
-                                                        errorBorder: InputBorder.none,
-                                                        enabledBorder:
-                                                            InputBorder.none,
-                                                        focusedErrorBorder:
-                                                            InputBorder.none,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        hintText: 'Speedo'),
-                                                    validator: (value) {
-                                                      if (value.isEmpty)
-                                                       if(!err)
-                                                        {err=true;
-                                                      speedoNode.requestFocus();}
-                                                        return 'Required';
-                                                    },
-                                                  ),
-                                                ),
-                                              ]),
-                                          padding: const EdgeInsets.all(10),
-                                        ),
-                                      ]),
-                                      TableRow(children: [
-                                        Padding(
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  flex: _large ? 9 : 4,
-                                                  child: Text(
-                                                    'Drivable',
-                                                    style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: _large
-                                                            ? kLargeFontSize
-                                                            : (_medium
-                                                                ? kMediumFontSize
-                                                                : kSmallFontSize),
-                                                        fontFamily: "Nunito"),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Transform.scale(
-                                                    scale: _large ? 1.5 : 1.2,
-                                                    child: Switch.adaptive(
-                                                      value: isSwitched,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          isSwitched = value;
-                                                        });
-                                                      },
-                                                      activeTrackColor: Colors.teal,
-                                                      activeColor: Platform.isAndroid
-                                                          ? Colors.white
-                                                          : Colors.teal,
+                                ),
+                                SizedBox(
+                                  height: 25,
+                                ),
+                                Column(children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.all(0),
+                                    child: Table(
+                                      border: TableBorder.all(
+                                          color: Color(0xffb3b3b3)),
+                                      columnWidths: {
+                                        0: FractionColumnWidth(0.5),
+                                        1: FractionColumnWidth(.5)
+                                      },
+                                      children: [
+                                        TableRow(children: [
+                                          Padding(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Text(
+                                                      'Make',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
                                                     ),
                                                   ),
-                                                )
-                                              ]),
-                                          padding: const EdgeInsets.all(10),
-                                        ),
-                                        Padding(
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  flex: _large ? 9 : 4,
-                                                  child: Text(
-                                                    'Goods Inside',
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: TextFormField(
+                                                      onFieldSubmitted:
+                                                          (value) {
+                                                        modelNode
+                                                            .requestFocus();
+                                                      },
+                                                      textInputAction:
+                                                          TextInputAction.next,
+                                                      focusNode: makeNode,
+                                                      style: TextStyle(
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
+                                                      controller:
+                                                          makeController,
+                                                      decoration: InputDecoration(
+                                                          enabledBorder:
+                                                              InputBorder.none,
+                                                          focusedErrorBorder:
+                                                              InputBorder.none,
+                                                          focusedBorder:
+                                                              InputBorder.none,
+                                                          errorBorder:
+                                                              InputBorder.none,
+                                                          hintText:
+                                                              '${_large ? 'Manufacturer Name' : 'Manufacturer'}'),
+                                                      inputFormatters: [
+                                                        UpperCaseTextFormatter(),
+                                                      ],
+                                                      validator: (value) {
+                                                        if (value.isEmpty) {
+                                                          if (!err) {
+                                                            err = true;
+                                                            makeNode
+                                                                .requestFocus();
+                                                          }
+                                                          return 'Required';
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                ]),
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                          Padding(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      'Model',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: TextFormField(
+                                                      inputFormatters: [
+                                                        UpperCaseTextFormatter(),
+                                                      ],
+                                                      onFieldSubmitted:
+                                                          (value) {
+                                                        regoNode.requestFocus();
+                                                      },
+                                                      textInputAction:
+                                                          TextInputAction.next,
+                                                      focusNode: modelNode,
+                                                      style: TextStyle(
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
+                                                      controller:
+                                                          modelController,
+                                                      decoration: InputDecoration(
+                                                          enabledBorder:
+                                                              InputBorder.none,
+                                                          focusedErrorBorder:
+                                                              InputBorder.none,
+                                                          focusedBorder:
+                                                              InputBorder.none,
+                                                          errorBorder:
+                                                              InputBorder.none,
+                                                          hintText:
+                                                              '${MediaQuery.of(context).size.width >= 600 ? 'Model Number' : 'Model'}'),
+                                                      validator: (value) {
+                                                        if (value.isEmpty) {
+                                                          if (!err) {
+                                                            err = true;
+                                                            modelNode
+                                                                .requestFocus();
+                                                          }
+
+                                                          return 'Required';
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                ]),
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                        ]),
+                                        TableRow(children: [
+                                          Padding(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Text(
+                                                      'Rego',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: TextFormField(
+                                                      onFieldSubmitted:
+                                                          (value) {
+                                                        speedoNode
+                                                            .requestFocus();
+                                                      },
+                                                      textInputAction:
+                                                          TextInputAction.next,
+                                                      style: TextStyle(
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
+                                                      controller:
+                                                          regoController,
+                                                      decoration: InputDecoration(
+                                                          errorBorder:
+                                                              InputBorder.none,
+                                                          enabledBorder:
+                                                              InputBorder.none,
+                                                          focusedErrorBorder:
+                                                              InputBorder.none,
+                                                          focusedBorder:
+                                                              InputBorder.none,
+                                                          hintText:
+                                                              'Registration'),
+                                                      focusNode: regoNode,
+                                                      inputFormatters: [
+                                                        UpperCaseTextFormatter(),
+                                                      ],
+                                                      validator: (value) {
+                                                        if (value.isEmpty) {
+                                                          if (!err) {
+                                                            err = true;
+                                                            regoNode
+                                                                .requestFocus();
+                                                          }
+                                                          return 'Required';
+                                                        }
+                                                        return null;
+                                                      },
+                                                    ),
+                                                  ),
+                                                ]),
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                          Padding(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      'Speedo',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: TextFormField(
+                                                      onFieldSubmitted:
+                                                          (value) {
+                                                        FocusScope.of(context)
+                                                            .unfocus();
+                                                      },
+                                                      textInputAction:
+                                                          TextInputAction.next,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      inputFormatters: [
+                                                        WhitelistingTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
+                                                      focusNode: speedoNode,
+                                                      style: TextStyle(
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
+                                                      controller:
+                                                          speedoController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              errorBorder:
+                                                                  InputBorder
+                                                                      .none,
+                                                              enabledBorder:
+                                                                  InputBorder
+                                                                      .none,
+                                                              focusedErrorBorder:
+                                                                  InputBorder
+                                                                      .none,
+                                                              focusedBorder:
+                                                                  InputBorder
+                                                                      .none,
+                                                              hintText:
+                                                                  'Speedo'),
+                                                      validator: (value) {
+                                                        if (value.isEmpty) {
+                                                          if (!err) {
+                                                            err = true;
+                                                            speedoNode
+                                                                .requestFocus();
+                                                          }
+                                                          return 'Required';
+                                                        }
+                                                        return null;
+                                                      },
+                                                    ),
+                                                  ),
+                                                ]),
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                        ]),
+                                        TableRow(children: [
+                                          Padding(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    flex: _large ? 9 : 4,
+                                                    child: Text(
+                                                      'Drivable',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Transform.scale(
+                                                      scale: _large ? 1.5 : 1.2,
+                                                      child: Switch.adaptive(
+                                                        value: isSwitched,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            isSwitched = value;
+                                                          });
+                                                        },
+                                                        activeTrackColor:
+                                                            Colors.teal,
+                                                        activeColor:
+                                                            Platform.isAndroid
+                                                                ? Colors.white
+                                                                : Colors.teal,
+                                                      ),
+                                                    ),
+                                                  )
+                                                ]),
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                          Padding(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    flex: _large ? 9 : 4,
+                                                    child: Text(
+                                                      'Goods Inside',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          fontFamily: "Nunito"),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Transform.scale(
+                                                      scale: _large ? 1.5 : 1.2,
+                                                      child: Switch.adaptive(
+                                                        value: isSwitched1,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            isSwitched1 = value;
+                                                          });
+                                                        },
+                                                        activeTrackColor:
+                                                            Colors.teal,
+                                                        activeColor:
+                                                            Platform.isAndroid
+                                                                ? Colors.white
+                                                                : Colors.teal,
+                                                      ),
+                                                    ),
+                                                  )
+                                                ]),
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                        ]),
+                                        TableRow(children: [
+                                          Padding(
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    'External Condition',
                                                     style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         fontSize: _large
                                                             ? kLargeFontSize
                                                             : (_medium
@@ -1569,160 +1778,120 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
                                                   ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Transform.scale(
-                                                    scale: _large ? 1.5 : 1.2,
-                                                    child: Switch.adaptive(
-                                                      value: isSwitched1,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          isSwitched1 = value;
-                                                        });
-                                                      },
-                                                      activeTrackColor: Colors.teal,
-                                                      activeColor: Platform.isAndroid
-                                                          ? Colors.white
-                                                          : Colors.teal,
-                                                    ),
+                                                  SizedBox(
+                                                    height: 10,
                                                   ),
-                                                )
-                                              ]),
-                                          padding: const EdgeInsets.all(10),
-                                        ),
-                                      ]),
-                                      TableRow(children: [
-                                        Padding(
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'External Condition',
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: _large
-                                                          ? kLargeFontSize
-                                                          : (_medium
-                                                              ? kMediumFontSize
-                                                              : kSmallFontSize),
-                                                      fontFamily: "Nunito"),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Stack(
-                                                          alignment: Alignment.center,
-                                                          fit: StackFit.loose,
-                                                          children: [
-                                                            Container(
-                                                              margin: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal: 5),
-                                                              height:
-                                                                  _large ? 20 : 10,
-                                                              child: Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                    child: Container(
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius: BorderRadius.only(
-                                                                            topLeft: Radius
-                                                                                .circular(
-                                                                                    10),
-                                                                            bottomLeft:
-                                                                                Radius.circular(
-                                                                                    10)),
-                                                                        color: Colors
-                                                                            .red,
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Stack(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            fit: StackFit.loose,
+                                                            children: [
+                                                              Container(
+                                                                margin: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            5),
+                                                                height: _large
+                                                                    ? 20
+                                                                    : 10,
+                                                                child: Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius: BorderRadius.only(
+                                                                              topLeft: Radius.circular(10),
+                                                                              bottomLeft: Radius.circular(10)),
+                                                                          color:
+                                                                              Colors.red,
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                  Expanded(
-                                                                    child: Container(
-                                                                      color: Colors
-                                                                          .amber,
-                                                                    ),
-                                                                  ),
-                                                                  Expanded(
-                                                                    child: Container(
-                                                                      margin: EdgeInsets
-                                                                          .only(
-                                                                              right: _large
-                                                                                  ? 3
-                                                                                  : 0),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius: BorderRadius.only(
-                                                                            topRight:
-                                                                                Radius.circular(
-                                                                                    10),
-                                                                            bottomRight:
-                                                                                Radius.circular(
-                                                                                    10)),
+                                                                    Expanded(
+                                                                      child:
+                                                                          Container(
                                                                         color: Colors
-                                                                            .teal,
+                                                                            .amber,
                                                                       ),
                                                                     ),
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Container(
-                                                              child: SliderTheme(
-                                                                data: SliderThemeData(
-                                                                  activeTickMarkColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  inactiveTickMarkColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  activeTrackColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  inactiveTrackColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  thumbColor:
-                                                                      Colors.white,
-                                                                  thumbShape:
-                                                                      RoundSliderThumbShape(
-                                                                          elevation:
-                                                                              6,
-                                                                          enabledThumbRadius:
-                                                                              _large
-                                                                                  ? 18
-                                                                                  : 12),
-                                                                  overlayShape:
-                                                                      RoundSliderOverlayShape(
-                                                                          overlayRadius:
-                                                                              10.0),
-                                                                ),
-                                                                child: Slider(
-                                                                  divisions: 2,
-                                                                  min: 0,
-                                                                  max: 2,
-                                                                  value: _value,
-                                                                  onChanged: (value) {
-                                                                    setState(() {
-                                                                      _value = value;
-                                                                      externalCondition =
-                                                                          vehicleCondition[
-                                                                              value
-                                                                                  .toInt()];
-                                                                      print(_value);
-                                                                    });
-                                                                  },
+                                                                    Expanded(
+                                                                      child:
+                                                                          Container(
+                                                                        margin: EdgeInsets.only(
+                                                                            right: _large
+                                                                                ? 3
+                                                                                : 0),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius: BorderRadius.only(
+                                                                              topRight: Radius.circular(10),
+                                                                              bottomRight: Radius.circular(10)),
+                                                                          color:
+                                                                              Colors.teal,
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  ],
                                                                 ),
                                                               ),
-                                                            )
+                                                              Container(
+                                                                child:
+                                                                    SliderTheme(
+                                                                  data:
+                                                                      SliderThemeData(
+                                                                    activeTickMarkColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    inactiveTickMarkColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    activeTrackColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    inactiveTrackColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    thumbColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    thumbShape: RoundSliderThumbShape(
+                                                                        elevation:
+                                                                            6,
+                                                                        enabledThumbRadius: _large
+                                                                            ? 18
+                                                                            : 12),
+                                                                    overlayShape:
+                                                                        RoundSliderOverlayShape(
+                                                                            overlayRadius:
+                                                                                10.0),
+                                                                  ),
+                                                                  child: Slider(
+                                                                    divisions:
+                                                                        2,
+                                                                    min: 0,
+                                                                    max: 2,
+                                                                    value:
+                                                                        _value,
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(
+                                                                          () {
+                                                                        _value =
+                                                                            value;
+                                                                        externalCondition =
+                                                                            vehicleCondition[value.toInt()];
+                                                                        print(
+                                                                            _value);
+                                                                      });
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              )
 //                                                     Container(
 //                                                       child: SeekBar(
 //                                                         barColor:
@@ -1777,158 +1946,167 @@ class _MyHomePageState extends State<CarCrashForm> {
 //                                                         },
 //                                                       ),
 //                                                     ),
-                                                          ]),
-                                                      flex: 2,
-                                                    ),
-                                                    Expanded(
-                                                        child: Text(
-                                                          externalCondition,
-                                                          style: TextStyle(
-                                                              fontSize:
-                                                                  _large ? 25 : 18,
-                                                              color: Colors.black,
-                                                              fontFamily: "Nunito"),
-                                                          textAlign: TextAlign.center,
-                                                        ),
-                                                        flex: 1)
-                                                  ],
-                                                )
-                                              ]),
-                                          padding: const EdgeInsets.all(10),
-                                        ),
-                                        Padding(
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Internal Condition',
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: _large
-                                                          ? kLargeFontSize
-                                                          : (_medium
-                                                              ? kMediumFontSize
-                                                              : kSmallFontSize),
-                                                      fontFamily: "Nunito"),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.spaceAround,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Stack(
-                                                          alignment: Alignment.center,
-                                                          fit: StackFit.loose,
-                                                          children: [
-                                                            Container(
-                                                              margin: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal: 5),
-                                                              height:
-                                                                  _large ? 20 : 10,
-                                                              // decoration: BoxDecoration(
-                                                              //   borderRadius: BorderRadius.circular(10),
-                                                              //  gradient: LinearGradient(colors: [Colors.red,Colors.amber,Colors.green]),
-                                                              // ),
-                                                              child: Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                      child:
-                                                                          Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius: BorderRadius.only(
-                                                                          topLeft: Radius
-                                                                              .circular(
-                                                                                  10),
-                                                                          bottomLeft:
-                                                                              Radius.circular(
-                                                                                  10)),
-                                                                      color:
-                                                                          Colors.red,
-                                                                    ),
-                                                                  )),
-                                                                  Expanded(
-                                                                      child:
-                                                                          Container(
-                                                                    color:
-                                                                        Colors.amber,
-                                                                  )),
-                                                                  Expanded(
-                                                                      child:
-                                                                          Container(
-                                                                    margin: EdgeInsets
-                                                                        .only(
-                                                                            right: _large
-                                                                                ? 3
-                                                                                : 0),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius: BorderRadius.only(
-                                                                          topRight: Radius
-                                                                              .circular(
-                                                                                  10),
-                                                                          bottomRight:
-                                                                              Radius.circular(
-                                                                                  10)),
-                                                                      color:
-                                                                          Colors.teal,
-                                                                    ),
-                                                                  ))
-                                                                ],
+                                                            ]),
+                                                        flex: 2,
+                                                      ),
+                                                      Expanded(
+                                                          child: Text(
+                                                            externalCondition,
+                                                            style: TextStyle(
+                                                                fontSize: _large
+                                                                    ? 25
+                                                                    : 18,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    "Nunito"),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                          flex: 1)
+                                                    ],
+                                                  )
+                                                ]),
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                          Padding(
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    'Internal Condition',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: _large
+                                                            ? kLargeFontSize
+                                                            : (_medium
+                                                                ? kMediumFontSize
+                                                                : kSmallFontSize),
+                                                        fontFamily: "Nunito"),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceAround,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Stack(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            fit: StackFit.loose,
+                                                            children: [
+                                                              Container(
+                                                                margin: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            5),
+                                                                height: _large
+                                                                    ? 20
+                                                                    : 10,
+                                                                // decoration: BoxDecoration(
+                                                                //   borderRadius: BorderRadius.circular(10),
+                                                                //  gradient: LinearGradient(colors: [Colors.red,Colors.amber,Colors.green]),
+                                                                // ),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                            Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius: BorderRadius.only(
+                                                                            topLeft:
+                                                                                Radius.circular(10),
+                                                                            bottomLeft: Radius.circular(10)),
+                                                                        color: Colors
+                                                                            .red,
+                                                                      ),
+                                                                    )),
+                                                                    Expanded(
+                                                                        child:
+                                                                            Container(
+                                                                      color: Colors
+                                                                          .amber,
+                                                                    )),
+                                                                    Expanded(
+                                                                        child:
+                                                                            Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          right: _large
+                                                                              ? 3
+                                                                              : 0),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius: BorderRadius.only(
+                                                                            topRight:
+                                                                                Radius.circular(10),
+                                                                            bottomRight: Radius.circular(10)),
+                                                                        color: Colors
+                                                                            .teal,
+                                                                      ),
+                                                                    ))
+                                                                  ],
+                                                                ),
                                                               ),
-                                                            ),
-                                                            SliderTheme(
-                                                              data: SliderThemeData(
-                                                                activeTickMarkColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                inactiveTickMarkColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                activeTrackColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                inactiveTrackColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                thumbColor:
-                                                                    Colors.white,
-                                                                thumbShape:
-                                                                    RoundSliderThumbShape(
-                                                                        elevation: 6,
-                                                                        enabledThumbRadius:
-                                                                            _large
-                                                                                ? 18
-                                                                                : 12),
-                                                                overlayShape:
-                                                                    RoundSliderOverlayShape(
-                                                                        overlayRadius:
-                                                                            10.0),
-                                                              ),
-                                                              child: Slider(
-                                                                divisions: 2,
-                                                                min: 0,
-                                                                max: 2,
-                                                                value: _value1,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    _value1 = value;
-                                                                    internalCondition =
-                                                                        vehicleCondition[
-                                                                            value
-                                                                                .toInt()];
-                                                                    print(_value1);
-                                                                  });
-                                                                },
-                                                              ),
-                                                            )
+                                                              SliderTheme(
+                                                                data:
+                                                                    SliderThemeData(
+                                                                  activeTickMarkColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  inactiveTickMarkColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  activeTrackColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  inactiveTrackColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  thumbColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  thumbShape: RoundSliderThumbShape(
+                                                                      elevation:
+                                                                          6,
+                                                                      enabledThumbRadius:
+                                                                          _large
+                                                                              ? 18
+                                                                              : 12),
+                                                                  overlayShape:
+                                                                      RoundSliderOverlayShape(
+                                                                          overlayRadius:
+                                                                              10.0),
+                                                                ),
+                                                                child: Slider(
+                                                                  divisions: 2,
+                                                                  min: 0,
+                                                                  max: 2,
+                                                                  value:
+                                                                      _value1,
+                                                                  onChanged:
+                                                                      (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      _value1 =
+                                                                          value;
+                                                                      internalCondition =
+                                                                          vehicleCondition[
+                                                                              value.toInt()];
+                                                                      print(
+                                                                          _value1);
+                                                                    });
+                                                                  },
+                                                                ),
+                                                              )
 //                                                     SeekBar(
 //                                                       barColor:
 //                                                           Colors.transparent,
@@ -1973,674 +2151,701 @@ class _MyHomePageState extends State<CarCrashForm> {
 // //                                            }
 //                                                       },
 //                                                     ),
-                                                          ]),
-                                                      flex: 2,
-                                                    ),
-                                                    Expanded(
-                                                        child: Text(
-                                                          internalCondition,
-                                                          style: TextStyle(
-                                                              fontSize:
-                                                                  _large ? 25 : 18,
-                                                              color: Colors.black,
-                                                              fontFamily: "Nunito"),
-                                                          textAlign: TextAlign.center,
-                                                        ),
-                                                        flex: 1)
-                                                  ],
-                                                )
-                                              ]),
-                                          padding: const EdgeInsets.all(10),
-                                        ),
-                                      ]),
-                                    ],
-                                  ),
-                                ),
-                              ]),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                "X-Dent  S-Scratch  C-Cracked  R-Rust",
-                                style: TextStyle(
-                                    fontSize: _large
-                                        ? kLargeFontSize
-                                        : (_medium
-                                            ? kMediumFontSize
-                                            : kSmallFontSize),
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: "Nunito"),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Diagram to show major/obvious damage only -damaged vehicles will not be survyed",
-                                style: TextStyle(
-                                    fontSize: _large
-                                        ? kLargeFontSize - 2
-                                        : (_medium
-                                            ? kMediumFontSize - 1
-                                            : kSmallFontSize - 1),
-                                    color: Colors.black54,
-                                    fontFamily: "Nunito"),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Align(
-                                child: GestureDetector(
-                                  child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(10, 5, 0, 0),
-                                    child: Text("Clear",
-                                        style: TextStyle(
-                                            fontSize: _large
-                                                ? kLargeFontSize
-                                                : (_medium
-                                                    ? kMediumFontSize
-                                                    : kSmallFontSize),
-                                            color: Color(0xff1a6ea8),
-                                            fontFamily: "Nunito")),
-                                  ),
-                                  onTap: () {
-                                    _controller.clear();
-                                    FocusScope.of(context).requestFocus(new FocusNode());
-                                  },
-                                ),
-                                alignment: Alignment.centerRight,
-                              ),
-                              Padding(
-                                  padding: const EdgeInsets.all(18),
-                                  child: RepaintBoundary(
-                                    key: scr,
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/img/carmover.svg',
-                                          width: MediaQuery.of(context).size.width,
-                                          //height: MediaQuery.of(context).size.width/0.9,
-                                          //height: 700,
-                                          height: _large ? 700 : 500,
-                                        ),
-                                        Signature(
-                                          controller: _controller,
-                                          width:
-                                              MediaQuery.of(context).size.width * 0.9,
-                                          height: _large ? 700 : 500,
-                                          backgroundColor: Colors.transparent,
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                "Boat/C/Van/Trlr Survey",
-                                style: TextStyle(
-                                    fontSize: _large
-                                        ? kLargeFontSize
-                                        : (_medium
-                                            ? kMediumFontSize
-                                            : kSmallFontSize),
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: "Nunito"),
-                              ),
-                              Align(
-                                child: GestureDetector(
-                                  child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(10, 5, 0, 0),
-                                    child: Text("Clear",
-                                        style: TextStyle(
-                                            fontSize: _large
-                                                ? kLargeFontSize
-                                                : (_medium
-                                                    ? kMediumFontSize
-                                                    : kSmallFontSize),
-                                            color: Color(0xff1a6ea8),
-                                            fontFamily: "Nunito")),
-                                  ),
-                                  onTap: () {
-                                    _controller1.clear();
-                                    FocusScope.of(context).requestFocus(new FocusNode());
-                                  },
-                                ),
-                                alignment: Alignment.centerRight,
-                              ),
-                              Padding(
-                                  padding: const EdgeInsets.all(18),
-                                  child: RepaintBoundary(
-                                    key: scr1,
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/img/car-top.svg',
-                                          width:
-                                              MediaQuery.of(context).size.width * 0.9,
-                                          height: _large ? 600 : 400,
-                                        ),
-                                        Signature(
-                                          controller: _controller1,
-                                          width:
-                                              MediaQuery.of(context).size.width * 0.9,
-                                          height: _large ? 600 : 400,
-                                          backgroundColor: Colors.transparent,
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              Column(
-                                children: [
-                                  Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Container(
-                                          decoration: myBoxDecoration(),
-                                          child: Column(
-                                            children: [
-                                              Align(
-                                                  alignment: Alignment.centerLeft,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(5.0),
-                                                    child: Text(
-                                                      "Other Comments",
-                                                      style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: _large
-                                                              ? kLargeFontSize
-                                                              : (_medium
-                                                                  ? kMediumFontSize
-                                                                  : kSmallFontSize),
-                                                          fontFamily: "Nunito"),
-                                                    ),
-                                                  )),
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(
-                                                    15, 0, 15, 0),
-                                                child: TextFormField(
-                                                  controller: othercommentController,
-                                                  style: TextStyle(
-                                                      color: Color(0xff000000),
-                                                      fontSize: 18,
-                                                      fontFamily: "Nunito"),
-//                               initialValue: "Write Message,
-                                                  textInputAction:
-                                                      TextInputAction.done,
-                                                  validator: (text) {
-                                                    if (text == null ||
-                                                        text.isEmpty ||
-                                                        text.trim().isEmpty) {
-                                                          commentNode.requestFocus();
-                                                      return 'Required';
-                                                    }
-                                                    return null;
-                                                  },
-                                                  decoration: InputDecoration(
-                                                    errorBorder: InputBorder.none,
-                                                    enabledBorder: InputBorder.none,
-
-                                                    focusedErrorBorder:
-                                                        InputBorder.none,
-                                                    focusedBorder: InputBorder.none,
-                                                    hintText: "Write Message",
-                                                    hintStyle: TextStyle(
-                                                      fontSize: _large
-                                                          ? kLargeFontSize - 2
-                                                          : (_medium
-                                                              ? kMediumFontSize - 2
-                                                              : kSmallFontSize),
-                                                      fontFamily: "Nunito",
-                                                      color: Color(0xff999999),
-                                                    ),
-// labelText: 'Enter
-                                                  ),
-// onEditingComplete: ()=>print(abc),
-                                                  maxLines: 8,
-                                                ),
-                                              ),
-                                              _large
-                                                  ? Row(children: [
-                                                      Expanded(
-                                                        child: Container(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                    " Reciever Signature",
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize: _large
-                                                                            ? kLargeFontSize
-                                                                            : (_medium
-                                                                                ? kMediumFontSize
-                                                                                : kSmallFontSize),
-                                                                        fontFamily:
-                                                                            "Nunito",
-                                                                        color: Color(
-                                                                            0xff000000)),
-                                                                  ),
-                                                                  GestureDetector(
-                                                                    child: Padding(
-                                                                      padding:
-                                                                          EdgeInsetsDirectional
-                                                                              .only(
-                                                                                  end:
-                                                                                      5),
-                                                                      child:Text("Clear",
-                                                                      style: TextStyle(
-                                                                        fontSize: _large
-                                                                            ? kLargeFontSize-2
-                                                                            : (_medium
-                                                                                ? kMediumFontSize-1
-                                                                                : kSmallFontSize),
-                                                                        fontFamily:"Nunito",color:Color(0xff1a6ea8))
-                                                                      ),
-                                                                    ),
-                                                                    onTap: () {
-                                                                      _controller2
-                                                                          .clear();
-                                                                          FocusScope.of(context).requestFocus(new FocusNode());
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              RepaintBoundary(
-                                                                key: scr2,
-                                                                child: Signature(
-                                                                  controller:
-                                                                      _controller2,
-                                                                  height: _large
-                                                                      ? 150
-                                                                      : 100,
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.49,
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .grey[200],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          decoration: BoxDecoration(
-                                                            border: Border(
-                                                                top: BorderSide(
-                                                                    color: Color(
-                                                                        0xffb0b0b0)),
-                                                                bottom: BorderSide(
-                                                                    color: Color(
-                                                                        0xffb0b0b0))),
-                                                          ),
-                                                        ),
+                                                            ]),
+                                                        flex: 2,
                                                       ),
                                                       Expanded(
-                                                        child: Container(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                    " Sender Signature",
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize: _large
-                                                                            ? kLargeFontSize
-                                                                            : (_medium
-                                                                                ? kMediumFontSize
-                                                                                : kSmallFontSize),
-                                                                        fontFamily:
-                                                                            "Nunito",
-                                                                        color: Color(
-                                                                            0xff000000)),
-                                                                  ),
-                                                                  GestureDetector(
-                                                                    child: Padding(
-                                                                      padding:
-                                                                          EdgeInsetsDirectional
-                                                                              .only(
-                                                                                  end:
-                                                                                      5),
-                                                                      child: Text("Clear",
-                                                                      style: TextStyle(
-                                                                        fontSize: _large
-                                                                            ? kLargeFontSize-2
-                                                                            : (_medium
-                                                                                ? kMediumFontSize-1
-                                                                                : kSmallFontSize),
-                                                                        fontFamily:"Nunito",color:Color(0xff1a6ea8))
-                                                                      ),
-                                                                    ),
-                                                                    onTap: () {
-                                                                      _controller3
-                                                                          .clear();
-                                                                          FocusScope.of(context).requestFocus(new FocusNode());
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              RepaintBoundary(
-                                                                key: scr3,
-                                                                child: Signature(
-                                                                  controller:
-                                                                      _controller3,
-                                                                  height: _large
-                                                                      ? 150
-                                                                      : 100,
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.475,
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .grey[200],
-                                                                ),
-                                                              ),
-                                                            ],
+                                                          child: Text(
+                                                            internalCondition,
+                                                            style: TextStyle(
+                                                                fontSize: _large
+                                                                    ? 25
+                                                                    : 18,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    "Nunito"),
+                                                            textAlign: TextAlign
+                                                                .center,
                                                           ),
-                                                          decoration: BoxDecoration(
-                                                            border: Border(
-                                                                top: BorderSide(
-                                                                    color: Color(
-                                                                        0xffb0b0b0)),
-                                                                left: BorderSide(
-                                                                    color: Color(
-                                                                        0xffb0b0b0)),
-                                                                bottom: BorderSide(
-                                                                    color: Color(
-                                                                        0xffb0b0b0))),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ])
-                                                  : Column(
-                                                      children: [
-                                                        Container(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                    " Reciever Signature",
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize: _large
-                                                                            ? kLargeFontSize
-                                                                            : (_medium
-                                                                                ? kMediumFontSize
-                                                                                : kSmallFontSize),
-                                                                        fontFamily:
-                                                                            "Nunito",
-                                                                        color: Color(0xff000000)),
-                                                                  ),
-                                                                  GestureDetector(
-                                                                    child: Padding(
-                                                                      padding:
-                                                                          EdgeInsetsDirectional
-                                                                              .only(
-                                                                                  end:
-                                                                                      5),
-                                                                      child: Text("Clear",
-                                                                      style: TextStyle(
-                                                                        fontSize: _large
-                                                                            ? kLargeFontSize
-                                                                            : (_medium
-                                                                                ? kMediumFontSize-1
-                                                                                : kSmallFontSize),
-                                                                        fontFamily:"Nunito",color:Color(0xff1a6ea8))
-                                                                      ),
-                                                                    ),
-                                                                    onTap: () {
-                                                                      _controller2
-                                                                          .clear();
-                                                                          FocusScope.of(context).requestFocus(new FocusNode());
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              RepaintBoundary(
-                                                                key: scr2,
-                                                                child: Signature(
-                                                                  controller:
-                                                                      _controller2,
-                                                                  height: _large
-                                                                      ? 150
-                                                                      : 100,
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.9,
-                                                                  backgroundColor:
-                                                                      Colors.grey[200],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          decoration: BoxDecoration(
-                                                            border: Border(
-                                                                top: BorderSide(
-                                                                    color: Color(
-                                                                        0xffb0b0b0))),
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                    " Sender Signature",
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize: _large
-                                                                            ? kLargeFontSize
-                                                                            : (_medium
-                                                                                ? kMediumFontSize
-                                                                                : kSmallFontSize),
-                                                                        fontFamily:
-                                                                            "Nunito",
-                                                                        color: Color(
-                                                                            0xff000000)),
-                                                                  ),
-                                                                  GestureDetector(
-                                                                    child: Padding(
-                                                                      padding:
-                                                                          EdgeInsetsDirectional
-                                                                              .only(
-                                                                                  end:
-                                                                                      5),
-                                                                      child: Text("Clear",
-                                                                      style: TextStyle(
-                                                                        fontSize: _large
-                                                                            ? kLargeFontSize
-                                                                            : (_medium
-                                                                                ? kMediumFontSize-1
-                                                                                : kSmallFontSize),
-                                                                        fontFamily:"Nunito",color:Color(0xff1a6ea8))
-                                                                      ),
-                                                                    ),
-                                                                    onTap: () {
-                                                                      FocusScope.of(context).requestFocus(new FocusNode());
-                                                                      _controller3
-                                                                          .clear();
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              RepaintBoundary(
-                                                                key: scr3,
-                                                                child: Signature(
-                                                                  controller:
-                                                                      _controller3,
-                                                                  height: _large
-                                                                      ? 150
-                                                                      : 100,
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.9,
-                                                                  backgroundColor:
-                                                                      Colors.grey[200],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          decoration: BoxDecoration(
-                                                              border: Border(
-                                                            top: BorderSide(
-                                                                color: Color(
-                                                                    0xffb0b0b0)),
-                                                          )),
-                                                        )
-                                                      ],
-                                                    ),
-                                            ],
-                                          ))),
-                                ],
-                              ),
-                              // Padding(
-                              //   padding: const EdgeInsets.fromLTRB(10, 10, 10, 2),
-                              //   child: Align(
-                              //     alignment: Alignment.centerLeft,
-                              //     child: Text(
-                              //       "Terms and Conditions:",
-                              //       style: TextStyle(
-                              //           fontSize: 15,
-                              //           color: Colors.grey,
-                              //           fontFamily: "Nunito"),
-                              //       textAlign: TextAlign.center,
-                              //     ),
-                              //   ),
-                              // ),
-                              // Padding(
-                              //   padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                              //   child: Align(
-                              //     alignment: Alignment.bottomLeft,
-                              //     child: Text(
-                              //       "HLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
-                              //       style: TextStyle(
-                              //           fontSize: 15,
-                              //           color: Colors.grey,
-                              //           fontFamily: "Nunito"),
-                              //       textAlign: TextAlign.left,
-                              //     ),
-                              //   ),
-                              // ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
+                                                          flex: 1)
+                                                    ],
+                                                  )
+                                                ]),
+                                            padding: const EdgeInsets.all(10),
+                                          ),
+                                        ]),
+                                      ],
+                                    ),
+                                  ),
+                                ]),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  "X-Dent  S-Scratch  C-Cracked  R-Rust",
+                                  style: TextStyle(
+                                      fontSize: _large
+                                          ? kLargeFontSize
+                                          : (_medium
+                                              ? kMediumFontSize
+                                              : kSmallFontSize),
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Nunito"),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "Diagram to show major/obvious damage only -damaged vehicles will not be survyed",
+                                  style: TextStyle(
+                                      fontSize: _large
+                                          ? kLargeFontSize - 2
+                                          : (_medium
+                                              ? kMediumFontSize - 1
+                                              : kSmallFontSize - 1),
+                                      color: Colors.black54,
+                                      fontFamily: "Nunito"),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Align(
+                                  child: GestureDetector(
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 5, 0, 0),
+                                      child: Text("Clear",
+                                          style: TextStyle(
+                                              fontSize: _large
+                                                  ? kLargeFontSize
+                                                  : (_medium
+                                                      ? kMediumFontSize
+                                                      : kSmallFontSize),
+                                              color: Color(0xff1a6ea8),
+                                              fontFamily: "Nunito")),
+                                    ),
+                                    onTap: () {
+                                      _controller.clear();
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                    },
+                                  ),
+                                  alignment: Alignment.centerRight,
+                                ),
+                                Padding(
+                                    padding: const EdgeInsets.all(18),
+                                    child: RepaintBoundary(
+                                      key: scr,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/img/carmover.svg',
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            //height: MediaQuery.of(context).size.width/0.9,
+                                            //height: 700,
+                                            height: _large ? 700 : 500,
+                                          ),
+                                          Signature(
+                                            controller: _controller,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.9,
+                                            height: _large ? 700 : 500,
+                                            backgroundColor: Colors.transparent,
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  "Boat/C/Van/Trlr Survey",
+                                  style: TextStyle(
+                                      fontSize: _large
+                                          ? kLargeFontSize
+                                          : (_medium
+                                              ? kMediumFontSize
+                                              : kSmallFontSize),
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Nunito"),
+                                ),
+                                Align(
+                                  child: GestureDetector(
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 5, 0, 0),
+                                      child: Text("Clear",
+                                          style: TextStyle(
+                                              fontSize: _large
+                                                  ? kLargeFontSize
+                                                  : (_medium
+                                                      ? kMediumFontSize
+                                                      : kSmallFontSize),
+                                              color: Color(0xff1a6ea8),
+                                              fontFamily: "Nunito")),
+                                    ),
+                                    onTap: () {
+                                      _controller1.clear();
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                    },
+                                  ),
+                                  alignment: Alignment.centerRight,
+                                ),
+                                Padding(
+                                    padding: const EdgeInsets.all(18),
+                                    child: RepaintBoundary(
+                                      key: scr1,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/img/car-top.svg',
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.9,
+                                            height: _large ? 600 : 400,
+                                          ),
+                                          Signature(
+                                            controller: _controller1,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.9,
+                                            height: _large ? 600 : 400,
+                                            backgroundColor: Colors.transparent,
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                Column(
                                   children: [
-                                    Expanded(
-                                      child: RaisedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            FocusScope.of(context).requestFocus(new FocusNode());
-                                            _controller.clear();
-                                            _controller1.clear();
-                                            _controller2.clear();
-                                            _controller3.clear();
-                                            regoController.clear();
-                                            modelController.clear();
-                                            makeController.clear();
-                                            bookingIdController.clear();
-                                            speedoController.clear();
-                                            isSwitched1 = false;
-                                            isSwitched = false;
-                                            othercommentController.clear();
-                                            senderController.clear();
-                                            recieverController.clear();
-                                          });
-                                        },
-                                        color: Colors.black,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                new BorderRadius.circular(0.0)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Text(
-                                            "RESET",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: _large
-                                                    ? kLargeFontSize
-                                                    : (_medium
-                                                        ? kMediumFontSize
-                                                        : kSmallFontSize),
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.normal,
-                                                fontFamily: "Nunito"),
+                                    Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Container(
+                                            decoration: myBoxDecoration(),
+                                            child: Column(
+                                              children: [
+                                                Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5.0),
+                                                      child: Text(
+                                                        "Other Comments",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: _large
+                                                                ? kLargeFontSize
+                                                                : (_medium
+                                                                    ? kMediumFontSize
+                                                                    : kSmallFontSize),
+                                                            fontFamily:
+                                                                "Nunito"),
+                                                      ),
+                                                    )),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          15, 0, 15, 0),
+                                                  child: TextFormField(
+                                                    controller:
+                                                        othercommentController,
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xff000000),
+                                                        fontSize: 18,
+                                                        fontFamily: "Nunito"),
+//                               initialValue: "Write Message,
+                                                    textInputAction:
+                                                        TextInputAction.done,
+                                                    validator: (text) {
+                                                      if (text == null ||
+                                                          text.isEmpty ||
+                                                          text.trim().isEmpty) {
+                                                        commentNode
+                                                            .requestFocus();
+                                                        return 'Required';
+                                                      }
+                                                      return null;
+                                                    },
+                                                    decoration: InputDecoration(
+                                                      errorBorder:
+                                                          InputBorder.none,
+                                                      enabledBorder:
+                                                          InputBorder.none,
+
+                                                      focusedErrorBorder:
+                                                          InputBorder.none,
+                                                      focusedBorder:
+                                                          InputBorder.none,
+                                                      hintText:
+                                                          "Type your comments here...",
+                                                      hintStyle: TextStyle(
+                                                        fontSize: _large
+                                                            ? kLargeFontSize - 2
+                                                            : (_medium
+                                                                ? kMediumFontSize -
+                                                                    2
+                                                                : kSmallFontSize),
+                                                        fontFamily: "Nunito",
+                                                        color:
+                                                            Color(0xff999999),
+                                                      ),
+// labelText: 'Enter
+                                                    ),
+// onEditingComplete: ()=>print(abc),
+                                                    maxLines: 8,
+                                                  ),
+                                                ),
+                                                _large
+                                                    ? Row(children: [
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      " Reciever Signature",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          fontSize: _large
+                                                                              ? kLargeFontSize
+                                                                              : (_medium
+                                                                                  ? kMediumFontSize
+                                                                                  : kSmallFontSize),
+                                                                          fontFamily:
+                                                                              "Nunito",
+                                                                          color:
+                                                                              Color(0xff000000)),
+                                                                    ),
+                                                                    GestureDetector(
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsetsDirectional.only(end: 5),
+                                                                        child: Text(
+                                                                            "Clear",
+                                                                            style: TextStyle(
+                                                                                fontSize: _large ? kLargeFontSize - 2 : (_medium ? kMediumFontSize - 1 : kSmallFontSize),
+                                                                                fontFamily: "Nunito",
+                                                                                color: Color(0xff1a6ea8))),
+                                                                      ),
+                                                                      onTap:
+                                                                          () {
+                                                                        _controller2
+                                                                            .clear();
+                                                                        FocusScope.of(context)
+                                                                            .requestFocus(new FocusNode());
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                RepaintBoundary(
+                                                                  key: scr2,
+                                                                  child:
+                                                                      Signature(
+                                                                    controller:
+                                                                        _controller2,
+                                                                    height: _large
+                                                                        ? 150
+                                                                        : 100,
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                        0.49,
+                                                                    backgroundColor:
+                                                                        Colors.grey[
+                                                                            200],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border: Border(
+                                                                  top: BorderSide(
+                                                                      color: Color(
+                                                                          0xffb0b0b0)),
+                                                                  bottom: BorderSide(
+                                                                      color: Color(
+                                                                          0xffb0b0b0))),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      " Sender Signature",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          fontSize: _large
+                                                                              ? kLargeFontSize
+                                                                              : (_medium
+                                                                                  ? kMediumFontSize
+                                                                                  : kSmallFontSize),
+                                                                          fontFamily:
+                                                                              "Nunito",
+                                                                          color:
+                                                                              Color(0xff000000)),
+                                                                    ),
+                                                                    GestureDetector(
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsetsDirectional.only(end: 5),
+                                                                        child: Text(
+                                                                            "Clear",
+                                                                            style: TextStyle(
+                                                                                fontSize: _large ? kLargeFontSize - 2 : (_medium ? kMediumFontSize - 1 : kSmallFontSize),
+                                                                                fontFamily: "Nunito",
+                                                                                color: Color(0xff1a6ea8))),
+                                                                      ),
+                                                                      onTap:
+                                                                          () {
+                                                                        _controller3
+                                                                            .clear();
+                                                                        FocusScope.of(context)
+                                                                            .requestFocus(new FocusNode());
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                RepaintBoundary(
+                                                                  key: scr3,
+                                                                  child:
+                                                                      Signature(
+                                                                    controller:
+                                                                        _controller3,
+                                                                    height: _large
+                                                                        ? 150
+                                                                        : 100,
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                        0.475,
+                                                                    backgroundColor:
+                                                                        Colors.grey[
+                                                                            200],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border: Border(
+                                                                  top: BorderSide(
+                                                                      color: Color(
+                                                                          0xffb0b0b0)),
+                                                                  left: BorderSide(
+                                                                      color: Color(
+                                                                          0xffb0b0b0)),
+                                                                  bottom: BorderSide(
+                                                                      color: Color(
+                                                                          0xffb0b0b0))),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ])
+                                                    : Column(
+                                                        children: [
+                                                          Container(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      " Reciever Signature",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          fontSize: _large
+                                                                              ? kLargeFontSize
+                                                                              : (_medium
+                                                                                  ? kMediumFontSize
+                                                                                  : kSmallFontSize),
+                                                                          fontFamily:
+                                                                              "Nunito",
+                                                                          color:
+                                                                              Color(0xff000000)),
+                                                                    ),
+                                                                    GestureDetector(
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsetsDirectional.only(end: 5),
+                                                                        child: Text(
+                                                                            "Clear",
+                                                                            style: TextStyle(
+                                                                                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize - 1 : kSmallFontSize),
+                                                                                fontFamily: "Nunito",
+                                                                                color: Color(0xff1a6ea8))),
+                                                                      ),
+                                                                      onTap:
+                                                                          () {
+                                                                        _controller2
+                                                                            .clear();
+                                                                        FocusScope.of(context)
+                                                                            .requestFocus(new FocusNode());
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                RepaintBoundary(
+                                                                  key: scr2,
+                                                                  child:
+                                                                      Signature(
+                                                                    controller:
+                                                                        _controller2,
+                                                                    height: _large
+                                                                        ? 150
+                                                                        : 120,
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                        0.885,
+                                                                    backgroundColor:
+                                                                        Colors.grey[
+                                                                            200],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border: Border(
+                                                                  top: BorderSide(
+                                                                      color: Color(
+                                                                          0xffb0b0b0))),
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      " Sender Signature",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          fontSize: _large
+                                                                              ? kLargeFontSize
+                                                                              : (_medium
+                                                                                  ? kMediumFontSize
+                                                                                  : kSmallFontSize),
+                                                                          fontFamily:
+                                                                              "Nunito",
+                                                                          color:
+                                                                              Color(0xff000000)),
+                                                                    ),
+                                                                    GestureDetector(
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsetsDirectional.only(end: 5),
+                                                                        child: Text(
+                                                                            "Clear",
+                                                                            style: TextStyle(
+                                                                                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize - 1 : kSmallFontSize),
+                                                                                fontFamily: "Nunito",
+                                                                                color: Color(0xff1a6ea8))),
+                                                                      ),
+                                                                      onTap:
+                                                                          () {
+                                                                        FocusScope.of(context)
+                                                                            .requestFocus(new FocusNode());
+                                                                        _controller3
+                                                                            .clear();
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                RepaintBoundary(
+                                                                  key: scr3,
+                                                                  child:
+                                                                      Signature(
+                                                                    controller:
+                                                                        _controller3,
+                                                                    height: _large
+                                                                        ? 150
+                                                                        : 120,
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                        0.885,
+                                                                    backgroundColor:
+                                                                        Colors.grey[
+                                                                            200],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    border:
+                                                                        Border(
+                                                              top: BorderSide(
+                                                                  color: Color(
+                                                                      0xffb0b0b0)),
+                                                            )),
+                                                          )
+                                                        ],
+                                                      ),
+                                              ],
+                                            ))),
+                                  ],
+                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.fromLTRB(10, 10, 10, 2),
+                                //   child: Align(
+                                //     alignment: Alignment.centerLeft,
+                                //     child: Text(
+                                //       "Terms and Conditions:",
+                                //       style: TextStyle(
+                                //           fontSize: 15,
+                                //           color: Colors.grey,
+                                //           fontFamily: "Nunito"),
+                                //       textAlign: TextAlign.center,
+                                //     ),
+                                //   ),
+                                // ),
+                                // Padding(
+                                //   padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                //   child: Align(
+                                //     alignment: Alignment.bottomLeft,
+                                //     child: Text(
+                                //       "HLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
+                                //       style: TextStyle(
+                                //           fontSize: 15,
+                                //           color: Colors.grey,
+                                //           fontFamily: "Nunito"),
+                                //       textAlign: TextAlign.left,
+                                //     ),
+                                //   ),
+                                // ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: RaisedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              FocusScope.of(context)
+                                                  .requestFocus(
+                                                      new FocusNode());
+                                              setState(() {
+                                                _autoValidate = false;
+                                              });
+                                              _formKey.currentState.reset();
+                                              // _showStatusDialog('Thank you for submitting!','Previous Offline Surveys Submitted.', 'Start New Survey');
+                                              _controller.clear();
+                                              _controller1.clear();
+                                              _controller2.clear();
+                                              _controller3.clear();
+                                              regoController.clear();
+                                              modelController.clear();
+                                              makeController.clear();
+                                              bookingIdController.clear();
+                                              speedoController.clear();
+                                              isSwitched1 = false;
+                                              isSwitched = false;
+                                              othercommentController.clear();
+                                              senderController.clear();
+                                              recieverController.clear();
+                                            });
+                                          },
+                                          color: Colors.black,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  new BorderRadius.circular(
+                                                      0.0)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Text(
+                                              "RESET",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: _large
+                                                      ? kLargeFontSize
+                                                      : (_medium
+                                                          ? kMediumFontSize
+                                                          : kSmallFontSize),
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontFamily: "Nunito"),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: RaisedButton(
-                                        onPressed: () async {
-                                          FocusScope.of(context).requestFocus(new FocusNode());
-                                          if(bookingIdController.text.isEmpty)                     
-                                              jobRefNode.requestFocus();
-                                          else if (_formKey.currentState.validate()) 
-                                          {
-                                           {
-
+                                      Expanded(
+                                        child: RaisedButton(
+                                          onPressed: () async {
+                                            FocusScope.of(context)
+                                                .requestFocus(new FocusNode());
+                                            if (_formKey.currentState
+                                                .validate()) {
                                               // var data = await _controller2.toPngBytes();
                                               // base64Imagesendersign = base64Encode(data);
                                               // var data1 = await _controller3.toPngBytes();
@@ -2654,44 +2859,54 @@ class _MyHomePageState extends State<CarCrashForm> {
                                               await takescrshot1();
                                               await takescrshotrecieverSign();
                                               await takescrshotsenderSign();
-                                              isConnected?CrashFormSubmit():_saveData();
+                                              isConnected
+                                                  ? CrashFormSubmit()
+                                                  : _saveData();
+                                            } else {
+                                              setState(() {
+                                                _autoValidate = true;
+                                                err = false;
+                                              });
                                             }
-                                          }
-                                          
-                                        },
-                                        color: Color(0xff167db3),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                new BorderRadius.circular(0.0)),
-                                        child: Padding(
-                                          padding: EdgeInsets.all(10.0),
-                                          child: Text(
-                                            isConnected ? "Submit".toUpperCase() : "Save Data".toUpperCase(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontFamily: "Nunito",
-                                                fontSize: _large
-                                                    ? kLargeFontSize
-                                                    : (_medium
-                                                        ? kMediumFontSize
-                                                        : kSmallFontSize),
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.normal),
+                                          },
+                                          color: Color(0xff167db3),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  new BorderRadius.circular(
+                                                      0.0)),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(10.0),
+                                            child: Text(
+                                              isConnected
+                                                  ? "Submit".toUpperCase()
+                                                  : "Save Data".toUpperCase(),
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontFamily: "Nunito",
+                                                  fontSize: _large
+                                                      ? kLargeFontSize
+                                                      : (_medium
+                                                          ? kMediumFontSize
+                                                          : kSmallFontSize),
+                                                  color: Colors.white,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  )),
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -2702,137 +2917,6 @@ class _MyHomePageState extends State<CarCrashForm> {
   BoxDecoration myBoxDecoration() {
     return BoxDecoration(
       border: Border.all(color: Color(0xffb0b0b0)),
-    );
-  }
-
-  Widget _tabSection(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            child: Column(
-              children: [
-                TabBar(
-                    onTap: (index) {
-                      index == 1
-                          ? receiverDetailsFocusNode.requestFocus()
-                          : senderDetailsFocusNode.requestFocus();
-                    },
-                    indicator: UnderlineTabIndicator(
-                      borderSide:
-                          BorderSide(color: Color(0xff1a6ea8), width: 3.0),
-                    ),
-                    indicatorColor: Color(0xff1a6ea8),
-                    indicatorWeight: 1,
-                    labelColor: Colors.black,
-                    labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                    tabs: [
-                      Tab(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Sender Details",
-                            style: TextStyle(
-                              fontSize: _large
-                                  ? kLargeFontSize
-                                  : (_medium
-                                      ? kMediumFontSize
-                                      : kSmallFontSize),
-                              fontFamily: "Nunito",
-                            ),
-                          ),
-                          Icon(
-                            Icons.edit,
-                            color: Color(0xff848484),
-                          ),
-                        ],
-                      )),
-                      Tab(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Receiver Details",
-                            style: TextStyle(
-                                fontSize: _large
-                                    ? kLargeFontSize
-                                    : (_medium
-                                        ? kMediumFontSize
-                                        : kSmallFontSize),
-                                fontFamily: "Nunito"),
-                          ),
-                          Icon(Icons.add_circle_outline,
-                              color: Color(0xff848484)),
-                        ],
-                      )),
-                    ]),
-                // Divider(
-                //   color: Colors.grey,
-                //   thickness: 1,
-                // )
-              ],
-            ),
-          ),
-          Container(
-            //Add this to give height
-            height: 150,
-            child: TabBarView(children: [
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: TextFormField(
-                    focusNode: senderDetailsFocusNode,
-                    maxLines: 5,
-                    cursorColor: Color(0xff1a6ea8),
-                    style: TextStyle(
-                        fontSize: _large
-                            ? kLargeFontSize
-                            : (_medium ? kMediumFontSize : kSmallFontSize),
-                        fontFamily: "Nunito"),
-                    controller: senderController,
-                    validator: (value) {
-                      if (value.isEmpty) return 'This field is required';
-                    },
-                    decoration: InputDecoration(
-                        hintText: 'Enter Sender Details',
-                        errorBorder: InputBorder.none,
-                        focusedErrorBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none),
-                  ),
-                ),
-              ),
-              Container(
-                  child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextFormField(
-                  maxLines: 5,
-                  cursorColor: Color(0xff1a6ea8),
-                  focusNode: receiverDetailsFocusNode,
-                  style: TextStyle(
-                      fontSize: _large
-                          ? kLargeFontSize
-                          : (_medium ? kMediumFontSize : kSmallFontSize),
-                      fontFamily: "Nunito"),
-                  controller: recieverController,
-                  validator: (value) {
-                    if (value.isEmpty) return 'This field is required';
-                  },
-                  decoration: InputDecoration(
-                      hintText: 'Enter Receiver Details',
-                      errorBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedErrorBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none),
-                ),
-              )),
-            ]),
-          ),
-        ],
-      ),
     );
   }
 

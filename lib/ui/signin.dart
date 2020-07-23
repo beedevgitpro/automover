@@ -9,7 +9,10 @@ import 'package:flutter_app/ui/widgets/custom_shape.dart';
 import 'package:flutter_app/ui/widgets/responsive_ui.dart';
 import 'package:flutter_app/ui/widgets/textformfield.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:progress_dialog/progress_dialog.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:strings/strings.dart';
+// import 'package:progress_dialog/progress_dialog.dart';
+import 'widgets/custom_progress_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
@@ -40,82 +43,30 @@ class _SignInScreenState extends State<SignInScreen> {
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> _key = GlobalKey();
 
-  Future<void> _showStatusDialog(String title, String msg) async {
-    return showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Platform.isAndroid
-              ? AlertDialog(
-                  title: Text(title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Nunito",
-                          fontSize: _large
-                              ? kLargeFontSize
-                              : (_medium ? kMediumFontSize : kSmallFontSize))),
-                  content: Text(msg,
-                      style: TextStyle(
-                          fontFamily: "Nunito",
-                          fontSize: _large
-                              ? kLargeFontSize - 2
-                              : (_medium
-                                  ? kMediumFontSize - 2
-                                  : kSmallFontSize - 2))),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        'OK',
-                        style: TextStyle(
-                            color: Color(0xff0985ba),
-                            fontFamily: "Nunito",
-                            fontSize: _large
-                                ? kLargeFontSize - 2
-                                : (_medium
-                                    ? kMediumFontSize - 2
-                                    : kSmallFontSize - 2)),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                )
-              : CupertinoAlertDialog(
-                  title: Text(title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Nunito",
-                          fontSize: _large
-                              ? kLargeFontSize
-                              : (_medium ? kMediumFontSize : kSmallFontSize))),
-                  content: Text(msg,
-                      style: TextStyle(
-                          fontFamily: "Nunito",
-                          fontSize: _large
-                              ? kLargeFontSize - 2
-                              : (_medium
-                                  ? kMediumFontSize - 2
-                                  : kSmallFontSize - 2))),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        'OK',
-                        style: TextStyle(
-                            color: Color(0xff0985ba),
-                            fontSize: _large
-                                ? kLargeFontSize - 2
-                                : (_medium
-                                    ? kMediumFontSize - 2
-                                    : kSmallFontSize - 2)),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-        });
+  void _showStatusDialog(String title, String msg, String btnText){
+    Alert(context: context, title: title,desc: msg,
+    style: AlertStyle(
+      isOverlayTapDismiss: false,
+     animationType: AnimationType.grow,
+     isCloseButton: false, 
+     titleStyle: TextStyle(fontSize:_large?kLargeFontSize+6:kMediumFontSize+4),
+        descStyle: TextStyle(fontSize:_large?kLargeFontSize+2:kMediumFontSize+2),
+    ),
+    image: Image.asset('assets/img/logo-new.png',width: _width*0.60,),
+    buttons: [
+        DialogButton(
+          color: Color(0xff167db3),
+          child: Text(
+            'Close'.toUpperCase(),
+            style: TextStyle(color: Colors.white, fontSize:_large?kLargeFontSize:kMediumFontSize),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            // jobRefNode.requestFocus();
+          },
+        )
+      ],).show();
+    
   }
 
   Future<LoginModel> login(username, password) async {
@@ -140,7 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
         //   prefs.setString('userid', );
         prefs.setString('token_security', loginrespdata.token);
         Scaffold.of(context)
-            .showSnackBar(SnackBar(content: Text('Login Successful')));
+            .showSnackBar(SnackBar(content: Text('Login Successful',style: TextStyle(color: Colors.white, fontSize: _large?kLargeFontSize:kMediumFontSize),)));
 
         Navigator.of(context)
             .pushNamedAndRemoveUntil(HOME, (Route<dynamic> route) => false);
@@ -149,14 +100,14 @@ class _SignInScreenState extends State<SignInScreen> {
         // Scaffold
         //     .of(context)
         //     .showSnackBar(SnackBar(content: Text('Invalid Login')));
-        _showStatusDialog("Couldn't Sign In", "Invalid Credentials");
+        _showStatusDialog("Email/Password is Incorrect", null,'OK');
       }
     } catch (e) {
       pr.hide();
       // Scaffold
       //     .of(context)
       //     .showSnackBar(SnackBar(content: Text('error'+e.toString())));
-      _showStatusDialog("Error occured", e.toString());
+      _showStatusDialog("Error occured", e.toString(),'OK');
     }
   }
 
@@ -174,8 +125,8 @@ class _SignInScreenState extends State<SignInScreen> {
         }
       });
       // Got a new connectivity status!
-      // print(result.toString());
-      // print(isConnected);
+      print(result.toString());
+      print(isConnected);
     });
   }
 
@@ -201,7 +152,7 @@ class _SignInScreenState extends State<SignInScreen> {
               children: <Widget>[
                 clipShape(),
                 welcomeTextRow(),
-                signInTextRow(),
+                // signInTextRow(),
                 form(),
                 forgetPassTextRow(),
                 SizedBox(height: _height / 75),
@@ -252,15 +203,15 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
         Container(
-          alignment: Alignment.topCenter,
+          alignment: Alignment.center,
           // margin: EdgeInsets.only(
           //     top: _large
           //         ? _height / 30
           //         : (_medium ? _height / 25 : _height / 20)),
           child: Image.asset(
             'assets/img/logo.png',
-            height: _height / 3.3,
-            width: _width / 3.3,
+            height: _large?_width / 3.0:_width /2.0,
+            width: _large?_width / 3.3:_width /2.5,
           ),
         ),
       ],
@@ -274,7 +225,7 @@ class _SignInScreenState extends State<SignInScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Welcome",
+            "Login",
             style: TextStyle(
               fontFamily: "Nunito",
               fontWeight: FontWeight.bold,
@@ -375,14 +326,15 @@ class _SignInScreenState extends State<SignInScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       onPressed: () async {
+        FocusScope.of(context).requestFocus(new FocusNode());
         if (emailController.text.toString().isEmpty) {
           Scaffold.of(context).showSnackBar(SnackBar(
               content: Text(
             'Please enter a valid Email',
             style: TextStyle(
                 fontSize: _large
-                    ? kLargeFontSize - 2
-                    : (_medium ? kMediumFontSize - 2 : kSmallFontSize - 2)),
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
           )));
         } else if (passwordController.text.toString().isEmpty) {
           Scaffold.of(context).showSnackBar(SnackBar(
@@ -390,15 +342,15 @@ class _SignInScreenState extends State<SignInScreen> {
             'Please enter a valid password',
             style: TextStyle(
                 fontSize: _large
-                    ? kLargeFontSize - 2
-                    : (_medium ? kMediumFontSize - 2 : kSmallFontSize - 2)),
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
           )));
         } else {
           isConnected
               ? login(emailController.text.toString(),
                   passwordController.text.toString())
               : _showStatusDialog(
-                  "No Internet Connection", "Internet connection required");
+                  "No Internet Connection", null,"OK");
         }
       },
       textColor: Colors.white,
