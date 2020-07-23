@@ -18,6 +18,7 @@ TextDirection _direction = TextDirection.ltr;
 bool _isShowing = false;
 BuildContext _context, _dismissingContext;
 ProgressDialogType _progressDialogType;
+bool _isOfflineSubmit;
 bool _barrierDismissible = true, _showLogs = false;
 
 TextStyle _progressTextStyle = TextStyle(
@@ -40,6 +41,7 @@ class ProgressDialog {
 
   ProgressDialog(BuildContext context,
       {ProgressDialogType type,
+      bool isOfflineSubmit,
         bool isDismissible,
         bool showLogs,
         TextDirection textDirection,
@@ -47,6 +49,7 @@ class ProgressDialog {
     _context = context;
     _progressDialogType = type ?? ProgressDialogType.Normal;
     _barrierDismissible = isDismissible ?? true;
+    _isOfflineSubmit=isOfflineSubmit??false;
     _showLogs = showLogs ?? false;
     _customBody = customBody ?? null;
     _direction = textDirection ?? TextDirection.ltr;
@@ -72,7 +75,7 @@ class ProgressDialog {
       _progress = progress ?? _progress;
     }
 
-    _dialogMessage = message ?? _dialogMessage;
+    _dialogMessage = _isOfflineSubmit??false? "Syncing":_dialogMessage;
     _maxProgress = maxProgress ?? _maxProgress;
     _progressWidget = progressWidget ?? _progressWidget;
     _backgroundColor = backgroundColor ?? _backgroundColor;
@@ -213,14 +216,7 @@ class _BodyState extends State<_Body> {
       ),
     );
 
-    final text = Expanded(
-      child: Text(
-        _dialogMessage,
-        textAlign: _textAlign,
-        style: _messageStyle,
-        textDirection: _direction,
-      )
-    );
+    //final text = ;
 
     return _customBody ??
         Container(
@@ -234,9 +230,18 @@ class _BodyState extends State<_Body> {
             children: <Widget>[
               // row body
                 SizedBox(height: 20.0),
-              _direction == TextDirection.ltr ? loader : text,
+               _isOfflineSubmit??false?SpinKitFadingCircle(size: 70,
+         color: kPrimaryColor,):loader,
                      SizedBox(height: 8.0),
-                    _direction == TextDirection.rtl ? loader : text,
+                    Center(
+        child: Text(
+          _isOfflineSubmit??false?'Syncing':_dialogMessage,
+          textAlign: _textAlign,
+          style: _messageStyle,
+          textDirection: _direction,
+        ),
+      ),
+      SizedBox(height: 20.0),
             ],
           ),
         );

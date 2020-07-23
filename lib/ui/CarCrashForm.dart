@@ -73,6 +73,7 @@ class _MyHomePageState extends State<CarCrashForm> {
   bool _large;
   bool _medium;
   bool _autoValidate = false;
+  final controller=ScrollController();
   var subscription;
   var scr = new GlobalKey();
   var scr1 = new GlobalKey();
@@ -228,6 +229,7 @@ class _MyHomePageState extends State<CarCrashForm> {
           ),
           onPressed: () {
             Navigator.pop(context);
+            controller.jumpTo(controller.position.minScrollExtent);
             jobRefNode.requestFocus();
           },
         )
@@ -396,6 +398,8 @@ class _MyHomePageState extends State<CarCrashForm> {
       'receiver_signature_data':
           "data:image/png;base64," + base64Imagerecieversign,
     };
+    print(body);
+    print("token="+token);
     SharedPreferences.getInstance().then((value) {
       List<String> forms = value.getStringList('forms') ?? [];
       forms.add(jsonEncode(body));
@@ -404,6 +408,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     });
     setState(() {
       _controller.clear();
+      _formKey.currentState.reset();
       _controller1.clear();
       _controller2.clear();
       _controller3.clear();
@@ -416,17 +421,23 @@ class _MyHomePageState extends State<CarCrashForm> {
       isSwitched1 = false;
       isSwitched = false;
       othercommentController.clear();
-      senderController.clear();
-      recieverController.clear();
+     senderPhoneController.clear();
+          recieverPhoneController.clear();
+          senderNameController.clear();
+          recieverNameController.clear();
+          senderAddressController.clear();
+          recieverAddressController.clear();
+          senderEmailController.clear();
+          recieverEmailController.clear();
     });
     _showStatusDialog('Survey Saved Offline',
         'Survey will be submitted when Online', 'Start a New Survey');
   }
 
   Future<CarCrashModel> CrashFormSubmit() async {
-    var pr = ProgressDialog(context);
-    err = false;
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    var pr = ProgressDialog(context,isOfflineSubmit:(prefs.getBool('toBeSubmitted') ?? false) );
+    err = false;
     // print("sender_report" +
     //     senderController.text.toString() +
     //     "   recevier_report" +
@@ -498,6 +509,7 @@ class _MyHomePageState extends State<CarCrashForm> {
         // pr.hide();
         pr.hide();
         setState(() {
+          _formKey.currentState.reset();
           _controller.clear();
           _controller1.clear();
           _controller2.clear();
@@ -529,7 +541,7 @@ class _MyHomePageState extends State<CarCrashForm> {
             CrashFormSubmit();
           } else {
             _showStatusDialog(
-                "Thank you for Submitting Survey",
+                "Thank You for Submitting Survey",
                 (prefs.getBool('toBeSubmitted') ?? false)
                     ? "Saved Surveys Submitted"
                     : "Survey Submitted",
@@ -538,7 +550,7 @@ class _MyHomePageState extends State<CarCrashForm> {
             prefs.remove('forms');
           }
         } else {
-          _showStatusDialog("Thank you for Submitting Survey",
+          _showStatusDialog("Thank You for Submitting Survey",
               "Survey Submitted", 'Start a New Survey');
         }
 
@@ -767,6 +779,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
+                      controller: controller,
                       child: Column(
                         children: [
                           Padding(
@@ -774,7 +787,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                             child: Column(
                               children: [
                                 Container(
-                                  decoration: myBoxDecoration(),
+                                  // decoration: myBoxDecoration(),
                                   child: Table(
                                     border: TableBorder.all(
                                         color: Color(0xffb3b3b3)),
@@ -2793,120 +2806,116 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 SizedBox(
                                   height: 20,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: RaisedButton(
-                                          onPressed: () {
-                                            setState(() {
+                                Container(
+                                    child:
+                                  RaisedButton(
+                                            onPressed: () async {
                                               FocusScope.of(context)
-                                                  .requestFocus(
-                                                      new FocusNode());
-                                              setState(() {
-                                                _autoValidate = false;
-                                              });
-                                              _formKey.currentState.reset();
-                                              // _showStatusDialog('Thank you for submitting!','Previous Offline Surveys Submitted.', 'Start New Survey');
-                                              _controller.clear();
-                                              _controller1.clear();
-                                              _controller2.clear();
-                                              _controller3.clear();
-                                              regoController.clear();
-                                              modelController.clear();
-                                              makeController.clear();
-                                              bookingIdController.clear();
-                                              speedoController.clear();
-                                              isSwitched1 = false;
-                                              isSwitched = false;
-                                              othercommentController.clear();
-                                              senderController.clear();
-                                              recieverController.clear();
-                                            });
-                                          },
-                                          color: Colors.black,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  new BorderRadius.circular(
-                                                      0.0)),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Text(
-                                              "RESET",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontSize: _large
-                                                      ? kLargeFontSize
-                                                      : (_medium
-                                                          ? kMediumFontSize
-                                                          : kSmallFontSize),
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.normal,
-                                                  fontFamily: "Nunito"),
+                                                  .requestFocus(new FocusNode());
+                                              if (_formKey.currentState
+                                                  .validate()) {
+                                                // var data = await _controller2.toPngBytes();
+                                                // base64Imagesendersign = base64Encode(data);
+                                                // var data1 = await _controller3.toPngBytes();
+                                                // base64Imagerecieversign =
+                                                //     base64Encode(data1);
+                                                // print("sendersign" +
+                                                //     base64Imagesendersign.toString());
+                                                // print("recieversign" +
+                                                //     base64Imagerecieversign.toString());
+                                                await takescrshot();
+                                                await takescrshot1();
+                                                await takescrshotrecieverSign();
+                                                await takescrshotsenderSign();
+                                                isConnected
+                                                    ? CrashFormSubmit()
+                                                    : _saveData();
+                                              } else {
+                                                setState(() {
+                                                  _autoValidate = true;
+                                                  err = false;
+                                                });
+                                              }
+                                            },
+                                            color: Color(0xff167db3),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        0.0)),
+                                            child: Padding(
+                                              padding: EdgeInsets.all(12.0),
+                                              child: Text(
+                                                isConnected
+                                                    ? "Submit Survey Report".toUpperCase()
+                                                    : "Save Survey Report".toUpperCase(),
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontFamily: "Nunito",
+                                                    fontSize: _large
+                                                        ? kLargeFontSize
+                                                        : (_medium
+                                                            ? kMediumFontSize
+                                                            : kSmallFontSize),
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: RaisedButton(
-                                          onPressed: () async {
-                                            FocusScope.of(context)
-                                                .requestFocus(new FocusNode());
-                                            if (_formKey.currentState
-                                                .validate()) {
-                                              // var data = await _controller2.toPngBytes();
-                                              // base64Imagesendersign = base64Encode(data);
-                                              // var data1 = await _controller3.toPngBytes();
-                                              // base64Imagerecieversign =
-                                              //     base64Encode(data1);
-                                              // print("sendersign" +
-                                              //     base64Imagesendersign.toString());
-                                              // print("recieversign" +
-                                              //     base64Imagerecieversign.toString());
-                                              await takescrshot();
-                                              await takescrshot1();
-                                              await takescrshotrecieverSign();
-                                              await takescrshotsenderSign();
-                                              isConnected
-                                                  ? CrashFormSubmit()
-                                                  : _saveData();
-                                            } else {
-                                              setState(() {
-                                                _autoValidate = true;
-                                                err = false;
-                                              });
-                                            }
-                                          },
-                                          color: Color(0xff167db3),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  new BorderRadius.circular(
-                                                      0.0)),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(10.0),
-                                            child: Text(
-                                              isConnected
-                                                  ? "Submit".toUpperCase()
-                                                  : "Save Data".toUpperCase(),
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontFamily: "Nunito",
-                                                  fontSize: _large
-                                                      ? kLargeFontSize
-                                                      : (_medium
-                                                          ? kMediumFontSize
-                                                          : kSmallFontSize),
-                                                  color: Colors.white,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
                                   ),
-                                )
+                              
+                                 Center(
+                                   child: FlatButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                FocusScope.of(context)
+                                                    .requestFocus(
+                                                        new FocusNode());
+                                                setState(() {
+                                                  _autoValidate = false;
+                                                });
+                                                _formKey.currentState.reset();
+                                                // _showStatusDialog('Thank you for submitting!','Previous Offline Surveys Submitted.', 'Start New Survey');
+                                                _controller.clear();
+                                                _controller1.clear();
+                                                _controller2.clear();
+                                                _controller3.clear();
+                                                regoController.clear();
+                                                modelController.clear();
+                                                makeController.clear();
+                                                bookingIdController.clear();
+                                                speedoController.clear();
+                                                isSwitched1 = false;
+                                                isSwitched = false;
+                                                othercommentController.clear();
+                                                senderController.clear();
+                                                recieverController.clear();
+                                              });
+                                            },
+                                            
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        0.0)),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(10.0),
+                                              child: Text(
+                                                "RESET Survey".toUpperCase(),
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontSize: _large
+                                                        ? kLargeFontSize
+                                                        : (_medium
+                                                            ? kMediumFontSize
+                                                            : kSmallFontSize),
+                                                    color: kPrimaryColor,
+                                                    fontWeight: FontWeight.normal,
+                                                    fontFamily: "Nunito"),
+                                              ),
+                                            ),
+                                          ),
+                                 )
+                                
                               ],
                             ),
                           )
