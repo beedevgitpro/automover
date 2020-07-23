@@ -370,13 +370,13 @@ class _MyHomePageState extends State<CarCrashForm> {
       'user_id': '1',
       'job_no': bookingIdController.text.toString(),
       'sender_name': senderNameController.text.toString(),
-      'receiver_name': recieverNameController.text.toString(),
+      'reciever_name': recieverNameController.text.toString(),
       'sender_phone': senderPhoneController.text.toString(),
-      'receiver_phone': recieverPhoneController.text.toString(),
+      'reciever_phone': recieverPhoneController.text.toString(),
       'sender_email': senderEmailController.text.toString(),
-      'receiver_email': recieverEmailController.text.toString(),
+      'reciever_email': recieverEmailController.text.toString(),
       'sender_address': senderAddressController.text.toString(),
-      'receiver_address': recieverAddressController.text.toString(),
+      'reciever_address': recieverAddressController.text.toString(),
       'maked': makeController.text.toString(),
       'model': modelController.text.toString(),
       'rego': regoController.text.toString(),
@@ -419,8 +419,8 @@ class _MyHomePageState extends State<CarCrashForm> {
       senderController.clear();
       recieverController.clear();
     });
-    _showStatusDialog('Data saved offline',
-        'Data will be submitted once device is online', 'Start a New Survey');
+    _showStatusDialog('Survey Saved Offline',
+        'Survey will be submitted when Online', 'Start a New Survey');
   }
 
   Future<CarCrashModel> CrashFormSubmit() async {
@@ -462,13 +462,13 @@ class _MyHomePageState extends State<CarCrashForm> {
                 'user_id': '1',
                 'job_no': bookingIdController.text.toString(),
                 'sender_name': senderNameController.text.toString(),
-                'receiver_name': recieverNameController.text.toString(),
+                'reciever_name': recieverNameController.text.toString(),
                 'sender_phone': senderPhoneController.text.toString(),
-                'receiver_phone': recieverPhoneController.text.toString(),
+                'reciever_phone': recieverPhoneController.text.toString(),
                 'sender_email': senderEmailController.text.toString(),
-                'receiver_email': recieverEmailController.text.toString(),
+                'reciever_email': recieverEmailController.text.toString(),
                 'sender_address': senderAddressController.text.toString(),
-                'receiver_address': recieverAddressController.text.toString(),
+                'reciever_address': recieverAddressController.text.toString(),
                 'maked': makeController.text.toString(),
                 'model': modelController.text.toString(),
                 'rego': regoController.text.toString(),
@@ -529,16 +529,16 @@ class _MyHomePageState extends State<CarCrashForm> {
             CrashFormSubmit();
           } else {
             _showStatusDialog(
-                "Thank you for submitting Survey",
+                "Thank you for Submitting Survey",
                 (prefs.getBool('toBeSubmitted') ?? false)
-                    ? "Previous offline survey submissions recorded"
-                    : "Survey Submission recorded.",
+                    ? "Saved Surveys Submitted"
+                    : "Survey Submitted",
                 'Start a New Survey');
             prefs.setBool('toBeSubmitted', false);
             prefs.remove('forms');
           }
         } else {
-          _showStatusDialog("Thank you for submitting Survey",
+          _showStatusDialog("Thank you for Submitting Survey",
               "Survey Submitted", 'Start a New Survey');
         }
 
@@ -552,7 +552,7 @@ class _MyHomePageState extends State<CarCrashForm> {
         prefs.setString('forms', null);
         toBeSubmitted
             ? _showStatusDialog(
-                "Couldn't submit saved offline data", "", 'Close')
+                "Couldn't Submit Saved Surveys", null, 'Close')
             : _showStatusDialog(
                 "Something Went Wrong", carCrashModel.status, 'Close');
         //prefs.setBool('toBeSubmitted',false);
@@ -560,7 +560,7 @@ class _MyHomePageState extends State<CarCrashForm> {
       }
     } catch (e) {
       pr.hide();
-      _showStatusDialog("Something Went Wrong", "", 'Close');
+      _showStatusDialog("Something Went Wrong", null, 'Close');
       print(e);
       //prefs.setBool('toBeSubmitted',false);
       //_showToast("Something Went Wrong" + response.body);
@@ -641,9 +641,9 @@ class _MyHomePageState extends State<CarCrashForm> {
             onPanDown: (_) {
               FocusScope.of(context).requestFocus(new FocusNode());
             },
-            onTap: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
+            // onTap: () {
+            //    FocusScope.of(context).requestFocus(new FocusNode());
+            // },
             child: Form(
               key: _formKey,
               autovalidate: _autoValidate,
@@ -728,34 +728,37 @@ class _MyHomePageState extends State<CarCrashForm> {
                           flex: 1,
                           child: Align(
                             alignment: Alignment.topRight,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Surveyed By  ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: _large
-                                          ? kLargeFontSize
-                                          : (_medium
-                                              ? kMediumFontSize
-                                              : kSmallFontSize),
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "Nunito"),
-                                ),
-                                Text(
-                                  capitalize(username.split(" ")[0] + " "),
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: _large
-                                          ? kLargeFontSize
-                                          : (_medium
-                                              ? kMediumFontSize
-                                              : kSmallFontSize),
-                                      fontFamily: "Nunito"),
-                                ),
-                              ],
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Surveyed By  ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _large
+                                            ? kLargeFontSize
+                                            : (_medium
+                                                ? kMediumFontSize
+                                                : kSmallFontSize),
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: "Nunito"),
+                                  ),
+                                  Text(
+                                    capitalize(username.split(" ")[0] + " "),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        // fontWeight: FontWeight.bold,
+                                        fontSize: _large
+                                            ? kLargeFontSize
+                                            : (_medium
+                                                ? kMediumFontSize
+                                                : kSmallFontSize),
+                                        fontFamily: "Nunito"),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -843,7 +846,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         TextInputAction.next,
                                                     textCapitalization:
                                                         TextCapitalization
-                                                            .sentences,
+                                                            .words,
                                                     focusNode: sNameNode,
                                                     style: TextStyle(
                                                         fontSize: _large
@@ -865,7 +868,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             InputBorder.none,
                                                         hintText: 'Name'),
                                                     inputFormatters: [
-                                                      UpperCaseTextFormatter(),
+                                                      
                                                     ],
                                                     validator: (value) {
                                                       if (value.isEmpty) {
@@ -907,9 +910,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   child: TextFormField(
                                                     textCapitalization:
                                                         TextCapitalization
-                                                            .sentences,
+                                                            .words,
                                                     inputFormatters: [
-                                                      UpperCaseTextFormatter(),
+                                                      //UpperCaseTextFormatter(),
                                                     ],
                                                     onFieldSubmitted: (value) {
                                                       rPhoneNode.requestFocus();
@@ -1415,6 +1418,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                           fontFamily: "Nunito"),
                                                       controller:
                                                           makeController,
+                                                          textCapitalization: TextCapitalization.characters,
                                                       decoration: InputDecoration(
                                                           enabledBorder:
                                                               InputBorder.none,
@@ -1471,6 +1475,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       inputFormatters: [
                                                         UpperCaseTextFormatter(),
                                                       ],
+                                                      textCapitalization: TextCapitalization.characters,
                                                       onFieldSubmitted:
                                                           (value) {
                                                         regoNode.requestFocus();
@@ -1545,6 +1550,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         speedoNode
                                                             .requestFocus();
                                                       },
+                                                      textCapitalization: TextCapitalization.characters,
                                                       textInputAction:
                                                           TextInputAction.next,
                                                       style: TextStyle(
@@ -2368,9 +2374,13 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     style: TextStyle(
                                                         color:
                                                             Color(0xff000000),
-                                                        fontSize: 18,
+                                                        fontSize:_large
+                                                            ? kLargeFontSize
+                                                            : (_medium
+                                                                ? kMediumFontSize
+                                                                : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-//                               initialValue: "Write Message,
+                                                    textCapitalization: TextCapitalization.sentences,
                                                     textInputAction:
                                                         TextInputAction.done,
                                                     validator: (text) {
@@ -2397,10 +2407,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                           "Type your comments here...",
                                                       hintStyle: TextStyle(
                                                         fontSize: _large
-                                                            ? kLargeFontSize - 2
+                                                            ? kLargeFontSize
                                                             : (_medium
-                                                                ? kMediumFontSize -
-                                                                    2
+                                                                ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito",
                                                         color:

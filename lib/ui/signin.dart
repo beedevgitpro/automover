@@ -73,12 +73,10 @@ class _SignInScreenState extends State<SignInScreen> {
     ProgressDialog pr;
     pr = new ProgressDialog(context, isDismissible: false);
     await pr.show();
-
+    try{
     final response = await http.post(
         'https://automover.beedevstaging.com/api/login',
         body: {'email': username, 'password': password});
-
-    try {
       LoginModel loginrespdata = loginModelFromJson(response.body);
 
       if (loginrespdata.status == "success") {
@@ -107,7 +105,7 @@ class _SignInScreenState extends State<SignInScreen> {
       // Scaffold
       //     .of(context)
       //     .showSnackBar(SnackBar(content: Text('error'+e.toString())));
-      _showStatusDialog("Error occured", e.toString(),'OK');
+      _showStatusDialog("Something Went Wrong", e.toString(),'OK');
     }
   }
 
