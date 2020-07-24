@@ -2890,6 +2890,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 othercommentController.clear();
                                                 senderController.clear();
                                                 recieverController.clear();
+                                                 controller.jumpTo(controller.position.minScrollExtent);
+                                                  jobRefNode.requestFocus();
                                               });
                                             },
                                             
