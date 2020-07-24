@@ -1,4 +1,3 @@
-
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     await pr.show();
 
     final response = await http.post(
-        'https://automover.beedevstaging.com/api/register',
+        'https://autoaus.adtestbed.com/api/register',
         body: {'name':username, 'email': email,'password':password,'c_password':confirmpassword}
     );
 

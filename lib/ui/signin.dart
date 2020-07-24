@@ -75,7 +75,7 @@ class _SignInScreenState extends State<SignInScreen> {
     await pr.show();
     try{
     final response = await http.post(
-        'https://automover.beedevstaging.com/api/login',
+        'https://autoaus.adtestbed.com/api/login',
         body: {'email': username, 'password': password});
       LoginModel loginrespdata = loginModelFromJson(response.body);
 
