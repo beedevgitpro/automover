@@ -566,13 +566,13 @@ class _MyHomePageState extends State<CarCrashForm> {
             ? _showStatusDialog(
                 "Couldn't Submit Saved Surveys", null, 'Close')
             : _showStatusDialog(
-                "Something Went Wrong", carCrashModel.status, 'Close');
+                "Couldn't Submit Surveys", carCrashModel.status.toString(), 'Close');
         //prefs.setBool('toBeSubmitted',false);
         //_showToast(carCrashModel.status);
       }
     } catch (e) {
       pr.hide();
-      _showStatusDialog("Something Went Wrong", null, 'Close');
+      _showStatusDialog("Couldn't Submit Surveys",null, 'Close');
       print(e);
       //prefs.setBool('toBeSubmitted',false);
       //_showToast("Something Went Wrong" + response.body);
@@ -718,7 +718,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                             color: Color(0xffffffff)),
                                         controller: bookingIdController,
                                         textCapitalization:
-                                            TextCapitalization.sentences,
+                                            TextCapitalization.characters,
                                         //keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                           enabledBorder: UnderlineInputBorder(
