@@ -470,7 +470,7 @@ class _MyHomePageState extends State<CarCrashForm> {
         body: (prefs.getBool('toBeSubmitted') ?? false)
             ? jsonDecode(lst[0])
             : {
-                'user_id': '1',
+                'user_id': 1,
                 'job_no': bookingIdController.text.toString(),
                 'sender_name': senderNameController.text.toString(),
                 'reciever_name': recieverNameController.text.toString(),
@@ -484,14 +484,14 @@ class _MyHomePageState extends State<CarCrashForm> {
                 'model': modelController.text.toString(),
                 'rego': regoController.text.toString(),
                 'speedo': speedoController.text.toString(),
-                'is_drivable': !isSwitched ? '2' : '1',
-                'goods_inside': !isSwitched1 ? '2' : '1',
+                'is_drivable': !isSwitched ? 2 : 1,
+                'goods_inside': !isSwitched1 ? 2 : 1,
                 'external_condition': externalCondition.toString() == "Low"
-                    ? '3'
-                    : externalCondition.toString() == "Fair" ? '2' : '1',
+                    ? 3
+                    : externalCondition.toString() == "Fair" ? 2 : 1,
                 'interior_condition': internalCondition.toString() == "Low"
-                    ? '3'
-                    : internalCondition.toString() == "Fair" ? '2' : '1',
+                    ? 3
+                    : internalCondition.toString() == "Fair" ? 2 : 1,
                 'survey_image': "data:image/png;base64," + base64Imagecar,
                 'boat_view_data': "data:image/png;base64," + base64Imageboat,
                 'comments': othercommentController.text.toString(),
