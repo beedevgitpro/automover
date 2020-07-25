@@ -10,10 +10,12 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Location required</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location required</string>
+<string>This app needs access to location when open.</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>This app needs access to location when in the background.</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>This app needs access to location when open and in the background.</string>
 	<key>CFBundleName</key>
 	<string>AUTOMOVER</string>
 	<key>CFBundlePackageType</key>

@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -2940,6 +2941,34 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 //     ),
                                 //   ),
                                 // ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                  "Received in Good Order and Condition.",
+                                  style: TextStyle(
+                                      fontSize: _large
+                                          ? kLargeFontSize
+                                          : (_medium
+                                              ? kMediumFontSize
+                                              : kSmallFontSize),
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Nunito"),
+                                    ),
+                                    Text(
+                                  "Transport is subject to Terms and Conditions of Transit. To receive a copy please go to www.automover.com.au Please note: Automover will not take responsibility for vehicles in poor condition, damaged vehicles, non drivable vehicles, contents inside vehicles, road damage, damage due to weather conditions, mechanical issues or vehicles that have been modified. If the driver is unable to survey the vehicle due to weather conditions, vehicle being dirty, dusty or night time pickup, Automover accepts no responsibility to the vehicle.",
+                                  style: TextStyle(
+                                      fontSize: _large
+                                          ? kLargeFontSize - 2
+                                          : (_medium
+                                              ? kMediumFontSize - 1
+                                              : kSmallFontSize - 1),
+                                      color: Colors.black54,
+                                      fontFamily: "Nunito"),
+                                  textAlign: TextAlign.justify,
+                                ),
+                                  ],
+                                ),
                                 SizedBox(
                                   height: 20,
                                 ),
