@@ -74,7 +74,6 @@ class _MyHomePageState extends State<CarCrashForm> {
   bool isSwitched1 = true;
   String dropdownValue = 'Honda';
   String dropdownValue1 = 'Honda';
-  Position position;
   String token;
   double _height;
   double _width;
@@ -159,9 +158,9 @@ class _MyHomePageState extends State<CarCrashForm> {
     );
   }
   getLocation()async{
-    position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(position.latitude,position.longitude);
-    print(placemark[0].subLocality);
+    print(placemark[0].subThoroughfare+", "+placemark[0].thoroughfare +", "+placemark[0].subLocality+", "+placemark[0].locality+", "+placemark[0].administrativeArea+", "+placemark[0].country+". Pincode: "+placemark[0].postalCode+'.');
     print(position.longitude);
   }
   @override
@@ -2948,6 +2947,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 //     ),
                                 //   ),
                                 // ),
+                                SizedBox(
+                                  height: 30,
+                                ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
@@ -2962,18 +2964,21 @@ class _MyHomePageState extends State<CarCrashForm> {
                                       fontWeight: FontWeight.bold,
                                       fontFamily: "Nunito"),
                                     ),
-                                    Text(
+                                    Padding(
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: Text(
                                   "Transport is subject to Terms and Conditions of Transit. To receive a copy please go to www.automover.com.au Please note: Automover will not take responsibility for vehicles in poor condition, damaged vehicles, non drivable vehicles, contents inside vehicles, road damage, damage due to weather conditions, mechanical issues or vehicles that have been modified. If the driver is unable to survey the vehicle due to weather conditions, vehicle being dirty, dusty or night time pickup, Automover accepts no responsibility to the vehicle.",
                                   style: TextStyle(
-                                      fontSize: _large
-                                          ? kLargeFontSize - 2
-                                          : (_medium
-                                              ? kMediumFontSize - 1
-                                              : kSmallFontSize - 1),
-                                      color: Colors.black54,
-                                      fontFamily: "Nunito"),
+                                        fontSize: _large
+                                            ? kLargeFontSize - 2
+                                            : (_medium
+                                                ? kMediumFontSize - 1
+                                                : kSmallFontSize - 1),
+                                        color: Colors.black54,
+                                        fontFamily: "Nunito"),
                                   textAlign: TextAlign.justify,
                                 ),
+                                    ),
                                   ],
                                 ),
                                 SizedBox(
@@ -3000,6 +3005,10 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 await takescrshot1();
                                                 await takescrshotrecieverSign();
                                                 await takescrshotsenderSign();
+                                                Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+                                                List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(position.latitude,position.longitude);
+                                                print(placemark[0].subThoroughfare+", "+placemark[0].thoroughfare +", "+placemark[0].subLocality+", "+placemark[0].locality+", "+placemark[0].administrativeArea+" - "+placemark[0].country+". Pincode: "+placemark[0].postalCode+'.');
+                                                print(position.longitude);
                                                 isConnected
                                                     ? CrashFormSubmit()
                                                     : _saveData();
@@ -3048,6 +3057,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   _autoValidate = false;
                                                 });
                                                 _formKey.currentState.reset();
+                                                getLocation();
                                                 // _showStatusDialog('Thank you for submitting!','Previous Offline Surveys Submitted.', 'Start New Survey');
                                                 _controller.clear();
                                                 _controller1.clear();
