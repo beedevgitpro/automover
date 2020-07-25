@@ -74,6 +74,7 @@ class _MyHomePageState extends State<CarCrashForm> {
   bool isSwitched1 = true;
   String dropdownValue = 'Honda';
   String dropdownValue1 = 'Honda';
+  Position position;
   String token;
   double _height;
   double _width;
@@ -157,11 +158,17 @@ class _MyHomePageState extends State<CarCrashForm> {
       toastDuration: Duration(seconds: 5),
     );
   }
-
+  getLocation()async{
+    position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(position.latitude,position.longitude);
+    print(placemark[0].subLocality);
+    print(position.longitude);
+  }
   @override
   void initState() {
     super.initState();
-    print('initstate');
+    getLocation();
+    //print('initstate');
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
