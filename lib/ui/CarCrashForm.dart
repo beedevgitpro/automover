@@ -48,10 +48,17 @@ class _MyHomePageState extends State<CarCrashForm> {
   final rPhoneNode = FocusNode();
   final rEmailNode = FocusNode();
   final rAddressNode = FocusNode();
+  List stack1=[];
+  List redoStack1=[];
+  List<Point> pointlist1=[];
+  List stack2=[];
+  List redoStack2=[];
+  List<Point> pointlist2=[];
   bool toBeSubmitted = false;
   bool isConnected = true;
   double _value = 0.0;
   List<String> vehicleCondition = ['Low', 'Fair', 'Good'];
+ 
   // double _secondValue = 0.0;
   double _value1 = 0;
   String username = "";
@@ -95,12 +102,12 @@ class _MyHomePageState extends State<CarCrashForm> {
   TextEditingController recieverEmailController = TextEditingController();
   TextEditingController senderAddressController = TextEditingController();
   TextEditingController recieverAddressController = TextEditingController();
-  final SignatureController _controller = SignatureController(
+  SignatureController _controller = SignatureController(
     penStrokeWidth: 2,
     penColor: Colors.red,
     exportBackgroundColor: Colors.white,
   );
-  final SignatureController _controller1 = SignatureController(
+  SignatureController _controller1 = SignatureController(
     penStrokeWidth: 2,
     penColor: Colors.red,
     exportBackgroundColor: Colors.white,
@@ -117,7 +124,7 @@ class _MyHomePageState extends State<CarCrashForm> {
   );
 
   FlutterToast flutterToast;
-
+     
   _showToast(var message) {
     Widget toast = Container(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
@@ -170,6 +177,7 @@ class _MyHomePageState extends State<CarCrashForm> {
       // Got a new connectivity status!
       // print(result.toString());
       // print(isConnected);
+      
     });
     flutterToast = FlutterToast(context);
     dropdownValue = 'Honda';
@@ -470,7 +478,7 @@ class _MyHomePageState extends State<CarCrashForm> {
         body: (prefs.getBool('toBeSubmitted') ?? false)
             ? jsonDecode(lst[0])
             : {
-                'user_id': 1,
+                'user_id': '1',
                 'job_no': bookingIdController.text.toString(),
                 'sender_name': senderNameController.text.toString(),
                 'reciever_name': recieverNameController.text.toString(),
@@ -484,14 +492,14 @@ class _MyHomePageState extends State<CarCrashForm> {
                 'model': modelController.text.toString(),
                 'rego': regoController.text.toString(),
                 'speedo': speedoController.text.toString(),
-                'is_drivable': !isSwitched ? 2 : 1,
-                'goods_inside': !isSwitched1 ? 2 : 1,
+                'is_drivable': !isSwitched ? '2'.toString() : '1'.toString(),
+                'goods_inside': !isSwitched1 ? '2'.toString() : '1'.toString(),
                 'external_condition': externalCondition.toString() == "Low"
-                    ? 3
-                    : externalCondition.toString() == "Fair" ? 2 : 1,
+                    ? '3'.toString()
+                    : externalCondition.toString() == "Fair" ? '2'.toString() : '1'.toString(),
                 'interior_condition': internalCondition.toString() == "Low"
-                    ? 3
-                    : internalCondition.toString() == "Fair" ? 2 : 1,
+                    ? '3'.toString()
+                    : internalCondition.toString() == "Fair" ? '2'.toString() : '1'.toString(),
                 'survey_image': "data:image/png;base64," + base64Imagecar,
                 'boat_view_data': "data:image/png;base64," + base64Imageboat,
                 'comments': othercommentController.text.toString(),
@@ -501,7 +509,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                     "data:image/png;base64," + base64Imagerecieversign,
               });
     try {
-      print("carcrashresponse" + response.body.toString());
+      print("carcrashresponse" + response.toString());
       CarCrashModel carCrashModel = carCrashModelFromJson(response.body);
       print("carcrashresponse" + response.body.toString());
       if (carCrashModel.status == "success") {
@@ -2231,25 +2239,70 @@ class _MyHomePageState extends State<CarCrashForm> {
                                   height: 10,
                                 ),
                                 Align(
-                                  child: GestureDetector(
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 5, 0, 0),
-                                      child: Text("Clear",
-                                          style: TextStyle(
-                                              fontSize: _large
-                                                  ? kLargeFontSize
-                                                  : (_medium
-                                                      ? kMediumFontSize
-                                                      : kSmallFontSize),
-                                              color: Color(0xff1a6ea8),
-                                              fontFamily: "Nunito")),
-                                    ),
-                                    onTap: () {
-                                      _controller.clear();
-                                      FocusScope.of(context)
-                                          .requestFocus(new FocusNode());
-                                    },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              10, 5, 10, 0),
+                                          child: Text("Undo",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                  fontSize: _large
+                                                      ? kLargeFontSize
+                                                      : (_medium
+                                                          ? kMediumFontSize
+                                                          : kSmallFontSize),
+                                                  color: Color(0xff1a6ea8),
+                                                  fontFamily: "Nunito")),
+                                        ),
+                                        onTap: () {
+                                          _controller.clear();
+                                          if(stack1.isNotEmpty)
+                                            {
+                                              stack1.removeLast();
+                                              if(stack1.isNotEmpty)
+                                             { 
+                                               //print(stack1[stack1.length-1]);
+                                              for(Point point in stack1[stack1.length-1])
+                                             {
+                                                _controller.addPoint(point);
+                                                }
+                                              }
+                                      
+                                              }
+                                              setState(() {
+                                                
+                                              });
+                                          FocusScope.of(context)
+                                              .requestFocus(new FocusNode());
+                                        },
+                                      ),
+                                     
+                                      GestureDetector(
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              10, 5, 10, 0),
+                                          child: Text("Clear All",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                  fontSize: _large
+                                                      ? kLargeFontSize
+                                                      : (_medium
+                                                          ? kMediumFontSize
+                                                          : kSmallFontSize),
+                                                  color: Color(0xff1a6ea8),
+                                                  fontFamily: "Nunito")),
+                                        ),
+                                        onTap: () {
+                                          _controller.clear();
+                                          stack1.clear();
+                                          FocusScope.of(context)
+                                              .requestFocus(new FocusNode());
+                                        },
+                                      ),
+                                    ],
                                   ),
                                   alignment: Alignment.centerRight,
                                 ),
@@ -2262,6 +2315,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         children: [
                                           SvgPicture.asset(
                                             'assets/img/carmover.svg',
+                                            color: Colors.black,
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
@@ -2269,14 +2323,24 @@ class _MyHomePageState extends State<CarCrashForm> {
                                             //height: 700,
                                             height: _large ? 700 : 500,
                                           ),
-                                          Signature(
-                                            controller: _controller,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.9,
-                                            height: _large ? 700 : 500,
-                                            backgroundColor: Colors.transparent,
+                                          Listener(
+                                            onPointerUp:(pointerup){
+                                              stack1.add(_controller.value.toList());
+                                              // print(stack2.length);
+                                              //stack2.removeLast();
+                                            },
+                                            // onPanEnd: (DragEndDetails details1){
+                                            //   print('end of stroke');
+                                            // },
+                                             child: Signature(
+                                              controller: _controller,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.9,
+                                              height: _large ? 700 : 500,
+                                              backgroundColor: Colors.black.withOpacity(0.05),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -2287,6 +2351,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 Text(
                                   "Boat/C/Van/Trlr Survey",
                                   style: TextStyle(
+                                   
                                       fontSize: _large
                                           ? kLargeFontSize
                                           : (_medium
@@ -2296,27 +2361,78 @@ class _MyHomePageState extends State<CarCrashForm> {
                                       fontFamily: "Nunito"),
                                 ),
                                 Align(
-                                  child: GestureDetector(
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 5, 0, 0),
-                                      child: Text("Clear",
-                                          style: TextStyle(
-                                              fontSize: _large
-                                                  ? kLargeFontSize
-                                                  : (_medium
-                                                      ? kMediumFontSize
-                                                      : kSmallFontSize),
-                                              color: Color(0xff1a6ea8),
-                                              fontFamily: "Nunito")),
-                                    ),
-                                    onTap: () {
-                                      _controller1.clear();
-                                      FocusScope.of(context)
-                                          .requestFocus(new FocusNode());
-                                    },
-                                  ),
                                   alignment: Alignment.centerRight,
+                                  child: Row(
+                                     mainAxisAlignment: MainAxisAlignment.center,
+
+                                    children: [
+                                      GestureDetector(
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              10, 5, 10, 0),
+                                          child: Text("Undo",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                  fontSize: _large
+                                                      ? kLargeFontSize
+                                                      : (_medium
+                                                          ? kMediumFontSize
+                                                          : kSmallFontSize),
+                                                  color: Color(0xff1a6ea8),
+                                                  fontFamily: "Nunito")),
+                                        ),
+                                        onTap: () {
+                                          _controller1.clear();
+                                          if(stack2.isNotEmpty)
+                                            {
+                                              //print(stack2[stack2.length-1].length);
+                                              stack2.removeAt(stack2.length-1);
+                                              //print('top popped');
+                                              if(stack2.isNotEmpty)
+                                             { 
+                                               print(stack2.length-1);
+                                               print(stack2[stack2.length-1].length);
+                                              for(Point point in stack2[(stack2.length)-1])
+                                              {
+                                                setState(() {
+                                                 _controller1.addPoint(point);
+                                              });
+                                                //_controller1.addPoint(point)
+                                              }
+                                              print('forend');
+                                              }
+                                      
+                                              }
+                                              
+                                          FocusScope.of(context)
+                                              .requestFocus(new FocusNode());
+                                        },
+                                      ),
+                                      GestureDetector(
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              10, 5, 10, 0),
+                                          child: Text("Clear All",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                  fontSize: _large
+                                                      ? kLargeFontSize
+                                                      : (_medium
+                                                          ? kMediumFontSize
+                                                          : kSmallFontSize),
+                                                  color: Color(0xff1a6ea8),
+                                                  fontFamily: "Nunito")),
+                                        ),
+                                        onTap: () {
+                                          _controller1.clear();
+                                          stack2.clear();
+                                          FocusScope.of(context)
+                                              .requestFocus(new FocusNode());
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  
                                 ),
                                 Padding(
                                     padding: const EdgeInsets.all(18),
@@ -2327,20 +2443,37 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         children: [
                                           SvgPicture.asset(
                                             'assets/img/car-top.svg',
+                                            color: Colors.black,
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
                                                 0.9,
                                             height: _large ? 600 : 400,
                                           ),
-                                          Signature(
-                                            controller: _controller1,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.9,
-                                            height: _large ? 600 : 400,
-                                            backgroundColor: Colors.transparent,
+                                          Listener(
+                                            onPointerUp:(pointerup){
+                                              //pointlist2=;
+                                              stack2.add(_controller1.value.toList());
+                                              //print(_controller.value);
+                                              for(var s in stack2)
+                                                print(s.length);
+                                              //stack2.removeLast();
+                                            },
+                                            // onPanEnd: (details){
+                                            //   stack2.add(_controller1.points);
+                                            //   // stack2.add(_controller1.points);
+                                            //   // print(stack2);
+                                            //   print('end of stroke');
+                                            // },
+                                            child: Signature(
+                                              controller: _controller1,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.9,
+                                              height: _large ? 600 : 400,
+                                              backgroundColor: Colors.black.withOpacity(0.05),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -2474,7 +2607,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                         child: Text(
                                                                             "Clear",
                                                                             style: TextStyle(
-                                                                                fontSize: _large ? kLargeFontSize - 2 : (_medium ? kMediumFontSize - 1 : kSmallFontSize),
+                                                                              fontWeight: FontWeight
+                                                                              .bold,
+                                                                                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize  : kSmallFontSize),
                                                                                 fontFamily: "Nunito",
                                                                                 color: Color(0xff1a6ea8))),
                                                                       ),
@@ -2558,7 +2693,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                         child: Text(
                                                                             "Clear",
                                                                             style: TextStyle(
-                                                                                fontSize: _large ? kLargeFontSize - 2 : (_medium ? kMediumFontSize - 1 : kSmallFontSize),
+                                                                              fontWeight: FontWeight
+                                                                              .bold,
+                                                                                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                                                 fontFamily: "Nunito",
                                                                                 color: Color(0xff1a6ea8))),
                                                                       ),
