@@ -1237,6 +1237,14 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         }
                                                         return 'Required';
                                                       }
+                                                      else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(value)){
+                                                        if (!err) {
+                                                          err = true;
+                                                          sEmailNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Invalid Email';
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -1303,6 +1311,14 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                               .requestFocus();
                                                         }
                                                         return 'Required';
+                                                      }
+                                                      else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(value)){
+                                                        if (!err) {
+                                                          err = true;
+                                                          rEmailNode
+                                                              .requestFocus();
+                                                        }
+                                                        return 'Invalid Email';
                                                       }
                                                     },
                                                   ),
