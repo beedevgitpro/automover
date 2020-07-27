@@ -16,6 +16,12 @@
 <string>This app needs access to location when in the background.</string>
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 <string>This app needs access to location when open and in the background.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Photo library access required for the upload feature</string>
+<key>NSCameraUsageDescription</key>
+<string>Camera required for the upload feature</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Microphone required for the upload feature</string>
 	<key>CFBundleName</key>
 	<string>AUTOMOVER</string>
 	<key>CFBundlePackageType</key>

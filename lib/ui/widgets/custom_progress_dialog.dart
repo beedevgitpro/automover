@@ -19,7 +19,7 @@ bool _isShowing = false;
 BuildContext _context, _dismissingContext;
 ProgressDialogType _progressDialogType;
 bool _isOfflineSubmit;
-bool _barrierDismissible = true, _showLogs = false;
+bool _barrierDismissible = false, _showLogs = false;
 
 TextStyle _progressTextStyle = TextStyle(
         color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w400,fontFamily: 'Nunito'),
