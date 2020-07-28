@@ -2468,7 +2468,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 child: CustomPaint(
                                                   willChange: true,
                                                   
-                                                foregroundPainter: CarSurveyPainter(markers: markers),
+                                                foregroundPainter: CarSurveyPainter(markers: markers,isLarge:_large),
                                                 child:SvgPicture.asset(
                                                     'assets/img/carmover.svg',
                                                     color: Colors.black,

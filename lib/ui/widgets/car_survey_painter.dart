@@ -4,17 +4,18 @@ import 'package:flutter/material.dart';
 
 class CarSurveyPainter extends CustomPainter {
   //2
-  CarSurveyPainter({@required this.markers});
+  CarSurveyPainter({@required this.markers,this.isLarge});
 
   //3
   final List<Map<String,dynamic>> markers;
+  final bool isLarge;
 
   //4
   @override
   void paint(Canvas canvas, Size size) {
     TextStyle textStyle = TextStyle(
     color: Colors.red,
-    fontSize: 28,
+    fontSize: isLarge?28:24,
     fontWeight: FontWeight.bold
   );
   if(markers.isNotEmpty)
