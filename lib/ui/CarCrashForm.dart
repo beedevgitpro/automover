@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_app/constants/constants.dart';
+import 'package:flutter_app/ui/widgets/car_survey_painter.dart';
 import 'package:flutter_app/ui/widgets/responsive_ui.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -52,8 +53,9 @@ class _MyHomePageState extends State<CarCrashForm> {
   final rPhoneNode = FocusNode();
   final rEmailNode = FocusNode();
   final rAddressNode = FocusNode();
+  List<bool> isSelected=[true,false,false,false];
   List stack1=[];
-  List redoStack1=[];
+  List<Map<String,dynamic>> redoStack=[];
   List<Point> pointlist1=[];
   List stack2=[];
   List redoStack2=[];
@@ -62,7 +64,7 @@ class _MyHomePageState extends State<CarCrashForm> {
   bool isConnected = true;
   double _value = 0.0;
   List<String> vehicleCondition = ['Low', 'Fair', 'Good'];
- 
+  List<Map<String,dynamic>> markers=[];
   // double _secondValue = 0.0;
   double _value1 = 0;
   String username = "";
@@ -106,6 +108,10 @@ class _MyHomePageState extends State<CarCrashForm> {
   TextEditingController recieverEmailController = TextEditingController();
   TextEditingController senderAddressController = TextEditingController();
   TextEditingController recieverAddressController = TextEditingController();
+  Offset offset;
+  String markerText='X';
+  List toggleList=['Dent-X','Scratch-S','Rust-R','Cracked-C'];
+  List toggleListMarkers=['X','S','R','C'];
   SignatureController _controller = SignatureController(
     penStrokeWidth: 2,
     penColor: Colors.red,
@@ -179,7 +185,7 @@ class _MyHomePageState extends State<CarCrashForm> {
   @override
   void initState() {
     super.initState();
-    getLocation();
+    //getLocation();
     //print('initstate');
     subscription = Connectivity()
         .onConnectivityChanged
@@ -463,7 +469,7 @@ class _MyHomePageState extends State<CarCrashForm> {
           ? '3'
           : internalCondition.toString() == "Fair" ? '2' : '1',
       'survey_image': "data:image/png;base64," + base64Imagecar,
-      'boat_view_data': "data:image/png;base64," + base64Imageboat,
+      // 'boat_view_data': "data:image/png;base64," + base64Imageboat,
       'comments': othercommentController.text.toString(),
       'sender_signature_data': "data:image/png;base64," + base64Imagesendersign,
       'receiver_signature_data':
@@ -509,7 +515,7 @@ class _MyHomePageState extends State<CarCrashForm> {
 
   Future<CarCrashModel> CrashFormSubmit() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var pr = ProgressDialog(context,isOfflineSubmit:(prefs.getBool('toBeSubmitted') ?? false) );
+    var pr = ProgressDialog(context,isOfflineSubmit:(prefs.getBool('toBeSubmitted') ?? false));
     err = false;
     // print("sender_report" +
     //     senderController.text.toString() +
@@ -570,7 +576,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                     ? '3'.toString()
                     : internalCondition.toString() == "Fair" ? '2'.toString() : '1'.toString(),
                 'survey_image': "data:image/png;base64," + base64Imagecar,
-                'boat_view_data': "data:image/png;base64," + base64Imageboat,
+                // 'boat_view_data': "data:image/png;base64," + base64Imageboat,
                 'comments': othercommentController.text.toString(),
                 'sender_signature_data':
                     "data:image/png;base64," + base64Imagesendersign,
@@ -962,16 +968,16 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     inputFormatters: [
                                                       
                                                     ],
-                                                    validator: (value) {
-                                                      if (value.isEmpty) {
-                                                        if (!err) {
-                                                          err = true;
-                                                          sNameNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Required';
-                                                      }
-                                                    },
+                                                    // validator: (value) {
+                                                    //   if (value.isEmpty) {
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       sNameNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Required';
+                                                    //   }
+                                                    // },
                                                   ),
                                                 ),
                                               ]),
@@ -1031,16 +1037,16 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         errorBorder:
                                                             InputBorder.none,
                                                         hintText: 'Name'),
-                                                    validator: (value) {
-                                                      if (value.isEmpty) {
-                                                        if (!err) {
-                                                          err = true;
-                                                          rNameNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Required';
-                                                      }
-                                                    },
+                                                    // validator: (value) {
+                                                    //   if (value.isEmpty) {
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       rNameNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Required';
+                                                    //   }
+                                                    // },
                                                   ),
                                                 ),
                                               ]),
@@ -1103,16 +1109,16 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       WhitelistingTextInputFormatter
                                                           .digitsOnly
                                                     ],
-                                                    validator: (value) {
-                                                      if (value.isEmpty) {
-                                                        if (!err) {
-                                                          err = true;
-                                                          sPhoneNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Required';
-                                                      }
-                                                    },
+                                                    // validator: (value) {
+                                                    //   if (value.isEmpty) {
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       sPhoneNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Required';
+                                                    //   }
+                                                    // },
                                                   ),
                                                 ),
                                               ]),
@@ -1173,16 +1179,16 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             InputBorder.none,
                                                         hintText:
                                                             'Phone Number'),
-                                                    validator: (value) {
-                                                      if (value.isEmpty) {
-                                                        if (!err) {
-                                                          err = true;
-                                                          rPhoneNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Required';
-                                                      }
-                                                    },
+                                                    // validator: (value) {
+                                                    //   if (value.isEmpty) {
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       rPhoneNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Required';
+                                                    //   }
+                                                    // },
                                                   ),
                                                 ),
                                               ]),
@@ -1228,24 +1234,24 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     inputFormatters: [
                                                       // UpperCaseTextFormatter(),
                                                     ],
-                                                    validator: (value) {
-                                                      if (value.isEmpty) {
-                                                        if (!err) {
-                                                          err = true;
-                                                          sEmailNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Required';
-                                                      }
-                                                      else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(value)){
-                                                        if (!err) {
-                                                          err = true;
-                                                          sEmailNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Invalid Email';
-                                                      }
-                                                    },
+                                                    // validator: (value) {
+                                                    //   if (value.isEmpty) {
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       sEmailNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Required';
+                                                    //   }
+                                                    //   else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(value)){
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       sEmailNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Invalid Email';
+                                                    //   }
+                                                    // },
                                                   ),
                                                 ),
                                               ]),
@@ -1303,24 +1309,24 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         errorBorder:
                                                             InputBorder.none,
                                                         hintText: 'Email'),
-                                                    validator: (value) {
-                                                      if (value.isEmpty) {
-                                                        if (!err) {
-                                                          err = true;
-                                                          rEmailNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Required';
-                                                      }
-                                                      else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(value)){
-                                                        if (!err) {
-                                                          err = true;
-                                                          rEmailNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Invalid Email';
-                                                      }
-                                                    },
+                                                    // validator: (value) {
+                                                    //   if (value.isEmpty) {
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       rEmailNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Required';
+                                                    //   }
+                                                    //   else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(value)){
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       rEmailNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Invalid Email';
+                                                    //   }
+                                                    // },
                                                   ),
                                                 ),
                                               ]),
@@ -1382,16 +1388,16 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     inputFormatters: [
                                                       // UpperCaseTextFormatter(),
                                                     ],
-                                                    validator: (value) {
-                                                      if (value.isEmpty) {
-                                                        if (!err) {
-                                                          err = true;
-                                                          sAddressNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Required';
-                                                      }
-                                                    },
+                                                    // validator: (value) {
+                                                    //   if (value.isEmpty) {
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       sAddressNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Required';
+                                                    //   }
+                                                    // },
                                                   ),
                                                 ),
                                               ]),
@@ -1451,16 +1457,16 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         errorBorder:
                                                             InputBorder.none,
                                                         hintText: 'Address'),
-                                                    validator: (value) {
-                                                      if (value.isEmpty) {
-                                                        if (!err) {
-                                                          err = true;
-                                                          rAddressNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Required';
-                                                      }
-                                                    },
+                                                    // validator: (value) {
+                                                    //   if (value.isEmpty) {
+                                                    //     if (!err) {
+                                                    //       err = true;
+                                                    //       rAddressNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Required';
+                                                    //   }
+                                                    // },
                                                   ),
                                                 ),
                                               ]),
@@ -1764,17 +1770,17 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                       .none,
                                                               hintText:
                                                                   'Speedo'),
-                                                      validator: (value) {
-                                                        if (value.isEmpty) {
-                                                          if (!err) {
-                                                            err = true;
-                                                            speedoNode
-                                                                .requestFocus();
-                                                          }
-                                                          return 'Required';
-                                                        }
-                                                        return null;
-                                                      },
+                                                      // validator: (value) {
+                                                      //   if (value.isEmpty) {
+                                                      //     if (!err) {
+                                                      //       err = true;
+                                                      //       speedoNode
+                                                      //           .requestFocus();
+                                                      //     }
+                                                      //     return 'Required';
+                                                      //   }
+                                                      //   return null;
+                                                      // },
                                                     ),
                                                   ),
                                                 ]),
@@ -2296,22 +2302,59 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 SizedBox(
                                   height: 20,
                                 ),
-                                Text(
-                                  "X-Dent  S-Scratch  C-Cracked  R-Rust",
-                                  style: TextStyle(
-                                      fontSize: _large
-                                          ? kLargeFontSize
-                                          : (_medium
-                                              ? kMediumFontSize
-                                              : kSmallFontSize),
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "Nunito"),
+                                Padding(
+                                  padding:EdgeInsets.symmetric(horizontal:16),
+                                  child: Container(
+                                    padding: EdgeInsets.zero,
+                                    margin: EdgeInsets.zero,
+                                    child: 
+                                    LayoutBuilder(builder: (context, constraints) {
+                                      return ToggleButtons(
+                                      constraints:
+                                            BoxConstraints.tight(Size.fromWidth(constraints.maxWidth / 4.1)),
+                                      selectedColor:Colors.white,
+                                      fillColor: kPrimaryColor,
+                                      children: [
+                                      for (String text in toggleList)
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(vertical:10.0),
+                                        child: Text(
+                                        text,
+                                        style: TextStyle(
+                                            fontSize: _large
+                                                ? kLargeFontSize-1
+                                                : (_medium
+                                                    ? kMediumFontSize-1
+                                                    : kSmallFontSize),
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "Nunito"),
+                                    ),
+                                      ),
+                                    ], isSelected:isSelected,onPressed: (index){
+                                      setState(() {
+                                        for(int i=0;i<isSelected.length;i++)
+                                          {
+                                            if(index==i)
+                                             { 
+                                                isSelected[i]=true;
+                                                markerText=toggleListMarkers[i];
+                                             }
+                                            else
+                                              isSelected[i]=false;
+                                            }
+                                      });
+                                      
+                                    },);
+                                    })
+                                    
+                                  ),
                                 ),
+                                
                                 SizedBox(
                                   height: 10,
                                 ),
                                 Text(
-                                  "Diagram to show major/obvious damage only -damaged vehicles will not be survyed",
+                                  "Diagram to show major/obvious damage only. Damaged vehicles will not be survyed",
                                   style: TextStyle(
                                       fontSize: _large
                                           ? kLargeFontSize - 2
@@ -2322,17 +2365,14 @@ class _MyHomePageState extends State<CarCrashForm> {
                                       fontFamily: "Nunito"),
                                   textAlign: TextAlign.center,
                                 ),
-                                SizedBox(
-                                  height: 10,
-                                ),
+                                SizedBox(height:10),
                                 Align(
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       GestureDetector(
                                         child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              10, 5, 10, 0),
+                                          padding: EdgeInsets.symmetric(horizontal:15),
                                           child: Text("Undo",
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -2345,32 +2385,42 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   fontFamily: "Nunito")),
                                         ),
                                         onTap: () {
-                                          _controller.clear();
-                                          if(stack1.isNotEmpty)
-                                            {
-                                              stack1.removeLast();
-                                              if(stack1.isNotEmpty)
-                                             { 
-                                               //print(stack1[stack1.length-1]);
-                                              for(Point point in stack1[stack1.length-1])
-                                             {
-                                                _controller.addPoint(point);
-                                                }
-                                              }
-                                      
-                                              }
-                                              setState(() {
-                                                
-                                              });
+                                          
+                                          setState(() {
+                                            if(markers.isNotEmpty)
+                                            redoStack.add(markers.removeLast());
+                                          });
                                           FocusScope.of(context)
                                               .requestFocus(new FocusNode());
                                         },
                                       ),
-                                     
+                                     GestureDetector(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(horizontal:15),
+                                          child: Text("Redo",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                  fontSize: _large
+                                                      ? kLargeFontSize
+                                                      : (_medium
+                                                          ? kMediumFontSize
+                                                          : kSmallFontSize),
+                                                  color: Color(0xff1a6ea8),
+                                                  fontFamily: "Nunito")),
+                                        ),
+                                        onTap: () {
+                                          
+                                          setState(() {
+                                            if(redoStack.isNotEmpty)
+                                            markers.add(redoStack.removeLast());
+                                          });
+                                          FocusScope.of(context)
+                                              .requestFocus(new FocusNode());
+                                        },
+                                      ),
                                       GestureDetector(
                                         child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              10, 5, 10, 0),
+                                          padding: EdgeInsets.symmetric(horizontal:15),
                                           child: Text("Clear All",
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -2383,8 +2433,11 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   fontFamily: "Nunito")),
                                         ),
                                         onTap: () {
-                                          _controller.clear();
-                                          stack1.clear();
+                                          //_controller.clear();
+                                          setState(() {
+                                            markers.clear();
+                                            redoStack.clear();
+                                          });
                                           FocusScope.of(context)
                                               .requestFocus(new FocusNode());
                                         },
@@ -2393,181 +2446,201 @@ class _MyHomePageState extends State<CarCrashForm> {
                                   ),
                                   alignment: Alignment.centerRight,
                                 ),
-                                Padding(
-                                    padding: const EdgeInsets.all(18),
-                                    child: RepaintBoundary(
-                                      key: scr,
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/img/carmover.svg',
-                                            color: Colors.black,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            //height: MediaQuery.of(context).size.width/0.9,
-                                            //height: 700,
-                                            height: _large ? 700 : 500,
-                                          ),
-                                          Listener(
-                                            onPointerUp:(pointerup){
-                                              stack1.add(_controller.value.toList());
-                                              // print(stack2.length);
-                                              //stack2.removeLast();
-                                            },
-                                            // onPanEnd: (DragEndDetails details1){
-                                            //   print('end of stroke');
-                                            // },
-                                             child: Signature(
-                                              controller: _controller,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.9,
-                                              height: _large ? 700 : 500,
-                                              backgroundColor: Colors.black.withOpacity(0.05),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )),
                                 SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  "Boat/C/Van/Trlr Survey",
-                                  style: TextStyle(
-                                   
-                                      fontSize: _large
-                                          ? kLargeFontSize
-                                          : (_medium
-                                              ? kMediumFontSize
-                                              : kSmallFontSize),
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "Nunito"),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Row(
-                                     mainAxisAlignment: MainAxisAlignment.center,
-
-                                    children: [
-                                      GestureDetector(
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              10, 5, 10, 0),
-                                          child: Text("Undo",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                  fontSize: _large
-                                                      ? kLargeFontSize
-                                                      : (_medium
-                                                          ? kMediumFontSize
-                                                          : kSmallFontSize),
-                                                  color: Color(0xff1a6ea8),
-                                                  fontFamily: "Nunito")),
-                                        ),
-                                        onTap: () {
-                                          _controller1.clear();
-                                          if(stack2.isNotEmpty)
-                                            {
-                                              //print(stack2[stack2.length-1].length);
-                                              stack2.removeAt(stack2.length-1);
-                                              //print('top popped');
-                                              if(stack2.isNotEmpty)
-                                             { 
-                                               print(stack2.length-1);
-                                               print(stack2[stack2.length-1].length);
-                                              for(Point point in stack2[(stack2.length)-1])
-                                              {
-                                                setState(() {
-                                                 _controller1.addPoint(point);
-                                              });
-                                                //_controller1.addPoint(point)
-                                              }
-                                              print('forend');
-                                              }
-                                      
-                                              }
-                                              
-                                          FocusScope.of(context)
-                                              .requestFocus(new FocusNode());
-                                        },
-                                      ),
-                                      GestureDetector(
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              10, 5, 10, 0),
-                                          child: Text("Clear All",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                  fontSize: _large
-                                                      ? kLargeFontSize
-                                                      : (_medium
-                                                          ? kMediumFontSize
-                                                          : kSmallFontSize),
-                                                  color: Color(0xff1a6ea8),
-                                                  fontFamily: "Nunito")),
-                                        ),
-                                        onTap: () {
-                                          _controller1.clear();
-                                          stack2.clear();
-                                          FocusScope.of(context)
-                                              .requestFocus(new FocusNode());
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  
+                                  height: 10,
                                 ),
                                 Padding(
-                                    padding: const EdgeInsets.all(18),
-                                    child: RepaintBoundary(
-                                      key: scr1,
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/img/car-top.svg',
-                                            color: Colors.black,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.9,
-                                            height: _large ? 600 : 400,
-                                          ),
-                                          Listener(
-                                            onPointerUp:(pointerup){
-                                              //pointlist2=;
-                                              stack2.add(_controller1.value.toList());
-                                              //print(_controller.value);
-                                              for(var s in stack2)
-                                                print(s.length);
-                                              //stack2.removeLast();
-                                            },
-                                            // onPanEnd: (details){
-                                            //   stack2.add(_controller1.points);
-                                            //   // stack2.add(_controller1.points);
-                                            //   // print(stack2);
-                                            //   print('end of stroke');
-                                            // },
-                                            child: Signature(
-                                              controller: _controller1,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.9,
-                                              height: _large ? 600 : 400,
-                                              backgroundColor: Colors.black.withOpacity(0.05),
+                                    padding:EdgeInsets.symmetric(horizontal:18),
+                                    child: Container(
+                                      color: Colors.grey[200],
+                                      child: RepaintBoundary(
+                                        key: scr,
+                                        child:
+                                            GestureDetector(
+                                              onTapDown: (details){
+                                                  //print(details.localPosition.dx);
+                                                  setState(() {
+                                                    markers.add({'text':markerText,'offset':details.localPosition});
+                                                    redoStack.clear();
+                                                    //offset=details.localPosition;
+                                                  });
+                                                },
+                                                child: CustomPaint(
+                                                  willChange: true,
+                                                  
+                                                foregroundPainter: CarSurveyPainter(markers: markers),
+                                                child:SvgPicture.asset(
+                                                    'assets/img/carmover.svg',
+                                                    color: Colors.black,
+                                                    width: MediaQuery.of(context)
+                                                        .size
+                                                        .width,
+                                                    //height: MediaQuery.of(context).size.width/0.9,
+                                                    //height: 700,
+                                                    height: _large ? 700 : 500,
+                                                  ),
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          //   Listener(
+                                          //     onPointerUp:(pointerup){
+                                          //       stack1.add(_controller.value.toList());
+                                          //       // print(stack2.length);
+                                          //       //stack2.removeLast();
+                                          //     },
+                                          //     // onPanEnd: (DragEndDetails details1){
+                                          //     //   print('end of stroke');
+                                          //     // },
+                                          //      child: Signature(
+                                          //       controller: _controller,
+                                          //       width: MediaQuery.of(context)
+                                          //               .size
+                                          //               .width *
+                                          //           0.9,
+                                          //       height: _large ? 700 : 500,
+                                          //       backgroundColor: Colors.black.withOpacity(0.05),
+                                          //     ),
+                                          //   ),
+                                          // ],
+                                        // )
+            
                                       ),
                                     )),
                                 SizedBox(
                                   height: 30,
                                 ),
+                                // Text(
+                                //   "Boat/C/Van/Trlr Survey",
+                                //   style: TextStyle(
+                                   
+                                //       fontSize: _large
+                                //           ? kLargeFontSize
+                                //           : (_medium
+                                //               ? kMediumFontSize
+                                //               : kSmallFontSize),
+                                //       fontWeight: FontWeight.bold,
+                                //       fontFamily: "Nunito"),
+                                // ),
+                                // Align(
+                                //   alignment: Alignment.centerRight,
+                                //   child: Row(
+                                //      mainAxisAlignment: MainAxisAlignment.center,
+
+                                //     children: [
+                                //       GestureDetector(
+                                //         child: Padding(
+                                //           padding: const EdgeInsets.fromLTRB(
+                                //               10, 5, 10, 0),
+                                //           child: Text("Undo",
+                                //               style: TextStyle(
+                                //                 fontWeight: FontWeight.bold,
+                                //                   fontSize: _large
+                                //                       ? kLargeFontSize
+                                //                       : (_medium
+                                //                           ? kMediumFontSize
+                                //                           : kSmallFontSize),
+                                //                   color: Color(0xff1a6ea8),
+                                //                   fontFamily: "Nunito")),
+                                //         ),
+                                //         onTap: () {
+                                //           _controller1.clear();
+                                //           if(stack2.isNotEmpty)
+                                //             {
+                                //               //print(stack2[stack2.length-1].length);
+                                //               stack2.removeAt(stack2.length-1);
+                                //               //print('top popped');
+                                //               if(stack2.isNotEmpty)
+                                //              { 
+                                //                print(stack2.length-1);
+                                //                print(stack2[stack2.length-1].length);
+                                //               for(Point point in stack2[(stack2.length)-1])
+                                //               {
+                                //                 setState(() {
+                                //                  _controller1.addPoint(point);
+                                //               });
+                                //                 //_controller1.addPoint(point)
+                                //               }
+                                //               print('forend');
+                                //               }
+                                      
+                                //               }
+                                              
+                                //           FocusScope.of(context)
+                                //               .requestFocus(new FocusNode());
+                                //         },
+                                //       ),
+                                //       GestureDetector(
+                                //         child: Padding(
+                                //           padding: const EdgeInsets.fromLTRB(
+                                //               10, 5, 10, 0),
+                                //           child: Text("Clear All",
+                                //               style: TextStyle(
+                                //                 fontWeight: FontWeight.bold,
+                                //                   fontSize: _large
+                                //                       ? kLargeFontSize
+                                //                       : (_medium
+                                //                           ? kMediumFontSize
+                                //                           : kSmallFontSize),
+                                //                   color: Color(0xff1a6ea8),
+                                //                   fontFamily: "Nunito")),
+                                //         ),
+                                //         onTap: () {
+                                //           _controller1.clear();
+                                //           stack2.clear();
+                                //           FocusScope.of(context)
+                                //               .requestFocus(new FocusNode());
+                                //         },
+                                //       ),
+                                //     ],
+                                //   ),
+                                  
+                                // ),
+                                // Padding(
+                                //     padding: const EdgeInsets.all(18),
+                                //     child: RepaintBoundary(
+                                //       key: scr1,
+                                //       child: Stack(
+                                //         alignment: Alignment.center,
+                                //         children: [
+                                //           SvgPicture.asset(
+                                //             'assets/img/car-top.svg',
+                                //             color: Colors.black,
+                                //             width: MediaQuery.of(context)
+                                //                     .size
+                                //                     .width *
+                                //                 0.9,
+                                //             height: _large ? 600 : 400,
+                                //           ),
+                                //           Listener(
+                                //             onPointerUp:(pointerup){
+                                //               //pointlist2=;
+                                //               stack2.add(_controller1.value.toList());
+                                //               //print(_controller.value);
+                                //               for(var s in stack2)
+                                //                 print(s.length);
+                                //               //stack2.removeLast();
+                                //             },
+                                //             // onPanEnd: (details){
+                                //             //   stack2.add(_controller1.points);
+                                //             //   // stack2.add(_controller1.points);
+                                //             //   // print(stack2);
+                                //             //   print('end of stroke');
+                                //             // },
+                                //             child: Signature(
+                                //               controller: _controller1,
+                                //               width: MediaQuery.of(context)
+                                //                       .size
+                                //                       .width *
+                                //                   0.9,
+                                //               height: _large ? 600 : 400,
+                                //               backgroundColor: Colors.black.withOpacity(0.05),
+                                //             ),
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     )),
+                                // SizedBox(
+                                //   height: 30,
+                                // ),
                                 Column(
                                   children: [
                                     Padding(
@@ -2617,20 +2690,20 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     textInputAction:
                                                         TextInputAction.done,
                                                   focusNode: commentNode,
-                                                    validator: (text) {
-                                                      if (text == null ||
-                                                          text.isEmpty ||
-                                                          text.trim().isEmpty) {
-                                                         if (!err) {
-                                                          err = true;
-                                                          commentNode
-                                                              .requestFocus();
-                                                        }
-                                                        return 'Required';
+                                                    // validator: (text) {
+                                                    //   if (text == null ||
+                                                    //       text.isEmpty ||
+                                                    //       text.trim().isEmpty) {
+                                                    //      if (!err) {
+                                                    //       err = true;
+                                                    //       commentNode
+                                                    //           .requestFocus();
+                                                    //     }
+                                                    //     return 'Required';
           
-                                                      }
-                                                      return null;
-                                                    },
+                                                    //   }
+                                                    //   return null;
+                                                    // },
                                                     decoration: InputDecoration(
                                                       errorBorder:
                                                           InputBorder.none,
@@ -3212,7 +3285,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 // print("recieversign" +
                                                 //     base64Imagerecieversign.toString());
                                                 await takescrshot();
-                                                await takescrshot1();
+                                                //await takescrshot1();
                                                 await takescrshotrecieverSign();
                                                 await takescrshotsenderSign();
                                                 _autoValidate = false;
@@ -3283,6 +3356,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 isSwitched1 = false;
                                                 isSwitched = false;
                                                 images.clear();
+                                                markers.clear();
+                                                redoStack.clear();
                                                 othercommentController.clear();
                                                 senderAddressController.clear();
                                                 senderEmailController.clear();

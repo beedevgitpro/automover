@@ -48,7 +48,7 @@ class ProgressDialog {
         Widget customBody}) {
     _context = context;
     _progressDialogType = type ?? ProgressDialogType.Normal;
-    _barrierDismissible = isDismissible ?? true;
+    _barrierDismissible = false;
     _isOfflineSubmit=isOfflineSubmit??false;
     _showLogs = showLogs ?? false;
     _customBody = customBody ?? null;
@@ -230,7 +230,7 @@ class _BodyState extends State<_Body> {
             children: <Widget>[
               // row body
                 SizedBox(height: 20.0),
-               _isOfflineSubmit??false?SpinKitFadingCircle(size: 70,
+               _isOfflineSubmit??false?SpinKitDualRing(size: 70,
          color: kPrimaryColor,):loader,
                      SizedBox(height: 8.0),
                     Center(
