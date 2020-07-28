@@ -3423,7 +3423,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imagecar = base64Encode(pngBytes);
-    print(base64Encode(pngBytes));
+    // print(base64Encode(pngBytes));
   }
 
   takescrshot1() async {
@@ -3433,7 +3433,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imageboat = base64Encode(pngBytes);
-    print(base64Encode(pngBytes));
+    // print(base64Encode(pngBytes));
   }
 
   takescrshotrecieverSign() async {
@@ -3442,7 +3442,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imagerecieversign = base64Encode(pngBytes);
-    print(base64Encode(pngBytes));
+    // print(base64Encode(pngBytes));
   }
 
   takescrshotsenderSign() async {
@@ -3451,7 +3451,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imagesendersign = base64Encode(pngBytes);
-    print(base64Encode(pngBytes));
+    // print(base64Encode(pngBytes));
   }
 }
 
