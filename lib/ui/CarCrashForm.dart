@@ -2331,7 +2331,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                 ? kLargeFontSize-1
                                                 : (_medium
                                                     ? kMediumFontSize-1
-                                                    : kSmallFontSize),
+                                                    : kSmallFontSize-2),
                                             fontWeight: FontWeight.bold,
                                             fontFamily: "Nunito"),
                                     ),
