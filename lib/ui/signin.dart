@@ -79,7 +79,6 @@ class _SignInScreenState extends State<SignInScreen> {
         // 'https://automover.beedevstaging.com/api/login',
         body: {'email': username, 'password': password});
       LoginModel loginrespdata = loginModelFromJson(response.body);
-
       if (loginrespdata.status == "success") {
         pr.hide();
 

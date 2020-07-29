@@ -142,7 +142,7 @@ class _MyHomePageState extends State<CarCrashForm> {
       List<String> base64Images=[];
     for(File image in images)
       base64Images.add("'data:image/png;base64," + base64Encode(image.readAsBytesSync()).length.toString()+"'");
-      print('$base64Images');
+      // print('$base64Images');
     });
   }
   _showToast(String message) {
@@ -476,8 +476,8 @@ class _MyHomePageState extends State<CarCrashForm> {
           "data:image/png;base64," + base64Imagerecieversign,
       'images':jsonEncode(base64Images)
     };
-    print(body);
-    print("token="+token);
+    // print(body);
+    // print("token="+token);
     SharedPreferences.getInstance().then((value) {
       List<String> forms = value.getStringList('forms') ?? [];
       forms.add(jsonEncode(body));
@@ -501,6 +501,8 @@ class _MyHomePageState extends State<CarCrashForm> {
       othercommentController.clear();
      senderPhoneController.clear();
      images.clear();
+     redoStack.clear();
+          markers.clear();
           recieverPhoneController.clear();
           senderNameController.clear();
           recieverNameController.clear();
@@ -542,8 +544,10 @@ class _MyHomePageState extends State<CarCrashForm> {
     await pr.show();
     List lst = prefs.getStringList('forms');
     Map<String,String> base64Images={};
+    print(token);
     for(File image in images)
       base64Images['image_${images.indexOf(image)+1}']="data:image/png;base64," + base64Encode(image.readAsBytesSync());
+    print(jsonEncode(base64Images).toString());
     final response = await http.post(
         'https://autoaus.adtestbed.com/api/post-survey',
         // 'https://automover.beedevstaging.com/api/post-survey',
@@ -604,6 +608,8 @@ class _MyHomePageState extends State<CarCrashForm> {
           makeController.clear();
           bookingIdController.clear();
           speedoController.clear();
+          redoStack.clear();
+          markers.clear();
           err = false;
           isSwitched1 = false;
           isSwitched = false;
@@ -2451,36 +2457,37 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 ),
                                 Padding(
                                     padding:EdgeInsets.symmetric(horizontal:18),
-                                    child: Container(
-                                      color: Colors.grey[200],
-                                      child: RepaintBoundary(
+                                    child: RepaintBoundary(
                                         key: scr,
-                                        child:
-                                            GestureDetector(
-                                              onTapDown: (details){
-                                                  //print(details.localPosition.dx);
-                                                  setState(() {
-                                                    markers.add({'text':markerText,'offset':details.localPosition});
-                                                    redoStack.clear();
-                                                    //offset=details.localPosition;
-                                                  });
-                                                },
-                                                child: CustomPaint(
-                                                  willChange: true,
-                                                  
-                                                foregroundPainter: CarSurveyPainter(markers: markers,isLarge:_large),
-                                                child:SvgPicture.asset(
-                                                    'assets/img/carmover.svg',
-                                                    color: Colors.black,
-                                                    width: MediaQuery.of(context)
-                                                        .size
-                                                        .width,
-                                                    //height: MediaQuery.of(context).size.width/0.9,
-                                                    //height: 700,
-                                                    height: _large ? 700 : 500,
+                                              child: Container(
+                                                color: Colors.grey[200],
+                                                child: GestureDetector(
+                                                  onTapDown: (details){
+                                                      //print(details.localPosition.dx);
+                                                      setState(() {
+                                                        markers.add({'text':markerText,'offset':details.localPosition});
+                                                        redoStack.clear();
+                                                        //offset=details.localPosition;vdvf
+                                                      });
+                                                    },
+                                                    child: CustomPaint(
+                                                      willChange: true,
+                                                      
+                                                    foregroundPainter: CarSurveyPainter(markers: markers,isLarge:_large),
+                                                    child:SvgPicture.asset(
+                                                        'assets/img/carmover.svg',
+                                                        color: Colors.black,
+                                                        width: MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                        //height: MediaQuery.of(context).size.width/0.9,
+                                                        //height: 700,
+                                                        height: _large ? 700 : 500,
+                                                      ),
                                                   ),
+                                                ),
                                               ),
-                                            ),
+                                           
                                           //   Listener(
                                           //     onPointerUp:(pointerup){
                                           //       stack1.add(_controller.value.toList());
@@ -2504,7 +2511,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         // )
             
                                       ),
-                                    )),
+                                    ),
                                 SizedBox(
                                   height: 30,
                                 ),
@@ -3212,10 +3219,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                             //     FontWeight.normal),),
                                                             //         ),
                                                             ],
-                                                          ),
-                                                                
-                                                      
-                                                  
+                                                          ), 
                                     ],
                                   ),
                                   ),
@@ -3341,7 +3345,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   _autoValidate = false;
                                                 });
                                                 _formKey.currentState.reset();
-                                                getLocation();
+                                                // getLocation();
                                                 // _showStatusDialog('Thank you for submitting!','Previous Offline Surveys Submitted.', 'Start New Survey');
                                                 _controller.clear();
                                                 err=false;
