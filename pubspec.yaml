@@ -73,7 +73,6 @@ flutter:
     - assets/img/car-top.svg
     - assets/img/logo-blue.png
     - assets/img/logo-new.png
-    - assets/img/car_loader.gif
   fonts:
     - family: Nunito
       fonts:
