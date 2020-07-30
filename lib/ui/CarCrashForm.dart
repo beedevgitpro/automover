@@ -669,22 +669,6 @@ class _MyHomePageState extends State<CarCrashForm> {
       //_showToast("Something Went Wrong" + response.body);
     }
   }
-
-  void handleClick(String value) async {
-    switch (value) {
-      case 'Logout':
-        {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.remove("loggedIn");
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              SIGN_IN, (Route<dynamic> route) => false);
-          break;
-        }
-      case 'Settings':
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
@@ -2330,7 +2314,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                             fontSize: _large
                                                 ? kLargeFontSize-1
                                                 : (_medium
-                                                    ? kMediumFontSize-1
+                                                    ? kMediumFontSize-2
                                                     : kSmallFontSize-2),
                                             fontWeight: FontWeight.bold,
                                             fontFamily: "Nunito"),
