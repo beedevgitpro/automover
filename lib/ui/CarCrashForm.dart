@@ -142,7 +142,7 @@ class _MyHomePageState extends State<CarCrashForm> {
       List<String> base64Images=[];
     for(File image in images)
       base64Images.add("'data:image/png;base64," + base64Encode(image.readAsBytesSync()).length.toString()+"'");
-      // print('$base64Images');
+     
     });
   }
   _showToast(String message) {
@@ -310,83 +310,6 @@ class _MyHomePageState extends State<CarCrashForm> {
     ).show();
   }
 
-  // Future<void> _showStatusDialog(String title, String msg) async {
-  //   return showDialog<void>(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (BuildContext context) {
-  //         return Platform.isAndroid
-  //             ? AlertDialog(
-  //                 title: Text(title,
-  //                     style: TextStyle(
-  //                         fontWeight: FontWeight.bold,
-  //                         fontSize: _large
-  //                             ? kLargeFontSize
-  //                             : (_medium ? kMediumFontSize : kSmallFontSize))),
-  //                 content: Text(msg,
-  //                     style: TextStyle(
-  //                         fontSize: _large
-  //                             ? kLargeFontSize - 2
-  //                             : (_medium ? kMediumFontSize : kSmallFontSize))),
-  //                 actions: <Widget>[
-  //                   FlatButton(
-  //                     child: Text(
-  //                       'OK',
-  //                       style: TextStyle(
-  //                           color: Color(0xff0985ba),
-  //                           fontSize: _large
-  //                               ? kLargeFontSize - 2
-  //                               : (_medium ? kMediumFontSize : kSmallFontSize)),
-  //                     ),
-  //                     onPressed: () {
-  //                       Navigator.of(context).pop();
-  //                     },
-  //                   ),
-  //                 ],
-  //               )
-  //             : CupertinoAlertDialog(
-  //                 title: Text(title,
-  //                     style: TextStyle(
-  //                         fontWeight: FontWeight.bold,
-  //                         fontSize: _large
-  //                             ? kLargeFontSize
-  //                             : (_medium ? kMediumFontSize : kSmallFontSize))),
-  //                 content: Text(msg,
-  //                     style: TextStyle(
-  //                         fontSize: _large
-  //                             ? kLargeFontSize - 2
-  //                             : (_medium ? kMediumFontSize : kSmallFontSize))),
-  //                 actions: <Widget>[
-  //                   FlatButton(
-  //                     child: Text(
-  //                       'OK',
-  //                       style: TextStyle(
-  //                           color: Color(0xff0985ba),
-  //                           fontSize: _large
-  //                               ? kLargeFontSize - 2
-  //                               : (_medium ? kMediumFontSize : kSmallFontSize)),
-  //                     ),
-  //                     onPressed: () {
-  //                       Navigator.of(context).pop();
-  //                     },
-  //                   ),
-  //                 ],
-  //               );
-  //       });
-  // }
-
-  //         DialogButton(
-  //       color: Color(0xff167db3),
-  //       child: Text(
-  //         capitalize('Close'),
-  //         style: TextStyle(color: Colors.white, fontSize: _large?kLargeFontSize:kMediumFontSize),
-  //       ),
-  //       onPressed: () {
-  //         Navigator.pop(context);
-  //         jobRefNode.requestFocus();
-  //       },
-  //     )
-
   void _showLogoutConfirmationDialog() {
     Alert(
       context: context,
@@ -416,11 +339,9 @@ class _MyHomePageState extends State<CarCrashForm> {
           onPressed: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.remove("loggedIn");
-            //prefs.setBool('toBeSubmitted',null);
             Navigator.of(context).pushNamedAndRemoveUntil(
                 SIGN_IN, (Route<dynamic> route) => false);
-            // Navigator.pop(context);
-            //jobRefNode.requestFocus();
+           
           },
         ),
         DialogButton(
@@ -519,28 +440,6 @@ class _MyHomePageState extends State<CarCrashForm> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var pr = ProgressDialog(context,isOfflineSubmit:(prefs.getBool('toBeSubmitted') ?? false));
     err = false;
-    // print("sender_report" +
-    //     senderController.text.toString() +
-    //     "   recevier_report" +
-    //     recieverController.text.toString() +
-    //     "   maked" +
-    //     dropdownValue.toString() +
-    //     "   model" +
-    //     dropdownValue1.toString() +
-    //     "    regocontrller" +
-    //     regoController.text.toString() +
-    //     "    speedo" +
-    //     speedoController.text.toString() +
-    //     "   is_drivable" +
-    //     isSwitched.toString() +
-    //     "   good_inside" +
-    //     isSwitched1.toString() +
-    //     "   textinternal" +
-    //     internalCondition.toString() +
-    //     "    textext" +
-    //     externalCondition.toString() +
-    //     "     othercomment" +
-    //     othercommentController.text.toString());
     await pr.show();
     List lst = prefs.getStringList('forms');
     Map<String,String> base64Images={};
@@ -2217,50 +2116,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                   },
                                                                 ),
                                                               )
-//                                                     SeekBar(
-//                                                       barColor:
-//                                                           Colors.transparent,
-//                                                       thumbColor:
-//                                                           Colors.grey[200],
-//                                                       thumbRadius: 12,
-//                                                       progressWidth: 3,
-//                                                       value: _value1,
-//                                                       secondValue:
-//                                                           _secondValue1,
-//                                                       progressColor:
-//                                                           Colors.transparent,
-//                                                       secondProgressColor:
-//                                                           Colors.transparent,
-//                                                       onStartTrackingTouch: () {
-//                                                         print(
-//                                                             'onStartTrackingTouch');
-//                                                       },
-//                                                       onProgressChanged:
-//                                                           (value) {
-//                                                         print(
-//                                                             'onProgressChanged:$value');
-//                                                         setState(() {
-//                                                           _value1 = value;
-//                                                           if (_value1 >= 0.66) {
-//                                                             internalCondition =
-//                                                                 "Good";
-//                                                           } else if (_value1 <
-//                                                                   0.66 &&
-//                                                               _value1 >= 0.33) {
-//                                                             internalCondition =
-//                                                                 "Fair";
-//                                                           } else
-//                                                             internalCondition = "Low";
-//                                                         });
-//                                                       },
-//                                                       onStopTrackingTouch: () {
-//                                                         print(
-//                                                             'onStopTrackingTouch');
-// //                                            if (!_done) {
-// //                                              _resumeProgressTimer();
-// //                                            }
-//                                                       },
-//                                                     ),
+
                                                             ]),
                                                         flex: 2,
                                                       ),
@@ -2362,17 +2218,18 @@ class _MyHomePageState extends State<CarCrashForm> {
                                     children: [
                                       GestureDetector(
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(horizontal:15),
-                                          child: Text("Undo",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                  fontSize: _large
-                                                      ? kLargeFontSize
-                                                      : (_medium
-                                                          ? kMediumFontSize
-                                                          : kSmallFontSize),
-                                                  color: Color(0xff1a6ea8),
-                                                  fontFamily: "Nunito")),
+                                          padding: EdgeInsets.symmetric(horizontal:10),
+                                          child: Icon(Icons.undo,color:kPrimaryColor,size:_large?40:34),
+                                          // Text("Undo",
+                                          //     style: TextStyle(
+                                          //       fontWeight: FontWeight.bold,
+                                          //         fontSize: _large
+                                          //             ? kLargeFontSize
+                                          //             : (_medium
+                                          //                 ? kMediumFontSize
+                                          //                 : kSmallFontSize),
+                                          //         color: Color(0xff1a6ea8),
+                                          //         fontFamily: "Nunito")),
                                         ),
                                         onTap: () {
                                           
@@ -2386,17 +2243,18 @@ class _MyHomePageState extends State<CarCrashForm> {
                                       ),
                                      GestureDetector(
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(horizontal:15),
-                                          child: Text("Redo",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                  fontSize: _large
-                                                      ? kLargeFontSize
-                                                      : (_medium
-                                                          ? kMediumFontSize
-                                                          : kSmallFontSize),
-                                                  color: Color(0xff1a6ea8),
-                                                  fontFamily: "Nunito")),
+                                          padding: EdgeInsets.symmetric(horizontal:10),
+                                          child: Icon(Icons.redo,color:kPrimaryColor,size:_large?40:34),
+                                          // Text("Redo",
+                                          //     style: TextStyle(
+                                          //       fontWeight: FontWeight.bold,
+                                          //         fontSize: _large
+                                          //             ? kLargeFontSize
+                                          //             : (_medium
+                                          //                 ? kMediumFontSize
+                                          //                 : kSmallFontSize),
+                                          //         color: Color(0xff1a6ea8),
+                                          //         fontFamily: "Nunito")),
                                         ),
                                         onTap: () {
                                           
@@ -2464,35 +2322,13 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         width: MediaQuery.of(context)
                                                             .size
                                                             .width,
-                                                        //height: MediaQuery.of(context).size.width/0.9,
-                                                        //height: 700,
+                                                       
                                                         height: _large ? 700 : 500,
                                                       ),
                                                   ),
                                                 ),
                                               ),
-                                           
-                                          //   Listener(
-                                          //     onPointerUp:(pointerup){
-                                          //       stack1.add(_controller.value.toList());
-                                          //       // print(stack2.length);
-                                          //       //stack2.removeLast();
-                                          //     },
-                                          //     // onPanEnd: (DragEndDetails details1){
-                                          //     //   print('end of stroke');
-                                          //     // },
-                                          //      child: Signature(
-                                          //       controller: _controller,
-                                          //       width: MediaQuery.of(context)
-                                          //               .size
-                                          //               .width *
-                                          //           0.9,
-                                          //       height: _large ? 700 : 500,
-                                          //       backgroundColor: Colors.black.withOpacity(0.05),
-                                          //     ),
-                                          //   ),
-                                          // ],
-                                        // )
+                                        
             
                                       ),
                                     ),
@@ -2717,9 +2553,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         color:
                                                             Color(0xff999999),
                                                       ),
-// labelText: 'Enter
+
                                                     ),
-// onEditingComplete: ()=>print(abc),
+
                                                     maxLines: 8,
                                                   ),
                                                 ),
@@ -3113,7 +2949,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           
                                                   RaisedButton(
                                                     onPressed: ()async{
-                                                      if(images.length<5)
+                                                      if(images.length<10)
                                                       await getImage(ImageSource.camera);
                                                       else
                                                         _showToast('Upload limit reached');
@@ -3152,7 +2988,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                         ],
                                       ),
                                              SizedBox(height: 3,),
-                                              Text('Upload Limit: 5 Images',style: TextStyle(
+                                              Text('Upload Limit: 10 Images',style: TextStyle(
                                                         fontFamily: "Nunito",
                                                         fontSize: _large
                                                             ? kLargeFontSize-2
@@ -3162,8 +2998,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         color: Colors.black54,
                                                         fontWeight:
                                                             FontWeight.normal),),
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                          Wrap(
+                                                            alignment: WrapAlignment.center,
+                                                      
                                                             children: [
                                                               for(File i in images)
                                                               GestureDetector(
@@ -3174,34 +3011,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                                padding: EdgeInsets.all(8.0),
                                                                                child: Image.file(i,width: _width/8,),
                                                                              )
-                                                                  //            Text('View Image',style: TextStyle(
-                                                                  // fontFamily: "Nunito",
-                                                                  // fontSize: _large
-                                                                  //     ? kLargeFontSize-2
-                                                                  //     : (_medium
-                                                                  //         ? kMediumFontSize-1
-                                                                  //         : kSmallFontSize-1),
-                                                                  // color:kPrimaryColor,
-                                                                  // fontWeight:
-                                                                  //     FontWeight.normal),),
+                                                                  
                                                               ),
-                                                            //     SizedBox(width:10),
-                                                            //         GestureDetector(
-                                                            // onTap: (){
-                                                            //   setState(() {
-                                                            //     images.removeWhere((element) => element==i);
-                                                            //   });
-                                                            // },                                                      child: Text('Remove',style: TextStyle(
-                                                            // fontFamily: "Nunito",
-                                                            // fontSize: _large
-                                                            //     ? kLargeFontSize-2
-                                                            //     : (_medium
-                                                            //           ? kMediumFontSize-1
-                                                            //           : kSmallFontSize-1),
-                                                            // color:Colors.red,
-                                                            // fontWeight:
-                                                            //     FontWeight.normal),),
-                                                            //         ),
+                                                            
                                                             ],
                                                           ), 
                                     ],
@@ -3263,24 +3075,13 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   .requestFocus(new FocusNode());
                                               if (_formKey.currentState
                                                   .validate()) {
-                                                // var data = await _controller2.toPngBytes();
-                                                // base64Imagesendersign = base64Encode(data);
-                                                // var data1 = await _controller3.toPngBytes();
-                                                // base64Imagerecieversign =
-                                                //     base64Encode(data1);
-                                                // print("sendersign" +
-                                                //     base64Imagesendersign.toString());
-                                                // print("recieversign" +
-                                                //     base64Imagerecieversign.toString());
+                                              
                                                 await takescrshot();
                                                 //await takescrshot1();
                                                 await takescrshotrecieverSign();
                                                 await takescrshotsenderSign();
                                                 _autoValidate = false;
-                                                // Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-                                                // List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(position.latitude,position.longitude);
-                                                // print(placemark[0].subThoroughfare+", "+placemark[0].thoroughfare +", "+placemark[0].subLocality+", "+placemark[0].locality+", "+placemark[0].administrativeArea+" - "+placemark[0].country+". Pincode: "+placemark[0].postalCode+'.');
-                                                // print(position.longitude);
+                                             
                                                 isConnected
                                                     ? CrashFormSubmit()
                                                     : _saveData();
@@ -3329,8 +3130,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                   _autoValidate = false;
                                                 });
                                                 _formKey.currentState.reset();
-                                                // getLocation();
-                                                // _showStatusDialog('Thank you for submitting!','Previous Offline Surveys Submitted.', 'Start New Survey');
+                                                
                                                 _controller.clear();
                                                 err=false;
                                                 _controller1.clear();
@@ -3411,7 +3211,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imagecar = base64Encode(pngBytes);
-    // print(base64Encode(pngBytes));
+  
   }
 
   takescrshot1() async {
@@ -3421,7 +3221,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imageboat = base64Encode(pngBytes);
-    // print(base64Encode(pngBytes));
+
   }
 
   takescrshotrecieverSign() async {
@@ -3430,7 +3230,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imagerecieversign = base64Encode(pngBytes);
-    // print(base64Encode(pngBytes));
+
   }
 
   takescrshotsenderSign() async {
@@ -3439,7 +3239,6 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imagesendersign = base64Encode(pngBytes);
-    // print(base64Encode(pngBytes));
   }
 }
 
@@ -3453,26 +3252,3 @@ class UpperCaseTextFormatter extends TextInputFormatter {
     );
   }
 }
-//DropdownButton<String>(
-//isExpanded: true,
-//value: dropdownValue,
-//icon: Icon(Icons.keyboard_arrow_down),
-//iconSize: 24,
-//elevation: 10,
-//style: TextStyle(color: Colors.blueAccent),
-//
-//onChanged: (String newValue) {
-//dropdownValue = newValue;
-//setState(() {
-//dropdownValue = newValue;
-//});
-//},
-//items: <String>['Honda','Tesla', 'Maruti', 'Hyundai']
-//.map<DropdownMenuItem<String>>((String value) {
-//return DropdownMenuItem<String>(
-//value: value,
-//child: Text(value,
-//style: TextStyle(fontSize:_large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),fontFamily: "Nunito",),),
-//);
-//}).toList(),
-//),

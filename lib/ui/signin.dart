@@ -80,12 +80,11 @@ class _SignInScreenState extends State<SignInScreen> {
         body: {'email': username, 'password': password});
       LoginModel loginrespdata = loginModelFromJson(response.body);
       if (loginrespdata.status == "success") {
-        pr.hide();
-
+        await pr.hide();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('loggedIn', "true");
         prefs.setString('username', loginrespdata.username);
-        print(response.body);
+        // print(response.body);
         //   prefs.setString('userid', );
         prefs.setString('token_security', loginrespdata.token);
         Scaffold.of(context)
@@ -94,14 +93,14 @@ class _SignInScreenState extends State<SignInScreen> {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(HOME, (Route<dynamic> route) => false);
       } else {
-        pr.hide();
+        await pr.hide();
         // Scaffold
         //     .of(context)
         //     .showSnackBar(SnackBar(content: Text('Invalid Login')));
         _showStatusDialog("Email/Password is Incorrect", null,'OK');
       }
     } catch (e) {
-      pr.hide();
+      await pr.hide();
       // Scaffold
       //     .of(context)
       //     .showSnackBar(SnackBar(content: Text('error'+e.toString())));
