@@ -1901,60 +1901,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                   ),
                                                                 ),
                                                               )
-//                                                     Container(
-//                                                       child: SeekBar(
-//                                                         barColor:
-//                                                             Colors.transparent,
-//                                                         thumbColor:
-//                                                             Colors.grey[200],
-//                                                         thumbRadius: 12,
-//                                                         progressWidth: 3,
-//                                                         value: _value,
-//                                                         secondValue:
-//                                                             _secondValue,
-//                                                         progressColor:
-//                                                             Colors.transparent,
-//                                                         secondProgressColor:
-//                                                             Colors.transparent,
-//                                                         onStartTrackingTouch:
-//                                                             () {
-//                                                           print(
-//                                                               'onStartTrackingTouch');
-// //                                            if (!_done) {
-// //                                              _progressTimer?.cancel();
-// //                                            }
-//                                                         },
-//                                                         onProgressChanged:
-//                                                             (value) {
-//                                                           print(
-//                                                               'onProgressChanged:$value');
-//                                                           _value = value;
-//                                                           setState(() {
-//                                                             if (_value >=
-//                                                                 0.66) {
-//                                                               externalCondition =
-//                                                                   "Good";
-//                                                             } else if (_value <
-//                                                                     0.66 &&
-//                                                                 _value >=
-//                                                                     0.33) {
-//                                                               externalCondition =
-//                                                                   "Fair";
-//                                                             } else
-//                                                               externalCondition =
-//                                                                   "Low";
-//                                                           });
-//                                                         },
-//                                                         onStopTrackingTouch:
-//                                                             () {
-//                                                           print(
-//                                                               'onStopTrackingTouch');
-// //                                            if (!_done) {
-// //                                              _resumeProgressTimer();
-// //                                            }
-//                                                         },
-//                                                       ),
-//                                                     ),
+
                                                             ]),
                                                         flex: 2,
                                                       ),
@@ -2952,7 +2899,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       if(images.length<10)
                                                       await getImage(ImageSource.camera);
                                                       else
-                                                        _showToast('Upload limit reached');
+                                                        _showToast('Upload Limit Reached');
                                                     },
                                                     color: Color(0xff167db3),
                                                     shape: RoundedRectangleBorder(
