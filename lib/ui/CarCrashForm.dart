@@ -2166,7 +2166,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                       GestureDetector(
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(horizontal:10),
-                                          child: Icon(Icons.undo,color:kPrimaryColor,size:_large?40:34),
+                                          child: Icon(Icons.undo,color:kPrimaryColor,size:_large?42:35),
                                           // Text("Undo",
                                           //     style: TextStyle(
                                           //       fontWeight: FontWeight.bold,
@@ -2191,7 +2191,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                      GestureDetector(
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(horizontal:10),
-                                          child: Icon(Icons.redo,color:kPrimaryColor,size:_large?40:34),
+                                          child: Icon(Icons.redo,color:kPrimaryColor,size:_large?42:35),
                                           // Text("Redo",
                                           //     style: TextStyle(
                                           //       fontWeight: FontWeight.bold,
