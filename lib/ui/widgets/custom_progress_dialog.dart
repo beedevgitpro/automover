@@ -237,9 +237,9 @@ class _BodyState extends State<_Body> {
                      SizedBox(height: 8.0),
                     Center(
         child: Text(
-          _isSubmit?'Please Wait while We Record your Survey':_dialogMessage,
+          _isSubmit?'Please Wait while we record your Survey':_dialogMessage,
           textAlign: _textAlign,
-          style: _messageStyle.copyWith(fontSize: _isSubmit?16:28.0),
+          style: _messageStyle.copyWith(fontSize: _isSubmit?18:28.0),
           textDirection: _direction,
         ),
       ),
