@@ -438,15 +438,15 @@ class _MyHomePageState extends State<CarCrashForm> {
 
   Future<CarCrashModel> CrashFormSubmit() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var pr = ProgressDialog(context,isOfflineSubmit:(prefs.getBool('toBeSubmitted') ?? false));
+    var pr = ProgressDialog(context,isSubmit: true);
     err = false;
     await pr.show();
     List lst = prefs.getStringList('forms');
     Map<String,String> base64Images={};
-    print(token);
+    // print(token);
     for(File image in images)
       base64Images['image_${images.indexOf(image)+1}']="data:image/png;base64," + base64Encode(image.readAsBytesSync());
-    print(jsonEncode(base64Images).toString());
+    // print(jsonEncode(base64Images).toString());
     final response = await http.post(
         'https://autoaus.adtestbed.com/api/post-survey',
         // 'https://automover.beedevstaging.com/api/post-survey',

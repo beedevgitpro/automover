@@ -7,7 +7,7 @@ enum ProgressDialogType { Normal, Download }
 
 String _dialogMessage = "Loading...";
 double _progress = 0.0, _maxProgress = 100.0;
-
+bool _isSubmit;
 Widget _customBody;
 
 TextAlign _textAlign = TextAlign.center;
@@ -24,7 +24,7 @@ bool _barrierDismissible = false, _showLogs = false;
 TextStyle _progressTextStyle = TextStyle(
         color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w400,fontFamily: 'Nunito'),
     _messageStyle = TextStyle(
-        color: Colors.black, fontSize: 28.0, fontWeight: FontWeight.w600,fontFamily: 'Nunito');
+        color: Colors.black, fontWeight: FontWeight.w600,fontFamily: 'Nunito');
 
 double _dialogElevation = 8.0, _borderRadius = 8.0;
 Color _backgroundColor = Colors.white;
@@ -42,6 +42,7 @@ class ProgressDialog {
   ProgressDialog(BuildContext context,
       {ProgressDialogType type,
       bool isOfflineSubmit,
+      bool isSubmit,
         bool isDismissible,
         bool showLogs,
         TextDirection textDirection,
@@ -50,6 +51,7 @@ class ProgressDialog {
     _progressDialogType = type ?? ProgressDialogType.Normal;
     _barrierDismissible = false;
     _isOfflineSubmit=isOfflineSubmit??false;
+    _isSubmit=isSubmit??false;
     _showLogs = showLogs ?? false;
     _customBody = customBody ?? null;
     _direction = textDirection ?? TextDirection.ltr;
@@ -220,9 +222,9 @@ class _BodyState extends State<_Body> {
 
     return _customBody ??
         Container(
-          width: 170,
-          height: 170,
-          //padding: _dialogPadding,
+          width: _isSubmit?250:170,
+          height:  _isSubmit?200:170,
+          padding: _isSubmit?_dialogPadding:EdgeInsets.zero,
           alignment: Alignment.center,
           child: Column(
             //mainAxisSize: MainAxisSize.min,
@@ -235,9 +237,9 @@ class _BodyState extends State<_Body> {
                      SizedBox(height: 8.0),
                     Center(
         child: Text(
-          _isOfflineSubmit??false?'Syncing':_dialogMessage,
+          _isSubmit?'Please Wait while We Record your Survey':_dialogMessage,
           textAlign: _textAlign,
-          style: _messageStyle,
+          style: _messageStyle.copyWith(fontSize: _isSubmit?16:28.0),
           textDirection: _direction,
         ),
       ),
