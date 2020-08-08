@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 // import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_app/constants/constants.dart';
@@ -136,12 +137,13 @@ class _MyHomePageState extends State<CarCrashForm> {
   final picker = ImagePicker();
   FlutterToast flutterToast;
       Future getImage(ImageSource source) async {
-    final pickedFile = await picker.getImage(source: source,imageQuality: 60);
+    final pickedFile = await picker.getImage(source: source,imageQuality: 30);
     setState(() {
+      print(pickedFile.path);
       images.add(File(pickedFile.path));
       List<String> base64Images=[];
     for(File image in images)
-      base64Images.add("'data:image/png;base64," + base64Encode(image.readAsBytesSync()).length.toString()+"'");
+      base64Images.add("'data:image/jpeg;base64," + base64Encode(image.readAsBytesSync()).length.toString()+"'");
      
     });
   }
@@ -361,11 +363,11 @@ class _MyHomePageState extends State<CarCrashForm> {
     ).show();
   }
 
-  void _saveData() {
-    Map<String,String> base64Images={};
-    for(File image in images)
-      base64Images['image_${images.indexOf(image)+1}']="data:image/png;base64," + base64Encode(image.readAsBytesSync());
-    
+  void _saveData() async{
+    // Map<String,String> base64Images={};
+    // for(File image in images)
+    //   base64Images['image_${images.indexOf(image)+1}']="data:image/png;base64," + base64Encode(image.readAsBytesSync());
+    List<String> imgPaths=[];
     Map body = {
       'user_id': '1',
       'job_no': bookingIdController.text.toString(),
@@ -395,14 +397,24 @@ class _MyHomePageState extends State<CarCrashForm> {
       'sender_signature_data': "data:image/png;base64," + base64Imagesendersign,
       'receiver_signature_data':
           "data:image/png;base64," + base64Imagerecieversign,
-      'images':jsonEncode(base64Images)
+      // 'images':jsonEncode(base64Images)
+      // 'images': [
+                      
+                     
+      //                   // http.MultipartFile('image_${images.indexOf(img)+1}', img.readAsBytes().asStream(), img.lengthSync(), filename: img.path.split("/").last)
+      //               ]
     };
+
     // print(body);
     // print("token="+token);
+    for(File img in images){
+      imgPaths.add(img.path);
+    }
     SharedPreferences.getInstance().then((value) {
       List<String> forms = value.getStringList('forms') ?? [];
       forms.add(jsonEncode(body));
       value.setStringList('forms', forms);
+      value.setStringList('imgPaths',imgPaths);
       value.setBool('toBeSubmitted', true);
     });
     setState(() {
@@ -437,6 +449,7 @@ class _MyHomePageState extends State<CarCrashForm> {
   }
 
   Future<CarCrashModel> CrashFormSubmit() async {
+     Dio dio = new Dio();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var pr = ProgressDialog(context,isSubmit: true);
     err = false;
@@ -444,19 +457,16 @@ class _MyHomePageState extends State<CarCrashForm> {
     List lst = prefs.getStringList('forms');
     Map<String,String> base64Images={};
     // print(token);
+    var start=DateTime.now();
     for(File image in images)
-      base64Images['image_${images.indexOf(image)+1}']="data:image/png;base64," + base64Encode(image.readAsBytesSync());
+      base64Images['image_${images.indexOf(image)+1}']="data:image/jpeg;base64," + base64Encode(image.readAsBytesSync());
     // print(jsonEncode(base64Images).toString());
-    final response = await http.post(
-        'https://autoaus.adtestbed.com/api/post-survey',
-        // 'https://automover.beedevstaging.com/api/post-survey',
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-        body: (prefs.getBool('toBeSubmitted') ?? false)
-            ? jsonDecode(lst[0])
-            : {
-                'user_id': '1',
+    print(DateTime.now().difference(start));
+    // var req = http.MultipartRequest('POST', Uri.parse('https://automover.beedevstaging.com/api/post-survey'));
+    FormData formData=FormData.fromMap({
+                if(prefs.getBool('toBeSubmitted') ?? false) ...jsonDecode(lst[0])
+                else
+                ...{'user_id': '1',
                 'job_no': bookingIdController.text.toString(),
                 'sender_name': senderNameController.text.toString(),
                 'reciever_name': recieverNameController.text.toString(),
@@ -478,22 +488,85 @@ class _MyHomePageState extends State<CarCrashForm> {
                 'interior_condition': internalCondition.toString() == "Low"
                     ? '3'.toString()
                     : internalCondition.toString() == "Fair" ? '2'.toString() : '1'.toString(),
-                'survey_image': "data:image/png;base64," + base64Imagecar,
+                'survey_image': "data:image/jpeg;base64," + base64Imagecar,
                 // 'boat_view_data': "data:image/png;base64," + base64Imageboat,
                 'comments': othercommentController.text.toString(),
                 'sender_signature_data':
-                    "data:image/png;base64," + base64Imagesendersign,
+                    "data:image/jpeg;base64," + base64Imagesendersign,
                 'receiver_signature_data':
-                    "data:image/png;base64," + base64Imagerecieversign,
-                    'images': jsonEncode(base64Images)
+                    "data:image/jpeg;base64," + base64Imagerecieversign,},
+                    'images': [
+                      if(prefs.getBool('toBeSubmitted') ?? false)
+                      for(String imgPath in prefs.getStringList('imgPaths'))
+                      await MultipartFile.fromFile(imgPath,
+                            filename: 'image${prefs.getStringList('imgPaths').indexOf(imgPath)+1}.jpg')
+                      else
+                      for(File img in images)
+                     await MultipartFile.fromFile(img.path,
+                  filename: 'image_${images.indexOf(img)+1}.jpg')
+                       
+                    ]
               });
+            // for(File img in images)
+            // {
+            //   // var fileLen=await img.length;
+            //   var multipartFileSign = http.MultipartFile('image_${images.indexOf(img)+1}', img.readAsBytes().asStream(), img.lengthSync(), filename: img.path.split("/").last);
+            //   req.files.add(multipartFileSign);
+            // }
+            // final response = await req.send();
+    // final response = await http.post(
+    //     // 'https://autoaus.adtestbed.com/api/post-survey',
+    //     'https://automover.beedevstaging.com/api/post-survey',
+    //     headers: {
+    //       'Authorization': 'Bearer $token',
+    //     },
+    //     body: (prefs.getBool('toBeSubmitted') ?? false)
+    //         ? jsonDecode(lst[0])
+    //         : {
+    //             'user_id': '1',
+    //             'job_no': bookingIdController.text.toString(),
+    //             'sender_name': senderNameController.text.toString(),
+    //             'reciever_name': recieverNameController.text.toString(),
+    //             'sender_phone': senderPhoneController.text.toString(),
+    //             'reciever_phone': recieverPhoneController.text.toString(),
+    //             'sender_email': senderEmailController.text.toString(),
+    //             'reciever_email': recieverEmailController.text.toString(),
+    //             'sender_address': senderAddressController.text.toString(),
+    //             'reciever_address': recieverAddressController.text.toString(),
+    //             'maked': makeController.text.toString(),
+    //             'model': modelController.text.toString(),
+    //             'rego': regoController.text.toString(),
+    //             'speedo': speedoController.text.toString(),
+    //             'is_drivable': !isSwitched ? '2'.toString() : '1'.toString(),
+    //             'goods_inside': !isSwitched1 ? '2'.toString() : '1'.toString(),
+    //             'external_condition': externalCondition.toString() == "Low"
+    //                 ? '3'.toString()
+    //                 : externalCondition.toString() == "Fair" ? '2'.toString() : '1'.toString(),
+    //             'interior_condition': internalCondition.toString() == "Low"
+    //                 ? '3'.toString()
+    //                 : internalCondition.toString() == "Fair" ? '2'.toString() : '1'.toString(),
+    //             'survey_image': "data:image/png;base64," + base64Imagecar,
+    //             // 'boat_view_data': "data:image/png;base64," + base64Imageboat,
+    //             'comments': othercommentController.text.toString(),
+    //             'sender_signature_data':
+    //                 "data:image/png;base64," + base64Imagesendersign,
+    //             'receiver_signature_data':
+    //                 "data:image/png;base64," + base64Imagerecieversign,
+    //                 'images': jsonEncode(base64Images)
+    //           });
     try {
-      print("carcrashresponse" + response.body.toString());
-      CarCrashModel carCrashModel = carCrashModelFromJson(response.body);
-      print("carcrashresponse" + response.body.toString());
-      if (carCrashModel.status == "success") {
+      final response = await dio.post(
+        // 'https://automover.beedevstaging.com/api/post-survey',
+        'https://autoaus.adtestbed.com/api/post-survey',
+        data: formData,
+        options: Options(headers: {
+          "Accept": "application/json",
+          'Authorization': 'Bearer $token',
+        }));
+      print("carcrashresponse1" + response.statusCode.toString());
+      // CarCrashModel carCrashModel = carCrashModelFromJson(jsonDecode(response.data));
+      if (response.statusCode==200) {
         prefs.setString('forms', null);
-        // pr.hide();
         pr.hide();
         setState(() {
           _formKey.currentState.reset();
@@ -544,11 +617,6 @@ class _MyHomePageState extends State<CarCrashForm> {
               "Survey Submitted", 'Start a New Survey');
         }
 
-//        SharedPreferences prefs = await SharedPreferences.getInstance();
-//        prefs.setString('loggedIn', "true");
-//        //   prefs.setString('userid', );
-//        prefs.setString('token_security',singinrespdata.token);
-
       } else {
         pr.hide();
         prefs.setString('forms', null);
@@ -556,16 +624,12 @@ class _MyHomePageState extends State<CarCrashForm> {
             ? _showStatusDialog(
                 "Couldn't Submit Saved Surveys", null, 'Close')
             : _showStatusDialog(
-                "Couldn't Submit Surveys", carCrashModel.status.toString(), 'Close');
-        //prefs.setBool('toBeSubmitted',false);
-        //_showToast(carCrashModel.status);
+                "Couldn't Submit Surveys", '', 'Close');
       }
-    } catch (e) {
+    } on DioError catch (e) {
       pr.hide();
-      _showStatusDialog("Couldn't Submit Surveys",null, 'Close');
-      print(e);
-      //prefs.setBool('toBeSubmitted',false);
-      //_showToast("Something Went Wrong" + response.body);
+      _showStatusDialog("Couldn't Submit Surveys",e.response.statusMessage, 'Close');
+      print(e.response.statusMessage);
     }
   }
   @override
