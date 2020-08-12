@@ -185,6 +185,12 @@ class _MyHomePageState extends State<CarCrashForm> {
     print(position.longitude); 
   }
   @override
+   void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
+  @override
   void initState() {
     super.initState();
     //getLocation();
@@ -629,7 +635,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     } on DioError catch (e) {
       pr.hide();
       _showStatusDialog("Couldn't Submit Surveys",e.response.statusMessage, 'Close');
-      print(e.response.statusMessage);
+      print(e.response);
     }
   }
   @override
@@ -2307,7 +2313,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                   height: 8,
                                 ),
                                 Padding(
-                                    padding:EdgeInsets.symmetric(horizontal:18),
+                                    padding:EdgeInsets.symmetric(horizontal:10),
                                     child: RepaintBoundary(
                                         key: scr,
                                               child: Container(
@@ -2326,7 +2332,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       
                                                     foregroundPainter: CarSurveyPainter(markers: markers,isLarge:_large),
                                                     child:SvgPicture.asset(
-                                                        'assets/img/carmover.svg',
+                                                        'assets/img/automover.svg',
                                                         color: Colors.black,
                                                         width: MediaQuery.of(context)
                                                             .size
@@ -2339,7 +2345,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                       ),
                                     ),
                                 SizedBox(
-                                  height: 8,
+                                  height: 0,
                                 ),
                                 // Text(
                                 //   "Boat/C/Van/Trlr Survey",
@@ -3017,7 +3023,6 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                                padding: EdgeInsets.all(8.0),
                                                                                child: Image.file(i,width: _width/8,),
                                                                              )
-                                                                  
                                                               ),
                                                             
                                                             ],
