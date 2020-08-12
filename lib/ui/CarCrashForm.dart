@@ -445,13 +445,13 @@ class _MyHomePageState extends State<CarCrashForm> {
           recieverEmailController.clear();
     });
     _showStatusDialog('Survey Saved Offline',
-        'Survey will be submitted when Online', 'Start a New Survey');
+        'Survey will be submitted when you\'re Connected', 'Start a New Survey');
   }
 
   Future<CarCrashModel> CrashFormSubmit() async {
      Dio dio = new Dio();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var pr = ProgressDialog(context,isSubmit: true);
+    var pr = ProgressDialog(context,isSubmit: true,isOfflineSubmit: prefs.getBool('toBeSubmitted') ?? false);
     err = false;
     await pr.show();
     List lst = prefs.getStringList('forms');
@@ -1766,19 +1766,17 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     flex: 2,
                                                     child: Transform.scale(
                                                       scale: _large ? 1.5 : 1.2,
-                                                      child: Switch.adaptive(
+                                                      child: CupertinoSwitch(
                                                         value: isSwitched,
                                                         onChanged: (value) {
                                                           setState(() {
                                                             isSwitched = value;
                                                           });
                                                         },
-                                                        activeTrackColor:
-                                                            Colors.teal,
+                                                        // activeTrackColor:
+                                                        //     Colors.teal,
                                                         activeColor:
-                                                            Platform.isAndroid
-                                                                ? Colors.white
-                                                                : Colors.teal,
+                                                             Colors.teal,
                                                       ),
                                                     ),
                                                   )
@@ -1810,19 +1808,19 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     flex: 2,
                                                     child: Transform.scale(
                                                       scale: _large ? 1.5 : 1.2,
-                                                      child: Switch.adaptive(
+                                                      child: CupertinoSwitch(
                                                         value: isSwitched1,
                                                         onChanged: (value) {
                                                           setState(() {
                                                             isSwitched1 = value;
                                                           });
                                                         },
-                                                        activeTrackColor:
-                                                            Colors.teal,
+                                                        // activeTrackColor:
+                                                        //     Colors.teal,
                                                         activeColor:
-                                                            Platform.isAndroid
-                                                                ? Colors.white
-                                                                : Colors.teal,
+                                                            // Platform.isAndroid
+                                                            //     ? Colors.white:
+                                                                 Colors.teal,
                                                       ),
                                                     ),
                                                   )
@@ -2306,7 +2304,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                   alignment: Alignment.centerRight,
                                 ),
                                 SizedBox(
-                                  height: 10,
+                                  height: 8,
                                 ),
                                 Padding(
                                     padding:EdgeInsets.symmetric(horizontal:18),
@@ -2333,18 +2331,15 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         width: MediaQuery.of(context)
                                                             .size
                                                             .width,
-                                                       
                                                         height: _large ? 700 : 500,
                                                       ),
                                                   ),
                                                 ),
                                               ),
-                                        
-            
                                       ),
                                     ),
                                 SizedBox(
-                                  height: 30,
+                                  height: 8,
                                 ),
                                 // Text(
                                 //   "Boat/C/Van/Trlr Survey",
@@ -2944,7 +2939,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 //   ),
                                 // ),
                                 SizedBox(
-                                  height: 30,
+                                  height: 10,
                                 ),
                                 Container(
                                     child:
@@ -3031,7 +3026,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                   ),
                                   ),
                                 SizedBox(
-                                  height: 30,
+                                  height: 18.0,
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
