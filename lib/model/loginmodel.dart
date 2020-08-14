@@ -13,16 +13,19 @@ class LoginModel {
     this.status,
     this.token,
     this.username,
+    this.id
   });
 
   String status;
+  int id;
   String token;
   String username;
 
   factory LoginModel.fromJson(Map<String, dynamic> json) => LoginModel(
     status: json["status"],
     token: json["token"],
-    username: json["status"]!='success'?"":json['user_data']['name']
+    username: json["status"]!='success'?"":json['user_data']['name'],
+    id:json["status"]!='success'?"":json['user_data']['id']
   );
 
   Map<String, dynamic> toJson() => {

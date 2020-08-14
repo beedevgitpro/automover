@@ -272,10 +272,12 @@ class _MyHomePageState extends State<CarCrashForm> {
         )
       ],).show();
   }
+  int id;
   void fetchuser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       username = prefs.getString('username');
+      id=prefs.getInt('id');
       token = prefs.getString('token_security');
     });
   }
@@ -375,7 +377,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     //   base64Images['image_${images.indexOf(image)+1}']="data:image/png;base64," + base64Encode(image.readAsBytesSync());
     List<String> imgPaths=[];
     Map body = {
-      'user_id': '1',
+      'user_id': id,
       'job_no': bookingIdController.text.toString(),
       'sender_name': senderNameController.text.toString(),
       'reciever_name': recieverNameController.text.toString(),
@@ -462,7 +464,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     await pr.show();
     List lst = prefs.getStringList('forms');
     Map<String,String> base64Images={};
-    // print(token);
+    print('id'+id.toString());
     var start=DateTime.now();
     for(File image in images)
       base64Images['image_${images.indexOf(image)+1}']="data:image/jpeg;base64," + base64Encode(image.readAsBytesSync());
@@ -472,7 +474,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     FormData formData=FormData.fromMap({
                 if(prefs.getBool('toBeSubmitted') ?? false) ...jsonDecode(lst[0])
                 else
-                ...{'user_id': '1',
+                ...{'user_id': id,
                 'job_no': bookingIdController.text.toString(),
                 'sender_name': senderNameController.text.toString(),
                 'reciever_name': recieverNameController.text.toString(),

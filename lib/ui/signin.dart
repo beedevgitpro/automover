@@ -78,12 +78,14 @@ class _SignInScreenState extends State<SignInScreen> {
         'https://autoaus.adtestbed.com/api/login',
         // 'https://automover.beedevstaging.com/api/login',
         body: {'email': username, 'password': password});
+        print(response.body);
       LoginModel loginrespdata = loginModelFromJson(response.body);
       if (loginrespdata.status == "success") {
         await pr.hide();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('loggedIn', "true");
         prefs.setString('username', loginrespdata.username);
+        prefs.setInt('id', loginrespdata.id);
         // print(response.body);
         //   prefs.setString('userid', );
         prefs.setString('token_security', loginrespdata.token);
