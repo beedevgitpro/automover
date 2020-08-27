@@ -75,8 +75,9 @@ class _SignInScreenState extends State<SignInScreen> {
     await pr.show();
     try{
     final response = await http.post(
-        'https://autoaus.adtestbed.com/api/login',
-        // 'https://automover.beedevstaging.com/api/login',
+      
+        // 'https://autoaus.adtestbed.com/api/login',
+        'https://survey.automover.com.au/api/login',
         body: {'email': username, 'password': password});
         print(response.body);
       LoginModel loginrespdata = loginModelFromJson(response.body);
@@ -211,7 +212,7 @@ class _SignInScreenState extends State<SignInScreen> {
             //         : (_medium ? _height / 25 : _height / 20)),
             child: Image.asset(
               'assets/img/logo.png',
-              height: _large?_width / 3.2:(_medium?_width /2.4:_width/1.9),
+              height: _large?_width / 3.2:(_medium?_width /2.4:_width/2.1),
               width: _large?_width / 3.0:(_medium?_width /2.2:_width/2),
             ),
           ),
