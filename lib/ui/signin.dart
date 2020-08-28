@@ -107,7 +107,7 @@ class _SignInScreenState extends State<SignInScreen> {
       // Scaffold
       //     .of(context)
       //     .showSnackBar(SnackBar(content: Text('error'+e.toString())));
-      _showStatusDialog("Something Went Wrong", e.toString(),'OK');
+      _showStatusDialog("Email/Password is Incorrect", null,'OK');
     }
   }
 
@@ -212,8 +212,8 @@ class _SignInScreenState extends State<SignInScreen> {
             //         : (_medium ? _height / 25 : _height / 20)),
             child: Image.asset(
               'assets/img/logo.png',
-              height: _large?_width / 3.2:(_medium?_width /2.4:_width/2.1),
-              width: _large?_width / 3.0:(_medium?_width /2.2:_width/2),
+              height: _large?_width / 3.2:(_medium?_width /2.4:_width/2.2),
+              width: _large?_width / 3.0:(_medium?_width /2.2:_width/2.1),
             ),
           ),
         ),
