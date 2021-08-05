@@ -43,43 +43,55 @@ class _SignInScreenState extends State<SignInScreen> {
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> _key = GlobalKey();
 
-  void _showStatusDialog(String title, String msg, String btnText){
-    Alert(context: context, title: title,desc: msg,
-    style: AlertStyle(
-      isOverlayTapDismiss: false,
-     animationType: AnimationType.grow,
-     isCloseButton: false, 
-     titleStyle: TextStyle(fontSize:_large?kLargeFontSize+6:kMediumFontSize+4),
-        descStyle: TextStyle(fontSize:_large?kLargeFontSize+2:kMediumFontSize+2),
-    ),
-    image: Image.asset('assets/img/logo-new.png',width: _width*0.60,),
-    buttons: [
+  void _showStatusDialog(String title, String msg, String btnText) {
+    Alert(
+      context: context,
+      title: title,
+      desc: msg,
+      style: AlertStyle(
+        isOverlayTapDismiss: false,
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+        titleStyle: TextStyle(
+            fontSize: _large ? kLargeFontSize + 6 : kMediumFontSize + 4),
+        descStyle: TextStyle(
+            fontSize: _large ? kLargeFontSize + 2 : kMediumFontSize + 2),
+      ),
+      image: Image.asset(
+        'assets/img/logo-new.png',
+        width: _width * 0.60,
+      ),
+      buttons: [
         DialogButton(
           color: Color(0xff167db3),
           child: Text(
             'Close'.toUpperCase(),
-            style: TextStyle(color: Colors.white, fontSize:_large?kLargeFontSize:kMediumFontSize),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: _large ? kLargeFontSize : kMediumFontSize),
           ),
           onPressed: () {
             Navigator.pop(context);
             // jobRefNode.requestFocus();
           },
         )
-      ],).show();
-    
+      ],
+    ).show();
   }
 
   Future<LoginModel> login(username, password) async {
     ProgressDialog pr;
     pr = new ProgressDialog(context, isDismissible: false);
     await pr.show();
-    try{
-    final response = await http.post(
-      
-        // 'https://autoaus.adtestbed.com/api/login',
-        'https://survey.automover.com.au/api/login',
-        body: {'email': username, 'password': password});
-        print(response.body);
+    try {
+      var url = Uri.parse('https://survey.automover.com.au/api/login');
+
+      final response = await http.post(
+
+          // 'https://autoaus.adtestbed.com/api/login',
+          url,
+          body: {'email': username, 'password': password});
+      print(response.body);
       LoginModel loginrespdata = loginModelFromJson(response.body);
       if (loginrespdata.status == "success") {
         await pr.hide();
@@ -90,8 +102,13 @@ class _SignInScreenState extends State<SignInScreen> {
         // print(response.body);
         //   prefs.setString('userid', );
         prefs.setString('token_security', loginrespdata.token);
-        Scaffold.of(context)
-            .showSnackBar(SnackBar(content: Text('Login Successful',style: TextStyle(color: Colors.white, fontSize: _large?kLargeFontSize:kMediumFontSize),)));
+        Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(
+          'Login Successful',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: _large ? kLargeFontSize : kMediumFontSize),
+        )));
 
         Navigator.of(context)
             .pushNamedAndRemoveUntil(HOME, (Route<dynamic> route) => false);
@@ -100,14 +117,14 @@ class _SignInScreenState extends State<SignInScreen> {
         // Scaffold
         //     .of(context)
         //     .showSnackBar(SnackBar(content: Text('Invalid Login')));
-        _showStatusDialog("Email/Password is Incorrect", null,'OK');
+        _showStatusDialog("Email/Password is Incorrect", null, 'OK');
       }
     } catch (e) {
       await pr.hide();
       // Scaffold
       //     .of(context)
       //     .showSnackBar(SnackBar(content: Text('error'+e.toString())));
-      _showStatusDialog("Email/Password is Incorrect", null,'OK');
+      _showStatusDialog("Email/Password is Incorrect", null, 'OK');
     }
   }
 
@@ -212,8 +229,12 @@ class _SignInScreenState extends State<SignInScreen> {
             //         : (_medium ? _height / 25 : _height / 20)),
             child: Image.asset(
               'assets/img/logo.png',
-              height: _large?_width / 3.2:(_medium?_width /2.4:_width/2.2),
-              width: _large?_width / 3.0:(_medium?_width /2.2:_width/2.1),
+              height: _large
+                  ? _width / 3.2
+                  : (_medium ? _width / 2.4 : _width / 2.2),
+              width: _large
+                  ? _width / 3.0
+                  : (_medium ? _width / 2.2 : _width / 2.1),
             ),
           ),
         ),
@@ -352,8 +373,7 @@ class _SignInScreenState extends State<SignInScreen> {
           isConnected
               ? login(emailController.text.toString(),
                   passwordController.text.toString())
-              : _showStatusDialog(
-                  "No Internet Connection", null,"OK");
+              : _showStatusDialog("No Internet Connection", null, "OK");
         }
       },
       textColor: Colors.white,

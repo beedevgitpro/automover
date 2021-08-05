@@ -14,6 +14,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
+
 class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -26,16 +27,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   double _pixelRatio;
   bool _large;
   bool _medium;
-  bool isConnected=true;
+  bool isConnected = true;
   var subscription;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController userNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmpasswordController = TextEditingController();
-
-
-
 
   FlutterToast flutterToast;
 
@@ -46,7 +44,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-
       setState(() {
         if (result.toString() == "ConnectivityResult.none") {
           isConnected = false;
@@ -73,9 +70,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
           SizedBox(
             width: 12.0,
           ),
-          Text(message,style: TextStyle(color: Colors.white,fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),),
+          Text(
+            message,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
+          ),
         ],
-      ), 
+      ),
     );
     flutterToast.showToast(
       child: toast,
@@ -84,19 +88,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Future<LoginModel> SignUP(username,email,password,confirmpassword) async {
+  Future<LoginModel> SignUP(username, email, password, confirmpassword) async {
     ProgressDialog pr;
-    pr = new ProgressDialog(context,isDismissible: false);
+    pr = new ProgressDialog(context, isDismissible: false);
     await pr.show();
-
-    final response = await http.post(
-        'https://autoaus.adtestbed.com/api/register',
-        body: {'name':username, 'email': email,'password':password,'c_password':confirmpassword}
-    );
+    var url = Uri.parse('https://survey.automover.com.au/api/register');
+    final response = await http.post(url, body: {
+      'name': username,
+      'email': email,
+      'password': password,
+      'c_password': confirmpassword
+    });
 
     try {
       LoginModel singinrespdata = loginModelFromJson(response.body);
-      print("signi"+singinrespdata.toString());
+      print("signi" + singinrespdata.toString());
       if (singinrespdata.status == "success") {
         pr.hide();
         Navigator.of(context).pop();
@@ -107,70 +113,56 @@ class _SignUpScreenState extends State<SignUpScreen> {
 //        //   prefs.setString('userid', );
 //        prefs.setString('token_security',singinrespdata.token);
 
-
-
-      }
-      else {
+      } else {
         pr.hide();
         _showToast(singinrespdata.status);
       }
-    }
-    catch(e)
-    {
+    } catch (e) {
       pr.hide();
-      _showStatusDialog("Email is Already Registered",null);
-
+      _showStatusDialog("Email is Already Registered", null);
     }
-
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
     _pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    _large =  ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
-    _medium =  ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
-
-
-
-
+    _large = ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
+    _medium = ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
 
     return Material(
       child: Scaffold(
-         key: _scaffoldKey,
-        body: Builder(
-          builder:  (ctx) => Container(
-            height: _height,
-            width: _width,
-            margin: EdgeInsets.only(bottom: 5),
-            child: GestureDetector(
-              onTap: (){
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-               child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    clipShape(),
-                    registerTextRow(),
-                    // createAccountTextRow(),
-                    form(),
-                    SizedBox(height: _height / 30),
-                    button(ctx),
-                    signInTextRow(),
-                  ],
+          key: _scaffoldKey,
+          body: Builder(
+            builder: (ctx) => Container(
+              height: _height,
+              width: _width,
+              margin: EdgeInsets.only(bottom: 5),
+              child: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      clipShape(),
+                      registerTextRow(),
+                      // createAccountTextRow(),
+                      form(),
+                      SizedBox(height: _height / 30),
+                      button(ctx),
+                      signInTextRow(),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        )
-
-      ),
+          )),
     );
   }
-   Widget createAccountTextRow() {
+
+  Widget createAccountTextRow() {
     return Container(
       // margin: EdgeInsets.only(left: _width / 15.0),
       child: Row(
@@ -189,6 +181,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+
   Widget clipShape() {
     //double height = MediaQuery.of(context).size.height;
     return Stack(
@@ -225,23 +218,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
         ),
-        
-          Container(
-            alignment: Alignment.center,
-            // margin: EdgeInsets.only(
-            //     top: _large
-            //         ? _height / 30
-            //         : (_medium ? _height / 25 : _height / 20)),
-            child: Image.asset(
-              'assets/img/logo.png',
-              height: _large?_width / 3.2:(_medium?_width /2.4:_width/1.7),
-              width: _large?_width / 3.0:(_medium?_width /2.2:_width/1.5),
-            ),
+        Container(
+          alignment: Alignment.center,
+          // margin: EdgeInsets.only(
+          //     top: _large
+          //         ? _height / 30
+          //         : (_medium ? _height / 25 : _height / 20)),
+          child: Image.asset(
+            'assets/img/logo.png',
+            height:
+                _large ? _width / 3.2 : (_medium ? _width / 2.4 : _width / 1.7),
+            width:
+                _large ? _width / 3.0 : (_medium ? _width / 2.2 : _width / 1.5),
           ),
-        
+        ),
       ],
     );
   }
+
   Widget signInTextRow() {
     return Container(
       margin: EdgeInsets.only(top: _height / 80.0),
@@ -252,7 +246,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             "Already have an account?",
             style: TextStyle(
                 fontWeight: FontWeight.w400,
-                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
           ),
           SizedBox(
             width: 8,
@@ -269,13 +265,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
               style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: Color(0xff0985ba),
-                  fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),
+                  fontSize: _large
+                      ? kLargeFontSize
+                      : (_medium ? kMediumFontSize : kSmallFontSize)),
             ),
           )
         ],
       ),
     );
   }
+
   Widget registerTextRow() {
     return Container(
       //margin: EdgeInsets.only(left: _width / 20, top: _height / 100),
@@ -294,12 +293,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+
   Widget form() {
     return Container(
       margin: EdgeInsets.only(
-          left:_width/ 12.0,
-          right: _width / 12.0,
-          top: _height / 15.0),
+          left: _width / 12.0, right: _width / 12.0, top: _height / 15.0),
       child: Form(
         child: Column(
           children: <Widget>[
@@ -315,6 +313,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+
   Widget firstNameTextFormField() {
     return CustomTextField(
       textEditingController: userNameController,
@@ -323,31 +322,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
       hint: "First Name",
     );
   }
- void _showStatusDialog(String title, String msg){
-    Alert(context: context, title: title,desc: msg,
-    style: AlertStyle(
-      titleStyle: TextStyle(fontSize:_large?kLargeFontSize+6:kMediumFontSize+4),
-        descStyle: TextStyle(fontSize:_large?kLargeFontSize+2:kMediumFontSize+2),
+
+  void _showStatusDialog(String title, String msg) {
+    Alert(
+      context: context,
+      title: title,
+      desc: msg,
+      style: AlertStyle(
+        titleStyle: TextStyle(
+            fontSize: _large ? kLargeFontSize + 6 : kMediumFontSize + 4),
+        descStyle: TextStyle(
+            fontSize: _large ? kLargeFontSize + 2 : kMediumFontSize + 2),
         isOverlayTapDismiss: false,
-     animationType: AnimationType.grow,
-     isCloseButton: false, 
-    ),
-    image: Image.asset('assets/img/logo-new.png',width: _width*0.60,),
-    buttons: [
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+      ),
+      image: Image.asset(
+        'assets/img/logo-new.png',
+        width: _width * 0.60,
+      ),
+      buttons: [
         DialogButton(
           color: Color(0xff167db3),
           child: Text(
             'Close'.toUpperCase(),
-            style: TextStyle(color: Colors.white, fontSize:_large?kLargeFontSize:kMediumFontSize),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: _large ? kLargeFontSize : kMediumFontSize),
           ),
           onPressed: () {
             Navigator.pop(context);
             // jobRefNode.requestFocus();
           },
         )
-      ],).show();
-    
+      ],
+    ).show();
   }
+
   Widget emailTextFormField() {
     return CustomTextField(
       textEditingController: emailController,
@@ -356,8 +367,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       hint: "Email ID",
     );
   }
-
-
 
   Widget passwordTextFormField() {
     return CustomTextField(
@@ -368,6 +377,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       hint: "Password",
     );
   }
+
   Widget confirmpasswordTextFormField() {
     return CustomTextField(
       textEditingController: confirmpasswordController,
@@ -378,82 +388,106 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-
-
-
   Widget button(BuildContext context) {
     return RaisedButton(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       onPressed: () async {
         FocusScope.of(context).requestFocus(new FocusNode());
-        if(userNameController.text.toString().isEmpty)
-        {
-          Scaffold
-              .of(context)
-              .showSnackBar(SnackBar(content: Text('Please Enter Your Name',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
-             // _showStatusDialog("Name is required", "Please enter your Name");
-        }
-        else if(emailController.text.toString().isEmpty)
-        {
-          Scaffold
-              .of(context)
-              .showSnackBar(SnackBar(content: Text('Please Enter a Valid Email',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
-              // _showStatusDialog("Email is required", "Please enter your Email");
-        }
-        else if(!RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(emailController.text.toString())){
-          Scaffold
-              .of(context)
-              .showSnackBar(SnackBar(content: Text('Please Enter a Valid Email',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
+        if (userNameController.text.toString().isEmpty) {
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+            'Please Enter Your Name',
+            style: TextStyle(
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
+          )));
+          // _showStatusDialog("Name is required", "Please enter your Name");
+        } else if (emailController.text.toString().isEmpty) {
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+            'Please Enter a Valid Email',
+            style: TextStyle(
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
+          )));
+          // _showStatusDialog("Email is required", "Please enter your Email");
+        } else if (!RegExp(
+                r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
+            .hasMatch(emailController.text.toString())) {
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+            'Please Enter a Valid Email',
+            style: TextStyle(
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
+          )));
           // _showStatusDialog("Invalid Email", "Please enter a valid Email");
-        }
-        else if(passwordController.text.toString().isEmpty)
-        {
+        } else if (passwordController.text.toString().isEmpty) {
           // Scaffold
           //     .of(context)
           //     .showSnackBar(SnackBar(content: Text('Please enter a valid password')));
-               Scaffold
-              .of(context)
-              .showSnackBar(SnackBar(content: Text('Please Enter a Password',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
-        }
-
-        else if(confirmpasswordController.text.toString().isEmpty)
-        {
-          Scaffold
-              .of(context)
-              .showSnackBar(SnackBar(content: Text('Please Confirm Entered Password',style: TextStyle(fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),)));
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+            'Please Enter a Password',
+            style: TextStyle(
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
+          )));
+        } else if (confirmpasswordController.text.toString().isEmpty) {
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+            'Please Confirm Entered Password',
+            style: TextStyle(
+                fontSize: _large
+                    ? kLargeFontSize
+                    : (_medium ? kMediumFontSize : kSmallFontSize)),
+          )));
           // _showStatusDialog("Password confirmation is required", "Please enter a valid password");
-        }
-        else if(passwordController.text.toString()!=confirmpasswordController.text.toString())
-        {
+        } else if (passwordController.text.toString() !=
+            confirmpasswordController.text.toString()) {
           // Scaffold
           //     .of(context)
           //     .showSnackBar(SnackBar(content: Text('Passwords Don\'t Match')));
-          _showStatusDialog("'Password' and 'Confirm Password' must match", null);
+          _showStatusDialog(
+              "'Password' and 'Confirm Password' must match", null);
+        } else {
+          isConnected
+              ? SignUP(
+                  userNameController.text.toString(),
+                  emailController.text.toString(),
+                  passwordController.text.toString(),
+                  confirmpasswordController.text.toString())
+              : _showStatusDialog(
+                  "No Internet Connection", "Internet connection required");
         }
-        else
-        {
-          isConnected?SignUP(userNameController.text.toString(),emailController.text.toString(),passwordController.text.toString(),confirmpasswordController.text.toString()):_showStatusDialog("No Internet Connection", "Internet connection required");
-        }
-
       },
       textColor: Colors.white,
       padding: EdgeInsets.all(0.0),
       child: Container(
         alignment: Alignment.center,
         height: _height / 20,
-        width:_large? _width/2 : (_medium? _width/2.5: _width/2.25),
+        width: _large ? _width / 2 : (_medium ? _width / 2.5 : _width / 2.25),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
           gradient: LinearGradient(
-            colors:<Color>[Color(0xff0985ba), Color(0xff1a6ea8)],
+            colors: <Color>[Color(0xff0985ba), Color(0xff1a6ea8)],
           ),
         ),
         padding: const EdgeInsets.all(12.0),
-        child: Text('REGISTER',style: TextStyle(fontFamily: "Nunito",fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize)),),
+        child: Text(
+          'REGISTER',
+          style: TextStyle(
+              fontFamily: "Nunito",
+              fontSize: _large
+                  ? kLargeFontSize
+                  : (_medium ? kMediumFontSize : kSmallFontSize)),
+        ),
       ),
     );
   }
-
 }
-
