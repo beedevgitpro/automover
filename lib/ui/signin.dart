@@ -91,7 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
           // 'https://autoaus.adtestbed.com/api/login',
           url,
           body: {'email': username, 'password': password});
-      print(response.body);
+      // print(response.body);
       LoginModel loginrespdata = loginModelFromJson(response.body);
       if (loginrespdata.status == "success") {
         await pr.hide();
@@ -142,8 +142,8 @@ class _SignInScreenState extends State<SignInScreen> {
         }
       });
       // Got a new connectivity status!
-      print(result.toString());
-      print(isConnected);
+      // print(result.toString());
+      // print(isConnected);
     });
   }
 
@@ -332,7 +332,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
           GestureDetector(
             onTap: () {
-              print("Routing");
+              // print("Routing");
             },
             child: Text(
               "",

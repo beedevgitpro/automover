@@ -54,18 +54,18 @@ class _MyHomePageState extends State<CarCrashForm> {
   final rPhoneNode = FocusNode();
   final rEmailNode = FocusNode();
   final rAddressNode = FocusNode();
-  List<bool> isSelected=[true,false,false,false];
-  List stack1=[];
-  List<Map<String,dynamic>> redoStack=[];
-  List<Point> pointlist1=[];
-  List stack2=[];
-  List redoStack2=[];
-  List<Point> pointlist2=[];
+  List<bool> isSelected = [true, false, false, false];
+  List stack1 = [];
+  List<Map<String, dynamic>> redoStack = [];
+  List<Point> pointlist1 = [];
+  List stack2 = [];
+  List redoStack2 = [];
+  List<Point> pointlist2 = [];
   bool toBeSubmitted = false;
   bool isConnected = true;
   double _value = 0.0;
   List<String> vehicleCondition = ['Low', 'Fair', 'Good'];
-  List<Map<String,dynamic>> markers=[];
+  List<Map<String, dynamic>> markers = [];
   // double _secondValue = 0.0;
   double _value1 = 0;
   String username = "";
@@ -87,7 +87,7 @@ class _MyHomePageState extends State<CarCrashForm> {
   bool _large;
   bool _medium;
   bool _autoValidate = false;
-  final controller=ScrollController();
+  final controller = ScrollController();
   var subscription;
   var scr = new GlobalKey();
   var scr1 = new GlobalKey();
@@ -110,9 +110,9 @@ class _MyHomePageState extends State<CarCrashForm> {
   TextEditingController senderAddressController = TextEditingController();
   TextEditingController recieverAddressController = TextEditingController();
   Offset offset;
-  String markerText='X';
-  List toggleList=['Dent-X','Scratch-S','Rust-R','Cracked-C'];
-  List toggleListMarkers=['X','S','R','C'];
+  String markerText = 'X';
+  List toggleList = ['Dent-X', 'Scratch-S', 'Rust-R', 'Cracked-C'];
+  List toggleListMarkers = ['X', 'S', 'R', 'C'];
   SignatureController _controller = SignatureController(
     penStrokeWidth: 2,
     penColor: Colors.red,
@@ -133,20 +133,22 @@ class _MyHomePageState extends State<CarCrashForm> {
     penColor: Colors.blueAccent,
     exportBackgroundColor: Colors.white,
   );
-  List<File> images=[];
+  List<File> images = [];
   final picker = ImagePicker();
   FlutterToast flutterToast;
-      Future getImage(ImageSource source) async {
-    final pickedFile = await picker.getImage(source: source,imageQuality: 30);
+  Future getImage(ImageSource source) async {
+    final pickedFile = await picker.getImage(source: source, imageQuality: 30);
     setState(() {
       print(pickedFile.path);
       images.add(File(pickedFile.path));
-      List<String> base64Images=[];
-    for(File image in images)
-      base64Images.add("'data:image/jpeg;base64," + base64Encode(image.readAsBytesSync()).length.toString()+"'");
-     
+      List<String> base64Images = [];
+      for (File image in images)
+        base64Images.add("'data:image/jpeg;base64," +
+            base64Encode(image.readAsBytesSync()).length.toString() +
+            "'");
     });
   }
+
   _showToast(String message) {
     Widget toast = Container(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
@@ -178,18 +180,23 @@ class _MyHomePageState extends State<CarCrashForm> {
       toastDuration: Duration(seconds: 2),
     );
   }
-  getLocation()async{
-    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(position.latitude,position.longitude);
-    print(placemark[0].subThoroughfare+", "+placemark[0].thoroughfare +", "+placemark[0].subLocality+", "+placemark[0].locality+", "+placemark[0].administrativeArea+", "+placemark[0].country+". Pincode: "+placemark[0].postalCode+'.');
-    print(position.longitude); 
+
+  getLocation() async {
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    List<Placemark> placemark = await Geolocator()
+        .placemarkFromCoordinates(position.latitude, position.longitude);
+    //print(placemark[0].subThoroughfare+", "+placemark[0].thoroughfare +", "+placemark[0].subLocality+", "+placemark[0].locality+", "+placemark[0].administrativeArea+", "+placemark[0].country+". Pincode: "+placemark[0].postalCode+'.');
+    //print(position.longitude);
   }
+
   @override
-   void setState(fn) {
-    if(mounted){
+  void setState(fn) {
+    if (mounted) {
       super.setState(fn);
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -211,7 +218,6 @@ class _MyHomePageState extends State<CarCrashForm> {
       // Got a new connectivity status!
       // print(result.toString());
       // print(isConnected);
-      
     });
     flutterToast = FlutterToast(context);
     dropdownValue = 'Honda';
@@ -232,17 +238,26 @@ class _MyHomePageState extends State<CarCrashForm> {
     subscription.cancel();
     super.dispose();
   }
-  void showImage(File file){
-    Alert(context: context, title: '',style: AlertStyle(isOverlayTapDismiss: false,
-        animationType: AnimationType.grow,isCloseButton: false),
-        content: Stack(
-         alignment: Alignment.center,
-         children: [
-           SpinKitChasingDots(color:kPrimaryColor,duration: Duration(milliseconds:800),),
-           Image.file(file)
-         ], 
-        )
-        ,buttons: [
+
+  void showImage(File file) {
+    Alert(
+      context: context,
+      title: '',
+      style: AlertStyle(
+          isOverlayTapDismiss: false,
+          animationType: AnimationType.grow,
+          isCloseButton: false),
+      content: Stack(
+        alignment: Alignment.center,
+        children: [
+          SpinKitChasingDots(
+            color: kPrimaryColor,
+            duration: Duration(milliseconds: 800),
+          ),
+          Image.file(file)
+        ],
+      ),
+      buttons: [
         DialogButton(
           color: Colors.red,
           child: Text(
@@ -253,7 +268,7 @@ class _MyHomePageState extends State<CarCrashForm> {
           ),
           onPressed: () {
             setState(() {
-                          images.removeWhere((element) => element==file);
+              images.removeWhere((element) => element == file);
             });
             Navigator.pop(context);
           },
@@ -270,14 +285,16 @@ class _MyHomePageState extends State<CarCrashForm> {
             Navigator.pop(context);
           },
         )
-      ],).show();
+      ],
+    ).show();
   }
+
   int id;
   void fetchuser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       username = prefs.getString('username');
-      id=prefs.getInt('id');
+      id = prefs.getInt('id');
       token = prefs.getString('token_security');
     });
   }
@@ -351,7 +368,6 @@ class _MyHomePageState extends State<CarCrashForm> {
             prefs.remove("loggedIn");
             Navigator.of(context).pushNamedAndRemoveUntil(
                 SIGN_IN, (Route<dynamic> route) => false);
-           
           },
         ),
         DialogButton(
@@ -371,11 +387,11 @@ class _MyHomePageState extends State<CarCrashForm> {
     ).show();
   }
 
-  void _saveData() async{
+  void _saveData() async {
     // Map<String,String> base64Images={};
     // for(File image in images)
     //   base64Images['image_${images.indexOf(image)+1}']="data:image/png;base64," + base64Encode(image.readAsBytesSync());
-    List<String> imgPaths=[];
+    List<String> imgPaths = [];
     Map body = {
       'user_id': id,
       'job_no': bookingIdController.text.toString(),
@@ -395,10 +411,14 @@ class _MyHomePageState extends State<CarCrashForm> {
       'goods_inside': !isSwitched1 ? '2' : '1',
       'external_condition': externalCondition.toString() == "Low"
           ? '3'
-          : externalCondition.toString() == "Fair" ? '2' : '1',
+          : externalCondition.toString() == "Fair"
+              ? '2'
+              : '1',
       'interior_condition': internalCondition.toString() == "Low"
           ? '3'
-          : internalCondition.toString() == "Fair" ? '2' : '1',
+          : internalCondition.toString() == "Fair"
+              ? '2'
+              : '1',
       'survey_image': "data:image/png;base64," + base64Imagecar,
       // 'boat_view_data': "data:image/png;base64," + base64Imageboat,
       'comments': othercommentController.text.toString(),
@@ -407,22 +427,21 @@ class _MyHomePageState extends State<CarCrashForm> {
           "data:image/png;base64," + base64Imagerecieversign,
       // 'images':jsonEncode(base64Images)
       // 'images': [
-                      
-                     
+
       //                   // http.MultipartFile('image_${images.indexOf(img)+1}', img.readAsBytes().asStream(), img.lengthSync(), filename: img.path.split("/").last)
       //               ]
     };
 
     // print(body);
     // print("token="+token);
-    for(File img in images){
+    for (File img in images) {
       imgPaths.add(img.path);
     }
     SharedPreferences.getInstance().then((value) {
       List<String> forms = value.getStringList('forms') ?? [];
       forms.add(jsonEncode(body));
       value.setStringList('forms', forms);
-      value.setStringList('imgPaths',imgPaths);
+      value.setStringList('imgPaths', imgPaths);
       value.setBool('toBeSubmitted', true);
     });
     setState(() {
@@ -440,88 +459,100 @@ class _MyHomePageState extends State<CarCrashForm> {
       isSwitched1 = false;
       isSwitched = false;
       othercommentController.clear();
-     senderPhoneController.clear();
-     images.clear();
-     redoStack.clear();
-          markers.clear();
-          recieverPhoneController.clear();
-          senderNameController.clear();
-          recieverNameController.clear();
-          senderAddressController.clear();
-          recieverAddressController.clear();
-          senderEmailController.clear();
-          recieverEmailController.clear();
+      senderPhoneController.clear();
+      images.clear();
+      redoStack.clear();
+      markers.clear();
+      recieverPhoneController.clear();
+      senderNameController.clear();
+      recieverNameController.clear();
+      senderAddressController.clear();
+      recieverAddressController.clear();
+      senderEmailController.clear();
+      recieverEmailController.clear();
     });
-    _showStatusDialog('Survey Saved Offline',
-        'Survey will be submitted when you\'re Connected', 'Start a New Survey');
+    _showStatusDialog(
+        'Survey Saved Offline',
+        'Survey will be submitted when you\'re Connected',
+        'Start a New Survey');
   }
 
   Future<CarCrashModel> CrashFormSubmit() async {
-     Dio dio = new Dio();
+    Dio dio = new Dio();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var pr = ProgressDialog(context,isSubmit: true,isOfflineSubmit: prefs.getBool('toBeSubmitted') ?? false);
+    var pr = ProgressDialog(context,
+        isSubmit: true,
+        isOfflineSubmit: prefs.getBool('toBeSubmitted') ?? false);
     err = false;
     await pr.show();
     List lst = prefs.getStringList('forms');
-    Map<String,String> base64Images={};
-    print('id'+id.toString());
-    var start=DateTime.now();
-    for(File image in images)
-      base64Images['image_${images.indexOf(image)+1}']="data:image/jpeg;base64," + base64Encode(image.readAsBytesSync());
+    print(id);
+    print(bookingIdController.text.toString());
+    //print(token);
+    //Clipboard.setData(ClipboardData(text: token));
+    List<dynamic> uploadimages = [];
+    for (var i = 0; i < images.length; i++) {
+      uploadimages.add(await MultipartFile.fromFile(images[i].path,
+          filename: images[i].path.split('/').last));
+    }
+
+    // Map<String, String> base64Images = {};
+    // //print('id'+id.toString());
+    // var start = DateTime.now();
+    // for (File image in images)
+    //   base64Images['image_${images.indexOf(image) + 1}'] =
+    //       "data:image/jpeg;base64," + base64Encode(image.readAsBytesSync());
     // print(jsonEncode(base64Images).toString());
-    print(DateTime.now().difference(start));
+    //(DateTime.now().difference(start));
     // var req = http.MultipartRequest('POST', Uri.parse('https://automover.beedevstaging.com/api/post-survey'));
-    FormData formData=FormData.fromMap({
-                if(prefs.getBool('toBeSubmitted') ?? false) ...jsonDecode(lst[0])
-                else
-                ...{'user_id': id,
-                'job_no': bookingIdController.text.toString(),
-                'sender_name': senderNameController.text.toString(),
-                'reciever_name': recieverNameController.text.toString(),
-                'sender_phone': senderPhoneController.text.toString(),
-                'reciever_phone': recieverPhoneController.text.toString(),
-                'sender_email': senderEmailController.text.toString(),
-                'reciever_email': recieverEmailController.text.toString(),
-                'sender_address': senderAddressController.text.toString(),
-                'reciever_address': recieverAddressController.text.toString(),
-                'maked': makeController.text.toString(),
-                'model': modelController.text.toString(),
-                'rego': regoController.text.toString(),
-                'speedo': speedoController.text.toString(),
-                'is_drivable': !isSwitched ? '2'.toString() : '1'.toString(),
-                'goods_inside': !isSwitched1 ? '2'.toString() : '1'.toString(),
-                'external_condition': externalCondition.toString() == "Low"
-                    ? '3'.toString()
-                    : externalCondition.toString() == "Fair" ? '2'.toString() : '1'.toString(),
-                'interior_condition': internalCondition.toString() == "Low"
-                    ? '3'.toString()
-                    : internalCondition.toString() == "Fair" ? '2'.toString() : '1'.toString(),
-                'survey_image': "data:image/jpeg;base64," + base64Imagecar,
-                // 'boat_view_data': "data:image/png;base64," + base64Imageboat,
-                'comments': othercommentController.text.toString(),
-                'sender_signature_data':
-                    "data:image/jpeg;base64," + base64Imagesendersign,
-                'receiver_signature_data':
-                    "data:image/jpeg;base64," + base64Imagerecieversign,},
-                    'images': [
-                      if(prefs.getBool('toBeSubmitted') ?? false)
-                      for(String imgPath in prefs.getStringList('imgPaths'))
-                      await MultipartFile.fromFile(imgPath,
-                            filename: 'image${prefs.getStringList('imgPaths').indexOf(imgPath)+1}.jpg')
-                      else
-                      for(File img in images)
-                     await MultipartFile.fromFile(img.path,
-                  filename: 'image_${images.indexOf(img)+1}.jpg')
-                       
-                    ]
-              });
-            // for(File img in images)
-            // {
-            //   // var fileLen=await img.length;
-            //   var multipartFileSign = http.MultipartFile('image_${images.indexOf(img)+1}', img.readAsBytes().asStream(), img.lengthSync(), filename: img.path.split("/").last);
-            //   req.files.add(multipartFileSign);
-            // }
-            // final response = await req.send();
+    FormData formData = FormData.fromMap({
+      if (prefs.getBool('toBeSubmitted') ?? false)
+        ...jsonDecode(lst[0])
+      else ...{
+        'user_id': id,
+        'job_no': bookingIdController.text.toString(),
+        'sender_name': senderNameController.text.toString(),
+        'reciever_name': recieverNameController.text.toString(),
+        'sender_phone': senderPhoneController.text.toString(),
+        'reciever_phone': recieverPhoneController.text.toString(),
+        'sender_email': senderEmailController.text.toString(),
+        'reciever_email': recieverEmailController.text.toString(),
+        'sender_address': senderAddressController.text.toString(),
+        'reciever_address': recieverAddressController.text.toString(),
+        'maked': makeController.text.toString(),
+        'model': modelController.text.toString(),
+        'rego': regoController.text.toString(),
+        'speedo': speedoController.text.toString(),
+        'is_drivable': !isSwitched ? '2'.toString() : '1'.toString(),
+        'goods_inside': !isSwitched1 ? '2'.toString() : '1'.toString(),
+        'external_condition': externalCondition.toString() == "Low"
+            ? '3'.toString()
+            : externalCondition.toString() == "Fair"
+                ? '2'.toString()
+                : '1'.toString(),
+        'interior_condition': internalCondition.toString() == "Low"
+            ? '3'.toString()
+            : internalCondition.toString() == "Fair"
+                ? '2'.toString()
+                : '1'.toString(),
+        'survey_image': "data:image/jpeg;base64," + base64Imagecar,
+        // 'boat_view_data': "data:image/png;base64," + base64Imageboat,
+        'comments': othercommentController.text.toString(),
+        'sender_signature_data':
+            "data:image/jpeg;base64," + base64Imagesendersign,
+        'receiver_signature_data':
+            "data:image/jpeg;base64," + base64Imagerecieversign,
+      },
+      'images[]': uploadimages,
+    });
+
+    // for(File img in images)
+    // {
+    //   // var fileLen=await img.length;
+    //   var multipartFileSign = http.MultipartFile('image_${images.indexOf(img)+1}', img.readAsBytes().asStream(), img.lengthSync(), filename: img.path.split("/").last);
+    //   req.files.add(multipartFileSign);
+    // }
+    // final response = await req.send();
     // final response = await http.post(
     //     // 'https://autoaus.adtestbed.com/api/post-survey',
     //     'https://automover.beedevstaging.com/api/post-survey',
@@ -564,18 +595,20 @@ class _MyHomePageState extends State<CarCrashForm> {
     //           });
     try {
       final response = await dio.post(
-        // 'https://automover.beedevstaging.com/api/post-survey',
-        // 'https://autoaus.adtestbed.com/api/post-survey',
-        'https://survey.automover.com.au/api/post-survey',
-        data: formData,
-        options: Options(headers: {
-          "Accept": "application/json",
-          'Authorization': 'Bearer $token',
-        }));
-      print("carcrashresponse1" + response.statusCode.toString());
+          // 'https://automover.beedevstaging.com/api/post-survey',
+          // 'https://autoaus.adtestbed.com/api/post-survey',
+          'https://survey.automover.com.au/api/post-survey',
+          data: formData,
+          options: Options(headers: {
+            "Accept": "application/json",
+            'Authorization': 'Bearer $token',
+          }));
+      // print("carcrashresponse1" + response.statusCode.toString());
       // CarCrashModel carCrashModel = carCrashModelFromJson(jsonDecode(response.data));
-      if (response.statusCode==200) {
-        prefs.setString('forms', null);
+      print("Response Code :  ${response.data}");
+
+      if (response.statusCode == 200) {
+        //prefs.setString('forms', null);
         pr.hide();
         setState(() {
           _formKey.currentState.reset();
@@ -605,7 +638,8 @@ class _MyHomePageState extends State<CarCrashForm> {
           recieverEmailController.clear();
         });
         //  Navigator.of(context).pop();
-
+        print("In IF");
+        print(prefs.getBool('toBeSubmitted'));
         if (prefs.getBool('toBeSubmitted') ?? false) {
           if (lst.length > 1) {
             lst.removeAt(0);
@@ -625,22 +659,23 @@ class _MyHomePageState extends State<CarCrashForm> {
           _showStatusDialog("Thank You for Submitting Survey",
               "Survey Submitted", 'Start a New Survey');
         }
-
       } else {
         pr.hide();
+        print("Else");
         prefs.setString('forms', null);
         toBeSubmitted
-            ? _showStatusDialog(
-                "Couldn't Submit Saved Surveys", null, 'Close')
-            : _showStatusDialog(
-                "Couldn't Submit Surveys", '', 'Close');
+            ? _showStatusDialog("Couldn't Submit Saved Surveys", null, 'Close')
+            : _showStatusDialog("Couldn't Submit Surveys", '', 'Close');
       }
     } on DioError catch (e) {
       pr.hide();
-      _showStatusDialog("Couldn't Submit Surveys",e.response.statusMessage, 'Close');
-      print(e.response);
+      print("In Error");
+      _showStatusDialog(
+          "Couldn't Submit Surveys", e.response.statusMessage, 'Close');
+      // print(e.response);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
@@ -790,7 +825,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                             child: Container(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Surveyed By  ",
@@ -927,9 +963,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         errorBorder:
                                                             InputBorder.none,
                                                         hintText: 'Name'),
-                                                    inputFormatters: [
-                                                      
-                                                    ],
+                                                    inputFormatters: [],
                                                     // validator: (value) {
                                                     //   if (value.isEmpty) {
                                                     //     if (!err) {
@@ -1494,7 +1528,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                           fontFamily: "Nunito"),
                                                       controller:
                                                           makeController,
-                                                          textCapitalization: TextCapitalization.characters,
+                                                      textCapitalization:
+                                                          TextCapitalization
+                                                              .characters,
                                                       decoration: InputDecoration(
                                                           enabledBorder:
                                                               InputBorder.none,
@@ -1551,7 +1587,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                       inputFormatters: [
                                                         UpperCaseTextFormatter(),
                                                       ],
-                                                      textCapitalization: TextCapitalization.characters,
+                                                      textCapitalization:
+                                                          TextCapitalization
+                                                              .characters,
                                                       onFieldSubmitted:
                                                           (value) {
                                                         regoNode.requestFocus();
@@ -1626,7 +1664,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         speedoNode
                                                             .requestFocus();
                                                       },
-                                                      textCapitalization: TextCapitalization.characters,
+                                                      textCapitalization:
+                                                          TextCapitalization
+                                                              .characters,
                                                       textInputAction:
                                                           TextInputAction.next,
                                                       style: TextStyle(
@@ -1785,7 +1825,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         // activeTrackColor:
                                                         //     Colors.teal,
                                                         activeColor:
-                                                             Colors.teal,
+                                                            Colors.teal,
                                                       ),
                                                     ),
                                                   )
@@ -1829,7 +1869,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         activeColor:
                                                             // Platform.isAndroid
                                                             //     ? Colors.white:
-                                                                 Colors.teal,
+                                                            Colors.teal,
                                                       ),
                                                     ),
                                                   )
@@ -1965,14 +2005,13 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                             value;
                                                                         externalCondition =
                                                                             vehicleCondition[value.toInt()];
-                                                                        print(
-                                                                            _value);
+                                                                        // print(
+                                                                        //     _value);
                                                                       });
                                                                     },
                                                                   ),
                                                                 ),
                                                               )
-
                                                             ]),
                                                         flex: 2,
                                                       ),
@@ -2128,13 +2167,12 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                       internalCondition =
                                                                           vehicleCondition[
                                                                               value.toInt()];
-                                                                      print(
-                                                                          _value1);
+                                                                      // print(
+                                                                      //     _value1);
                                                                     });
                                                                   },
                                                                 ),
                                                               )
-
                                                             ]),
                                                         flex: 2,
                                                       ),
@@ -2167,53 +2205,58 @@ class _MyHomePageState extends State<CarCrashForm> {
                                   height: 20,
                                 ),
                                 Padding(
-                                  padding:EdgeInsets.symmetric(horizontal:16),
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
                                   child: Container(
-                                    padding: EdgeInsets.zero,
-                                    margin: EdgeInsets.zero,
-                                    child: 
-                                    LayoutBuilder(builder: (context, constraints) {
-                                      return ToggleButtons(
-                                      constraints:
-                                            BoxConstraints.tight(Size.fromWidth(constraints.maxWidth / 4.1)),
-                                      selectedColor:Colors.white,
-                                      fillColor: kPrimaryColor,
-                                      children: [
-                                      for (String text in toggleList)
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(vertical:10.0),
-                                        child: Text(
-                                        text,
-                                        style: TextStyle(
-                                            fontSize: _large
-                                                ? kLargeFontSize-1
-                                                : (_medium
-                                                    ? kMediumFontSize-2
-                                                    : kSmallFontSize-2),
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: "Nunito"),
-                                    ),
-                                      ),
-                                    ], isSelected:isSelected,onPressed: (index){
-                                      setState(() {
-                                        for(int i=0;i<isSelected.length;i++)
-                                          {
-                                            if(index==i)
-                                             { 
-                                                isSelected[i]=true;
-                                                markerText=toggleListMarkers[i];
-                                             }
-                                            else
-                                              isSelected[i]=false;
-                                            }
-                                      });
-                                      
-                                    },);
-                                    })
-                                    
-                                  ),
+                                      padding: EdgeInsets.zero,
+                                      margin: EdgeInsets.zero,
+                                      child: LayoutBuilder(
+                                          builder: (context, constraints) {
+                                        return ToggleButtons(
+                                          constraints: BoxConstraints.tight(
+                                              Size.fromWidth(
+                                                  constraints.maxWidth / 4.1)),
+                                          selectedColor: Colors.white,
+                                          fillColor: kPrimaryColor,
+                                          children: [
+                                            for (String text in toggleList)
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 10.0),
+                                                child: Text(
+                                                  text,
+                                                  style: TextStyle(
+                                                      fontSize: _large
+                                                          ? kLargeFontSize - 1
+                                                          : (_medium
+                                                              ? kMediumFontSize -
+                                                                  2
+                                                              : kSmallFontSize -
+                                                                  2),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontFamily: "Nunito"),
+                                                ),
+                                              ),
+                                          ],
+                                          isSelected: isSelected,
+                                          onPressed: (index) {
+                                            setState(() {
+                                              for (int i = 0;
+                                                  i < isSelected.length;
+                                                  i++) {
+                                                if (index == i) {
+                                                  isSelected[i] = true;
+                                                  markerText =
+                                                      toggleListMarkers[i];
+                                                } else
+                                                  isSelected[i] = false;
+                                              }
+                                            });
+                                          },
+                                        );
+                                      })),
                                 ),
-                                
+
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -2229,15 +2272,18 @@ class _MyHomePageState extends State<CarCrashForm> {
                                       fontFamily: "Nunito"),
                                   textAlign: TextAlign.center,
                                 ),
-                                SizedBox(height:10),
+                                SizedBox(height: 10),
                                 Align(
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       GestureDetector(
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(horizontal:10),
-                                          child: Icon(Icons.undo,color:kPrimaryColor,size:_large?42:35),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Icon(Icons.undo,
+                                              color: kPrimaryColor,
+                                              size: _large ? 42 : 35),
                                           // Text("Undo",
                                           //     style: TextStyle(
                                           //       fontWeight: FontWeight.bold,
@@ -2250,19 +2296,22 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           //         fontFamily: "Nunito")),
                                         ),
                                         onTap: () {
-                                          
                                           setState(() {
-                                            if(markers.isNotEmpty)
-                                            redoStack.add(markers.removeLast());
+                                            if (markers.isNotEmpty)
+                                              redoStack
+                                                  .add(markers.removeLast());
                                           });
                                           FocusScope.of(context)
                                               .requestFocus(new FocusNode());
                                         },
                                       ),
-                                     GestureDetector(
+                                      GestureDetector(
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(horizontal:10),
-                                          child: Icon(Icons.redo,color:kPrimaryColor,size:_large?42:35),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Icon(Icons.redo,
+                                              color: kPrimaryColor,
+                                              size: _large ? 42 : 35),
                                           // Text("Redo",
                                           //     style: TextStyle(
                                           //       fontWeight: FontWeight.bold,
@@ -2275,10 +2324,10 @@ class _MyHomePageState extends State<CarCrashForm> {
                                           //         fontFamily: "Nunito")),
                                         ),
                                         onTap: () {
-                                          
                                           setState(() {
-                                            if(redoStack.isNotEmpty)
-                                            markers.add(redoStack.removeLast());
+                                            if (redoStack.isNotEmpty)
+                                              markers
+                                                  .add(redoStack.removeLast());
                                           });
                                           FocusScope.of(context)
                                               .requestFocus(new FocusNode());
@@ -2286,10 +2335,11 @@ class _MyHomePageState extends State<CarCrashForm> {
                                       ),
                                       GestureDetector(
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(horizontal:15),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 15),
                                           child: Text("Clear All",
                                               style: TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: _large
                                                       ? kLargeFontSize
                                                       : (_medium
@@ -2316,44 +2366,48 @@ class _MyHomePageState extends State<CarCrashForm> {
                                   height: 8,
                                 ),
                                 Padding(
-                                    padding:EdgeInsets.symmetric(horizontal:10),
-                                    child: RepaintBoundary(
-                                        key: scr,
-                                              child: Container(
-                                                color: Colors.grey[200],
-                                                child: GestureDetector(
-                                                  onTapDown: (details){
-                                                      //print(details.localPosition.dx);
-                                                      setState(() {
-                                                        markers.add({'text':markerText,'offset':details.localPosition});
-                                                        redoStack.clear();
-                                                        //offset=details.localPosition;vdvf
-                                                      });
-                                                    },
-                                                    child: CustomPaint(
-                                                      willChange: true,
-                                                      
-                                                    foregroundPainter: CarSurveyPainter(markers: markers,isLarge:_large),
-                                                    child:SvgPicture.asset(
-                                                        'assets/img/automover.svg',
-                                                        color: Colors.black,
-                                                        width: MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                        height: _large ? 700 : 500,
-                                                      ),
-                                                  ),
-                                                ),
-                                              ),
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: RepaintBoundary(
+                                    key: scr,
+                                    child: Container(
+                                      color: Colors.grey[200],
+                                      child: GestureDetector(
+                                        onTapDown: (details) {
+                                          //print(details.localPosition.dx);
+                                          setState(() {
+                                            markers.add({
+                                              'text': markerText,
+                                              'offset': details.localPosition
+                                            });
+                                            redoStack.clear();
+                                            //offset=details.localPosition;vdvf
+                                          });
+                                        },
+                                        child: CustomPaint(
+                                          willChange: true,
+                                          foregroundPainter: CarSurveyPainter(
+                                              markers: markers,
+                                              isLarge: _large),
+                                          child: SvgPicture.asset(
+                                            'assets/img/automover.svg',
+                                            color: Colors.black,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: _large ? 700 : 500,
+                                          ),
+                                        ),
                                       ),
                                     ),
+                                  ),
+                                ),
                                 SizedBox(
                                   height: 0,
                                 ),
                                 // Text(
                                 //   "Boat/C/Van/Trlr Survey",
                                 //   style: TextStyle(
-                                   
+
                                 //       fontSize: _large
                                 //           ? kLargeFontSize
                                 //           : (_medium
@@ -2391,7 +2445,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 //               stack2.removeAt(stack2.length-1);
                                 //               //print('top popped');
                                 //               if(stack2.isNotEmpty)
-                                //              { 
+                                //              {
                                 //                print(stack2.length-1);
                                 //                print(stack2[stack2.length-1].length);
                                 //               for(Point point in stack2[(stack2.length)-1])
@@ -2403,9 +2457,9 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 //               }
                                 //               print('forend');
                                 //               }
-                                      
+
                                 //               }
-                                              
+
                                 //           FocusScope.of(context)
                                 //               .requestFocus(new FocusNode());
                                 //         },
@@ -2434,7 +2488,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                 //       ),
                                 //     ],
                                 //   ),
-                                  
+
                                 // ),
                                 // Padding(
                                 //     padding: const EdgeInsets.all(18),
@@ -2522,16 +2576,18 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     style: TextStyle(
                                                         color:
                                                             Color(0xff000000),
-                                                        fontSize:_large
+                                                        fontSize: _large
                                                             ? kLargeFontSize
                                                             : (_medium
                                                                 ? kMediumFontSize
                                                                 : kSmallFontSize),
                                                         fontFamily: "Nunito"),
-                                                    textCapitalization: TextCapitalization.sentences,
+                                                    textCapitalization:
+                                                        TextCapitalization
+                                                            .sentences,
                                                     textInputAction:
                                                         TextInputAction.done,
-                                                  focusNode: commentNode,
+                                                    focusNode: commentNode,
                                                     // validator: (text) {
                                                     //   if (text == null ||
                                                     //       text.isEmpty ||
@@ -2542,7 +2598,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                     //           .requestFocus();
                                                     //     }
                                                     //     return 'Required';
-          
+
                                                     //   }
                                                     //   return null;
                                                     // },
@@ -2551,7 +2607,6 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                           InputBorder.none,
                                                       enabledBorder:
                                                           InputBorder.none,
-
                                                       focusedErrorBorder:
                                                           InputBorder.none,
                                                       focusedBorder:
@@ -2568,7 +2623,6 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                         color:
                                                             Color(0xff999999),
                                                       ),
-
                                                     ),
 
                                                     maxLines: 8,
@@ -2614,9 +2668,8 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                         child: Text(
                                                                             "Clear",
                                                                             style: TextStyle(
-                                                                              fontWeight: FontWeight
-                                                                              .bold,
-                                                                                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize  : kSmallFontSize),
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                                                 fontFamily: "Nunito",
                                                                                 color: Color(0xff1a6ea8))),
                                                                       ),
@@ -2700,8 +2753,7 @@ class _MyHomePageState extends State<CarCrashForm> {
                                                                         child: Text(
                                                                             "Clear",
                                                                             style: TextStyle(
-                                                                              fontWeight: FontWeight
-                                                                              .bold,
+                                                                                fontWeight: FontWeight.bold,
                                                                                 fontSize: _large ? kLargeFontSize : (_medium ? kMediumFontSize : kSmallFontSize),
                                                                                 fontFamily: "Nunito",
                                                                                 color: Color(0xff1a6ea8))),
@@ -2951,130 +3003,145 @@ class _MyHomePageState extends State<CarCrashForm> {
                                   height: 10,
                                 ),
                                 Container(
-                                    child:
-                                  Column(
+                                  child: Column(
                                     children: [
-                                      
-                                                      SizedBox(
-                                  height: 6,
-                                ),
+                                      SizedBox(
+                                        height: 6,
+                                      ),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          
-                                                  RaisedButton(
-                                                    onPressed: ()async{
-                                                      if(images.length<10)
-                                                      await getImage(ImageSource.camera);
-                                                      else
-                                                        _showToast('Upload Limit Reached');
-                                                    },
-                                                    color: Color(0xff167db3),
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            new BorderRadius.circular(
-                                                                0.0)),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.all(10.0),
-                                                      child: 
-                                                          // Icon(Icons.add_a_photo,color: Colors.white),
-                                                         Row(
-                                                           children: [
-                                                             Icon(Icons.camera_alt,color: Colors.white),
-                                                             Align(
-                                                                alignment: Alignment.center,
-                                                                child: Text(' Upload Images',style: TextStyle(
-                                                        fontFamily: "Nunito",
-                                                        fontSize: _large
-                                                                    ? kLargeFontSize
-                                                                    : (_medium
-                                                                        ? kMediumFontSize
-                                                                        : kSmallFontSize),
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                                    FontWeight.bold),),
-                                                             ),
-                                                           ],
-                                                         ),
-                                                          
-                                                       
+                                          RaisedButton(
+                                            onPressed: () async {
+                                              if (images.length < 10)
+                                                await getImage(
+                                                    ImageSource.camera);
+                                              else
+                                                _showToast(
+                                                    'Upload Limit Reached');
+                                            },
+                                            color: Color(0xff167db3),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        0.0)),
+                                            child: Padding(
+                                              padding: EdgeInsets.all(10.0),
+                                              child:
+                                                  // Icon(Icons.add_a_photo,color: Colors.white),
+                                                  Row(
+                                                children: [
+                                                  Icon(Icons.camera_alt,
+                                                      color: Colors.white),
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      ' Upload Images',
+                                                      style: TextStyle(
+                                                          fontFamily: "Nunito",
+                                                          fontSize: _large
+                                                              ? kLargeFontSize
+                                                              : (_medium
+                                                                  ? kMediumFontSize
+                                                                  : kSmallFontSize),
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     ),
                                                   ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
-                                             SizedBox(height: 3,),
-                                              Text('Upload Limit: 10 Images',style: TextStyle(
-                                                        fontFamily: "Nunito",
-                                                        fontSize: _large
-                                                            ? kLargeFontSize-2
-                                                            : (_medium
-                                                                ? kMediumFontSize-1
-                                                                : kSmallFontSize-1),
-                                                        color: Colors.black54,
-                                                        fontWeight:
-                                                            FontWeight.normal),),
-                                                          Wrap(
-                                                            alignment: WrapAlignment.center,
-                                                      
-                                                            children: [
-                                                              for(File i in images)
-                                                              GestureDetector(
-                                                                onTap: (){
-                                                                  showImage(i);
-                                                                },
-                                                                             child: Padding(
-                                                                               padding: EdgeInsets.all(8.0),
-                                                                               child: Image.file(i,width: _width/8,),
-                                                                             )
-                                                              ),
-                                                            
-                                                            ],
-                                                          ), 
+                                      SizedBox(
+                                        height: 3,
+                                      ),
+                                      Text(
+                                        'Upload Limit: 10 Images',
+                                        style: TextStyle(
+                                            fontFamily: "Nunito",
+                                            fontSize: _large
+                                                ? kLargeFontSize - 2
+                                                : (_medium
+                                                    ? kMediumFontSize - 1
+                                                    : kSmallFontSize - 1),
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      Wrap(
+                                        alignment: WrapAlignment.center,
+                                        children: [
+                                          for (File i in images)
+                                            GestureDetector(
+                                                onTap: () {
+                                                  showImage(i);
+                                                },
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Image.file(
+                                                    i,
+                                                    width: _width / 8,
+                                                  ),
+                                                )),
+                                        ],
+                                      ),
                                     ],
                                   ),
-                                  ),
+                                ),
                                 SizedBox(
                                   height: 18.0,
                                 ),
                                 Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal:15.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0),
                                       child: Text(
-                                  "Received in Good Order and Condition.",
-                                  style: TextStyle(
-                                        fontSize: _large
-                                            ? 15
-                                            : (_medium
-                                                ? 14
-                                                : 13),
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "Nunito"),
+                                        "Received in Good Order and Condition.",
+                                        style: TextStyle(
+                                            fontSize: _large
+                                                ? 15
+                                                : (_medium ? 14 : 13),
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "Nunito"),
                                         textAlign: TextAlign.start,
                                       ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(15.0),
                                       child: RichText(
-                                  text:TextSpan(text:"Transport is subject to Terms and Conditions of Transit. To receive a copy please go to ",style: TextStyle(
-                                        fontSize: _large
-                                            ? 13
-                                            : (_medium
-                                                ? 12
-                                                : 11),
-                                        color: Colors.black54,
-                                        fontFamily: "Nunito"),
-                                        children:[
-                                          TextSpan(text:"www.automover.com.au",recognizer: TapGestureRecognizer()..onTap=(){launch('https://www.automover.com.au');},style: TextStyle(color:Colors.blue)),
-                                          TextSpan(
-                                            
-                                            text:"\n\nPlease note: Automover will not take responsibility for vehicles in poor condition, damaged vehicles, non drivable vehicles, contents inside vehicles, road damage, damage due to weather conditions, mechanical issues or vehicles that have been modified. If the driver is unable to survey the vehicle due to weather conditions, vehicle being dirty, dusty or night time pickup, Automover accepts no responsibility to the vehicle.")
-                                        ],
+                                        text: TextSpan(
+                                          text:
+                                              "Transport is subject to Terms and Conditions of Transit. To receive a copy please go to ",
+                                          style: TextStyle(
+                                              fontSize: _large
+                                                  ? 13
+                                                  : (_medium ? 12 : 11),
+                                              color: Colors.black54,
+                                              fontFamily: "Nunito"),
+                                          children: [
+                                            TextSpan(
+                                                text: "www.automover.com.au",
+                                                recognizer:
+                                                    TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        launch(
+                                                            'https://www.automover.com.au');
+                                                      },
+                                                style: TextStyle(
+                                                    color: Colors.blue)),
+                                            TextSpan(
+                                                text:
+                                                    "\n\nPlease note: Automover will not take responsibility for vehicles in poor condition, damaged vehicles, non drivable vehicles, contents inside vehicles, road damage, damage due to weather conditions, mechanical issues or vehicles that have been modified. If the driver is unable to survey the vehicle due to weather conditions, vehicle being dirty, dusty or night time pickup, Automover accepts no responsibility to the vehicle.")
+                                          ],
                                         ),
-                                  
-                                  textAlign: TextAlign.left,
-                                ),
+                                        textAlign: TextAlign.left,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -3082,121 +3149,115 @@ class _MyHomePageState extends State<CarCrashForm> {
                                   height: 20,
                                 ),
                                 Container(
-                                    child:
-                                  RaisedButton(
-                                            onPressed: () async {
-                                              FocusScope.of(context)
-                                                  .requestFocus(new FocusNode());
-                                              if (_formKey.currentState
-                                                  .validate()) {
-                                              
-                                                await takescrshot();
-                                                //await takescrshot1();
-                                                await takescrshotrecieverSign();
-                                                await takescrshotsenderSign();
-                                                _autoValidate = false;
-                                             
-                                                isConnected
-                                                    ? CrashFormSubmit()
-                                                    : _saveData();
-                                              } else {
-                                                setState(() {
-                                                  _autoValidate = true;
-                                                  err = false;
-                                                });
-                                              }
-                                            },
-                                            color: Colors.green,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    new BorderRadius.circular(
-                                                        0.0)),
-                                            child: Padding(
-                                              padding: EdgeInsets.all(12.0),
-                                              child: Text(
-                                                isConnected
-                                                    ? "Submit Survey Report".toUpperCase()
-                                                    : "Save Survey Report".toUpperCase(),
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontFamily: "Nunito",
-                                                    fontSize: _large
-                                                        ? kLargeFontSize
-                                                        : (_medium
-                                                            ? kMediumFontSize
-                                                            : kSmallFontSize),
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                          ),
+                                  child: RaisedButton(
+                                    onPressed: () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      if (_formKey.currentState.validate()) {
+                                        await takescrshot();
+                                        //await takescrshot1();
+                                        await takescrshotrecieverSign();
+                                        await takescrshotsenderSign();
+                                        _autoValidate = false;
+
+                                        isConnected
+                                            ? CrashFormSubmit()
+                                            : _saveData();
+                                      } else {
+                                        setState(() {
+                                          _autoValidate = true;
+                                          err = false;
+                                        });
+                                      }
+                                    },
+                                    color: Colors.green,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(0.0)),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(12.0),
+                                      child: Text(
+                                        isConnected
+                                            ? "Submit Survey Report"
+                                                .toUpperCase()
+                                            : "Save Survey Report"
+                                                .toUpperCase(),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontFamily: "Nunito",
+                                            fontSize: _large
+                                                ? kLargeFontSize
+                                                : (_medium
+                                                    ? kMediumFontSize
+                                                    : kSmallFontSize),
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
                                   ),
-                              
-                                 Center(
-                                   child: FlatButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                FocusScope.of(context)
-                                                    .requestFocus(
-                                                        new FocusNode());
-                                                setState(() {
-                                                  _autoValidate = false;
-                                                });
-                                                _formKey.currentState.reset();
-                                                
-                                                _controller.clear();
-                                                err=false;
-                                                _controller1.clear();
-                                                _controller2.clear();
-                                                _controller3.clear();
-                                                regoController.clear();
-                                                modelController.clear();
-                                                makeController.clear();
-                                                bookingIdController.clear();
-                                                speedoController.clear();
-                                                isSwitched1 = false;
-                                                isSwitched = false;
-                                                images.clear();
-                                                markers.clear();
-                                                redoStack.clear();
-                                                othercommentController.clear();
-                                                senderAddressController.clear();
-                                                senderEmailController.clear();
-                                                senderNameController.clear();
-                                                senderPhoneController.clear();
-                                                recieverNameController.clear();
-                                                recieverPhoneController.clear();
-                                                recieverEmailController.clear();
-                                                recieverAddressController.clear();
-                                                 controller.jumpTo(controller.position.minScrollExtent);
-                                                  jobRefNode.requestFocus();
-                                              });
-                                            },
-                                            
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    new BorderRadius.circular(
-                                                        0.0)),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                "Reset Survey",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: _large
-                                                        ? kLargeFontSize
-                                                        : (_medium
-                                                            ? kMediumFontSize
-                                                            : kSmallFontSize),
-                                                    color: kPrimaryColor,
-                                                    fontWeight: FontWeight.normal,
-                                                    fontFamily: "Nunito"),
-                                              ),
-                                            ),
-                                          ),
-                                 )
-                                
+                                ),
+
+                                Center(
+                                  child: FlatButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        setState(() {
+                                          _autoValidate = false;
+                                        });
+                                        _formKey.currentState.reset();
+
+                                        _controller.clear();
+                                        err = false;
+                                        _controller1.clear();
+                                        _controller2.clear();
+                                        _controller3.clear();
+                                        regoController.clear();
+                                        modelController.clear();
+                                        makeController.clear();
+                                        bookingIdController.clear();
+                                        speedoController.clear();
+                                        isSwitched1 = false;
+                                        isSwitched = false;
+                                        images.clear();
+                                        markers.clear();
+                                        redoStack.clear();
+                                        othercommentController.clear();
+                                        senderAddressController.clear();
+                                        senderEmailController.clear();
+                                        senderNameController.clear();
+                                        senderPhoneController.clear();
+                                        recieverNameController.clear();
+                                        recieverPhoneController.clear();
+                                        recieverEmailController.clear();
+                                        recieverAddressController.clear();
+                                        controller.jumpTo(controller
+                                            .position.minScrollExtent);
+                                        jobRefNode.requestFocus();
+                                      });
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(0.0)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        "Reset Survey",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: _large
+                                                ? kLargeFontSize
+                                                : (_medium
+                                                    ? kMediumFontSize
+                                                    : kSmallFontSize),
+                                            color: kPrimaryColor,
+                                            fontWeight: FontWeight.normal,
+                                            fontFamily: "Nunito"),
+                                      ),
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
                           )
@@ -3225,7 +3286,6 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imagecar = base64Encode(pngBytes);
-  
   }
 
   takescrshot1() async {
@@ -3235,7 +3295,6 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imageboat = base64Encode(pngBytes);
-
   }
 
   takescrshotrecieverSign() async {
@@ -3244,7 +3303,6 @@ class _MyHomePageState extends State<CarCrashForm> {
     var byteData = await image.toByteData(format: UI.ImageByteFormat.png);
     var pngBytes = byteData.buffer.asUint8List();
     base64Imagerecieversign = base64Encode(pngBytes);
-
   }
 
   takescrshotsenderSign() async {

@@ -102,7 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     try {
       LoginModel singinrespdata = loginModelFromJson(response.body);
-      print("signi" + singinrespdata.toString());
+      //  print("signi" + singinrespdata.toString());
       if (singinrespdata.status == "success") {
         pr.hide();
         Navigator.of(context).pop();

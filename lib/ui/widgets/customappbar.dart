@@ -7,7 +7,7 @@ class CustomAppBar extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     return Material(
       child: Container(
-        height: height/10,
+        height: height / 10,
         width: width,
         padding: EdgeInsets.only(left: 15, top: 25),
         decoration: BoxDecoration(
@@ -18,11 +18,13 @@ class CustomAppBar extends StatelessWidget {
         child: Row(
           children: <Widget>[
             IconButton(
-                icon: Icon(Icons.arrow_back,),
-                onPressed: (){
-                  print("pop");
+                icon: Icon(
+                  Icons.arrow_back,
+                ),
+                onPressed: () {
+                  // print("pop");
                   Navigator.of(context).pop();
-            })
+                })
           ],
         ),
       ),
