@@ -502,7 +502,7 @@ class _MyHomePageState extends State<CarCrashForm> {
     //print(token);
     //Clipboard.setData(ClipboardData(text: token));
     List<dynamic> uploadimages = [];
-    if (prefs.getBool('toBeSubmitted')) {
+    if (prefs.getBool('toBeSubmitted') ?? false) {
       for (var i = 0; i < jsonDecode(lst[0])['imagelist'].length; i++) {
         uploadimages.add(await MultipartFile.fromFile(
             jsonDecode(lst[0])['imagelist'][i],
