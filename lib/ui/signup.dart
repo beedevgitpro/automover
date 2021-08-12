@@ -261,7 +261,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Navigator.pop(context);
             },
             child: Text(
-              "Login",
+              "Sign In",
               style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: Color(0xff0985ba),
@@ -470,7 +470,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       padding: EdgeInsets.all(0.0),
       child: Container(
         alignment: Alignment.center,
-        height: _height / 20,
+        height: _height / 15,
         width: _large ? _width / 2 : (_medium ? _width / 2.5 : _width / 2.25),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20.0)),

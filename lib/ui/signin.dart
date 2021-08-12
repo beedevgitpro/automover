@@ -169,12 +169,12 @@ class _SignInScreenState extends State<SignInScreen> {
               children: <Widget>[
                 clipShape(),
                 welcomeTextRow(),
-                // signInTextRow(),
+                //signInTextRow(),
                 form(),
                 forgetPassTextRow(),
                 SizedBox(height: _height / 75),
                 button(),
-                // signUpTextRow(),
+                signUpTextRow(),
               ],
             ),
           ),
@@ -405,7 +405,7 @@ class _SignInScreenState extends State<SignInScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Don't have an account?",
+            "Are You A Driver?",
             style: TextStyle(
                 fontWeight: FontWeight.w400,
                 fontSize: _large
@@ -422,7 +422,7 @@ class _SignInScreenState extends State<SignInScreen> {
               Navigator.of(context).pushNamed(SIGN_UP);
             },
             child: Text(
-              "Register",
+              "Sign Up",
               style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: Color(0xff0985ba),
